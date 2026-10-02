@@ -267,18 +267,29 @@
 
     // Função central responsável pela comunicação com o servidor Google via POST
     async function callAPI(action, payload = {}) {
-      payload.action = action;
-      try {
-        const response = await fetch(API_URL, {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: { "Content-Type": "text/plain;charset=utf-8" } // Evita erro de CORS preflight
-        });
-        return await response.json();
-      } catch (err) {
-        return { erro: "Falha de comunicação: Verifique a sua ligação ou se a API foi implantada para 'Qualquer Pessoa'." };
+  payload.action = action;
+  try {
+    const response = await fetch(API_URL, {
+      method: "POST",
+      redirect: "follow", // <-- FORÇA O NAVEGADOR A SEGUIR O GOOGLE
+      body: JSON.stringify(payload),
+      headers: { 
+        "Content-Type": "text/plain;charset=utf-8" 
       }
+    });
+    
+    // Se o Google devolver uma página de erro HTML em vez de JSON, capta a falha
+    const text = await response.text();
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      return { erro: "O Google bloqueou o acesso. Verifique as permissões de Implantação." };
     }
+    
+  } catch (err) {
+    return { erro: "Falha de rede: " + err.message };
+  }
+}
 
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
