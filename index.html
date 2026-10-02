@@ -162,7 +162,7 @@
       <!-- ================= ADMIN: RADAR DA EQUIPA ================= -->
       <div id="tab-radar" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Radar da Equipe</h3>
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Radar da Equipe (Ao Vivo com GPS)</h3>
           <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarRadar()">🔄 Atualizar Radar</button>
           <div id="areaRadar">Carregando posições...</div>
         </div>
@@ -254,6 +254,7 @@
   </div>
 
   <script>
+    // Atenção: Mantenha a URL que copiou do Google Apps Script
     const API_URL = "https://script.google.com/macros/s/AKfycbxAz5QbUm2qRYkHx0rU0vvLKxInNGj9oaiFvik4RsIXRe4BGnjxMAgu49dcR6mo7GMA/exec";
 
     let usuarioAutenticado = "";
@@ -274,10 +275,10 @@
         try {
           return JSON.parse(text);
         } catch (e) {
-          return { erro: "A API do Google bloqueou a leitura. Verifique se a Implantação está acessível a 'Qualquer pessoa'." };
+          return { erro: "A API do Google bloqueou a leitura." };
         }
       } catch (err) {
-        return { erro: "Falha de rede ao conectar com a API: " + err.message };
+        return { erro: "Falha de rede ao conectar com a API." };
       }
     }
 
@@ -287,6 +288,28 @@
       b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Cheguei") || msg.includes("Saí") ? "#a855f7" : "var(--accent)");
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 5000);
+    }
+
+    // === NOVO: FUNÇÃO QUE CAPTURA O GPS DO DISPOSITIVO ===
+    async function obterLocalizacao() {
+      return new Promise((resolve) => {
+        if (!navigator.geolocation) {
+          resolve("GPS não suportado");
+          return;
+        }
+        navigator.geolocation.getCurrentPosition(
+          (pos) => {
+            const lat = pos.coords.latitude;
+            const lon = pos.coords.longitude;
+            // Cria um link direto para o Google Maps com o pino da localização
+            resolve(`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`);
+          },
+          (err) => {
+            resolve("Sem permissão de GPS");
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      });
     }
 
     window.onload = () => {
@@ -374,8 +397,11 @@
       const obs = document.getElementById("obs").value;
       document.querySelectorAll('.grid-botoes .btn').forEach(b => b.disabled = true);
       
-      exibirMsg(`Registrando ${tipo}...`, false);
-      const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado });
+      // Captura da Localização antes de enviar
+      exibirMsg(`A capturar sinal GPS e a registar ${tipo}...`, false);
+      const loc = await obterLocalizacao();
+      
+      const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       document.getElementById("obs").value = "";
       if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false);
@@ -387,8 +413,11 @@
       const obs = document.getElementById('chkObs').value;
       if(!cli) return exibirMsg("Informe o nome do cliente/local.", true);
       
-      exibirMsg(`Marcando ${acao}...`, false);
-      const res = await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: obs, nomeColaborador: usuarioAutenticado });
+      // Captura da Localização antes de enviar
+      exibirMsg(`A capturar sinal GPS para registar a ação...`, false);
+      const loc = await obterLocalizacao();
+      
+      const res = await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       if(res.erro) exibirMsg(res.erro, true);
       else {
@@ -435,20 +464,30 @@
 
     async function carregarRadar() {
       const div = document.getElementById("areaRadar");
-      div.innerHTML = "Buscando posições...";
+      div.innerHTML = "A procurar localizações via satélite...";
       const dados = await callAPI('getRadarEquipa');
 
       if (dados.erro || !dados || dados.length === 0) { 
-        div.innerHTML = "Nenhum check-in registrado."; return; 
+        div.innerHTML = "Nenhum check-in registado."; return; 
       }
       
       let html = "";
       dados.forEach(d => {
         let cor = d.acao === 'Cheguei' ? 'var(--accent)' : 'var(--text-muted)';
-        let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Saiu';
+        let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Saiu / Em Trânsito';
+        
+        // Verifica se existe um link de GPS e cria o botão
+        let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) 
+            ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` 
+            : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
+
         html += `<div class="card-radar" style="border-left-color: ${cor}">
           <div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">${d.nome}</strong><small style="color:${cor}; font-weight:bold;">${icon}</small></div>
-          <div style="color:var(--primary); margin-top:4px;">${d.cliente}</div><small style="color:var(--text-muted);">Última ação: ${d.dataHora}</small>
+          <div style="color:var(--primary); margin-top:4px;">${d.cliente}</div>
+          <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;">
+             <small style="color:var(--text-muted);">Última ação: ${d.dataHora}</small>
+             ${linkMapa}
+          </div>
         </div>`;
       });
       div.innerHTML = html;
