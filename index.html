@@ -256,40 +256,32 @@
   </div>
 
   <script>
-    // ==========================================
-    // URL DA SUA API GOOGLE APPS SCRIPT
-    // ==========================================
     const API_URL = "https://script.google.com/macros/s/AKfycbxAz5QbUm2qRYkHx0rU0vvLKxInNGj9oaiFvik4RsIXRe4BGnjxMAgu49dcR6mo7GMA/exec";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
     let todasRotas = [];
 
-    // Função central responsável pela comunicação com o servidor Google via POST
-   async function callAPI(action, payload = {}) {
-  payload.action = action;
-  try {
-    const response = await fetch(API_URL, {
-      method: "POST",
-      redirect: "follow", // <-- FORÇA O NAVEGADOR A SEGUIR O GOOGLE
-      body: JSON.stringify(payload),
-      headers: { 
-        "Content-Type": "text/plain;charset=utf-8" 
+    async function callAPI(action, payload = {}) {
+      payload.action = action;
+      try {
+        const response = await fetch(API_URL, {
+          method: "POST",
+          redirect: "follow",
+          body: JSON.stringify(payload),
+          headers: { "Content-Type": "text/plain;charset=utf-8" }
+        });
+        
+        const text = await response.text();
+        try {
+          return JSON.parse(text);
+        } catch (e) {
+          return { erro: "A API do Google bloqueou a leitura. Verifique se a Implantação está acessível a 'Qualquer pessoa'." };
+        }
+      } catch (err) {
+        return { erro: "Falha de rede ao conectar com a API: " + err.message };
       }
-    });
-    
-    // Se o Google devolver uma página de erro HTML em vez de JSON, capta a falha
-    const text = await response.text();
-    try {
-      return JSON.parse(text);
-    } catch (e) {
-      return { erro: "O Google bloqueou o acesso. Verifique as permissões de Implantação." };
     }
-    
-  } catch (err) {
-    return { erro: "Falha de rede: " + err.message };
-  }
-}
 
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
@@ -377,8 +369,6 @@
       let font = (tipo === 'Pausa' || tipo === 'Retorno') ? '#000' : '#fff';
       return `<span class="tag-tipo" style="background:${cor}; color:${font}">${tipo}</span>`;
     }
-
-    // ================= FUNÇÕES ASSÍNCRONAS API =================
 
     async function baterPonto(tipo) {
       if (!usuarioAutenticado) return;
@@ -542,7 +532,6 @@
       else { exibirMsg(res.sucesso, false); carregarAprovacoes(); }
     }
 
-    // ================= ROTAS =================
     const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
     const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
     
