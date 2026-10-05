@@ -46,6 +46,10 @@
     .card-metric .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
     .card-metric .val { font-size: 1.4rem; font-weight: 700; margin-top: 6px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    
+    .card-itinerario { background: #1e293b; border-left: 4px solid var(--warning); padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+    .card-itinerario.concluido { border-left-color: var(--accent); opacity: 0.7; }
+
     @media (max-width: 640px) {
       .grid-botoes, .form-row { grid-template-columns: 1fr; }
       table, thead, tbody, tr, td { display: block; width: 100%; }
@@ -81,7 +85,8 @@
     <div id="tela-app" style="display: none;">
       <!-- ABAS COMUNS -->
       <div class="tabs">
-        <button class="tab-btn active" onclick="abrirAba('tab-form', this)">Registrar Ponto</button>
+        <button class="tab-btn active" onclick="abrirAba('tab-form', this)">Ponto & Visitas</button>
+        <button class="tab-btn" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d;">Itinerário</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
       </div>
       <!-- ABAS ADMIN -->
@@ -93,7 +98,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this)" style="color: #a855f7;">Deslocamentos</button>
       </div>
 
-      <!-- ================= ABA PONTO & CHECK-IN CLIENTE (INTEGRADOS) ================= -->
+      <!-- ================= ABA PONTO & CHECK-IN CLIENTE ================= -->
       <div id="tab-form" class="tab-content active">
         <!-- BLOCO 1: PONTO -->
         <div class="box">
@@ -138,6 +143,29 @@
             <button class="btn" style="background:var(--accent);" onclick="fazerCheckin('Cheguei')">📍 Cheguei no Cliente</button>
             <button class="btn" style="background:var(--danger);" onclick="fazerCheckin('Saí')">🚶 Saí do Cliente</button>
           </div>
+        </div>
+      </div>
+
+      <!-- ================= ABA ITINERÁRIO (NOVO) ================= -->
+      <div id="tab-itinerario" class="tab-content">
+        <!-- VISÃO DE ADMIN: ATRIBUIR VISITA -->
+        <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Nova Visita (Admin)</h3>
+          <div class="form-row">
+            <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option></select></div>
+            <div><label>Data</label><input type="date" id="itiData" /></div>
+          </div>
+          <label>Cliente</label><input type="text" id="itiCliente" placeholder="Nome do Cliente" />
+          <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
+          <label>Horário Previsto</label><input type="time" id="itiHorario" />
+          <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Gravar Itinerário</button>
+        </div>
+
+        <!-- VISÃO GERAL: LISTA DE VISITAS -->
+        <div class="box" style="padding: 10px 0; background: transparent; border: none;">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #fcd34d;">Minha Agenda de Visitas</h3>
+          <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarItinerario()">🔄 Atualizar Agenda</button>
+          <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">Carregando agenda...</div>
         </div>
       </div>
 
@@ -240,7 +268,7 @@
               <div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div>
             </div>
             <label>Observações</label><input type="text" id="rotaObs" />
-            <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7;">Salvar Rota</button>
+            <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7; margin-top: 10px;">Salvar Rota</button>
           </form>
         </div>
         <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;">
@@ -254,12 +282,13 @@
   </div>
 
   <script>
-    // Atenção: Mantenha a URL que copiou do Google Apps Script
-    const API_URL = "https://script.google.com/macros/s/AKfycbxAz5QbUm2qRYkHx0rU0vvLKxInNGj9oaiFvik4RsIXRe4BGnjxMAgu49dcR6mo7GMA/exec";
+    // URL ATUALIZADA
+    const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
     let todasRotas = [];
+    let notificadoHoje = false;
 
     async function callAPI(action, payload = {}) {
       payload.action = action;
@@ -285,12 +314,25 @@
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Cheguei") || msg.includes("Saí") ? "#a855f7" : "var(--accent)");
+      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") ? "#fcd34d" : "var(--accent)");
+      if(msg.includes("Itinerário")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 5000);
     }
 
-    // === NOVO: FUNÇÃO QUE CAPTURA O GPS DO DISPOSITIVO ===
+    async function solicitarPermissaoNotificacao() {
+      if (!("Notification" in window)) return;
+      if (Notification.permission !== "granted" && Notification.permission !== "denied") {
+        await Notification.requestPermission();
+      }
+    }
+
+    function dispararNotificacao(titulo, corpo) {
+      if ("Notification" in window && Notification.permission === "granted") {
+        new Notification(titulo, { body: corpo });
+      }
+    }
+
     async function obterLocalizacao() {
       return new Promise((resolve) => {
         if (!navigator.geolocation) {
@@ -301,7 +343,6 @@
           (pos) => {
             const lat = pos.coords.latitude;
             const lon = pos.coords.longitude;
-            // Cria um link direto para o Google Maps com o pino da localização
             resolve(`https://www.google.com/maps/search/?api=1&query=${lat},${lon}`);
           },
           (err) => {
@@ -325,6 +366,9 @@
       if(!u || !s) return exibirMsg("Preencha usuário e senha.", true);
       
       btn.disabled = true; btn.innerText = "Autenticando...";
+      
+      solicitarPermissaoNotificacao();
+
       const res = await callAPI('autenticarUsuario', { login: u, senha: s });
       btn.disabled = false; btn.innerText = "Entrar";
 
@@ -347,9 +391,11 @@
       if (perfil === 'Admin') {
         document.getElementById('subHeader').innerText = "Painel Administrativo";
         document.getElementById('abasAdmin').style.display = "flex";
+        document.getElementById('areaAtribuirItinerario').style.display = "block";
         if(document.querySelector(`#rotaTecnico option[value="${nome}"]`)) document.getElementById('rotaTecnico').value = nome;
       }
       carregarHistoricoEAtualizarBotoes(nome);
+      carregarItinerario(true); 
     }
 
     function logout() {
@@ -368,6 +414,7 @@
       if(id === 'tab-banco') carregarBancoHoras();
       if(id === 'tab-aprovacoes') carregarAprovacoes();
       if(id === 'tab-rotas') carregarRotasServidor();
+      if(id === 'tab-itinerario') carregarItinerario();
     }
 
     setInterval(() => {
@@ -397,10 +444,8 @@
       const obs = document.getElementById("obs").value;
       document.querySelectorAll('.grid-botoes .btn').forEach(b => b.disabled = true);
       
-      // Captura da Localização antes de enviar
-      exibirMsg(`A capturar sinal GPS e a registar ${tipo}...`, false);
+      exibirMsg(`Capturando localização e registrando ${tipo}...`, false);
       const loc = await obterLocalizacao();
-      
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       document.getElementById("obs").value = "";
@@ -413,10 +458,8 @@
       const obs = document.getElementById('chkObs').value;
       if(!cli) return exibirMsg("Informe o nome do cliente/local.", true);
       
-      // Captura da Localização antes de enviar
-      exibirMsg(`A capturar sinal GPS para registar a ação...`, false);
+      exibirMsg(`Capturando localização e marcando ${acao}...`, false);
       const loc = await obterLocalizacao();
-      
       const res = await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       if(res.erro) exibirMsg(res.erro, true);
@@ -425,6 +468,83 @@
         if(acao === 'Saí') document.getElementById('chkCliente').value = "";
         document.getElementById('chkObs').value = "";
       }
+    }
+
+    async function carregarItinerario(verificarAlerta = false) {
+      const div = document.getElementById("listaItinerario");
+      if(!verificarAlerta) div.innerHTML = "Buscando agenda...";
+      
+      const parametroBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
+      const dados = await callAPI('getItinerario', { nome: parametroBusca });
+
+      if (dados.erro || !dados || dados.length === 0) { 
+        div.innerHTML = "Sua agenda está livre."; return; 
+      }
+      
+      let html = "";
+      let pendentesHoje = 0;
+      const hojeStr = new Date().toLocaleDateString('pt-BR');
+
+      [...dados].reverse().forEach(d => {
+        let isConcluido = d.status === 'Concluído';
+        let corClasse = isConcluido ? 'concluido' : '';
+        let btnAcao = isConcluido 
+           ? `<span style="color:var(--accent); font-weight:bold;">✔ Concluído</span>` 
+           : `<button class="btn-acao" style="background:var(--warning); color:#000;" onclick="marcarItinerarioConcluido(${d.linha})">Marcar Concluído</button>`;
+        
+        if (!isConcluido && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
+
+        let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem;">👤 Técnico: ${d.tecnico}</span><br>` : '';
+
+        html += `<div class="card-itinerario ${corClasse}">
+          ${infoTecnico}
+          <div style="display:flex; justify-content:space-between;">
+            <strong style="color:var(--text); font-size:1.1rem;">${d.cliente}</strong>
+            <small style="color:var(--text-muted); font-weight:bold;">🕒 ${d.horario}</small>
+          </div>
+          <div style="color:var(--text-muted); margin-top:4px; font-size:0.9rem;">📍 ${d.endereco}</div>
+          <div style="display:flex; justify-content:space-between; margin-top:12px; align-items:center;">
+             <small style="color:var(--text-muted);">Data: ${d.data}</small>
+             ${btnAcao}
+          </div>
+        </div>`;
+      });
+      
+      div.innerHTML = html;
+
+      if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje) {
+        dispararNotificacao("Agenda do Dia", `Você tem ${pendentesHoje} visita(s) pendente(s) hoje.`);
+        notificadoHoje = true;
+      }
+    }
+
+    async function salvarNovoItinerario() {
+      const tec = document.getElementById("itiTecnico").value;
+      const data = document.getElementById("itiData").value;
+      const cli = document.getElementById("itiCliente").value;
+      const end = document.getElementById("itiEndereco").value;
+      const hor = document.getElementById("itiHorario").value;
+
+      if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos da agenda.", true);
+
+      exibirMsg("Atribuindo visita...", false);
+      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor };
+      const res = await callAPI('addItinerario', { dados: payload });
+
+      if(res.erro) exibirMsg(res.erro, true);
+      else {
+        exibirMsg(res.sucesso, false);
+        document.getElementById("itiCliente").value = "";
+        document.getElementById("itiEndereco").value = "";
+        carregarItinerario();
+      }
+    }
+
+    async function marcarItinerarioConcluido(linha) {
+      exibirMsg("Baixando visita no servidor...", false);
+      const res = await callAPI('concluirItinerario', { linha: linha });
+      if(res.erro) exibirMsg(res.erro, true);
+      else { exibirMsg(res.sucesso, false); carregarItinerario(); }
     }
 
     async function carregarHistoricoEAtualizarBotoes(nome) {
@@ -464,11 +584,11 @@
 
     async function carregarRadar() {
       const div = document.getElementById("areaRadar");
-      div.innerHTML = "A procurar localizações via satélite...";
+      div.innerHTML = "Buscando posições...";
       const dados = await callAPI('getRadarEquipa');
 
       if (dados.erro || !dados || dados.length === 0) { 
-        div.innerHTML = "Nenhum check-in registado."; return; 
+        div.innerHTML = "Nenhum check-in registrado."; return; 
       }
       
       let html = "";
@@ -476,7 +596,6 @@
         let cor = d.acao === 'Cheguei' ? 'var(--accent)' : 'var(--text-muted)';
         let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Saiu / Em Trânsito';
         
-        // Verifica se existe um link de GPS e cria o botão
         let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) 
             ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` 
             : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
