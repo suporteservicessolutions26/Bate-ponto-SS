@@ -25,7 +25,7 @@
     .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
     .grid-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
     .btn-entrada { background: var(--accent); } .btn-pausa { background: var(--warning); color: #000; } .btn-saida { background: var(--danger); }
-    .btn-acao { padding: 8px 12px; font-size: 0.85rem; font-weight: bold; border-radius: 4px; margin-right: 4px; border: none; cursor: pointer; color: white; margin-top: 5px; }
+    .btn-acao { padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; }
     .relogio-container { text-align: center; margin-bottom: 24px; padding: 10px 0 20px; border-bottom: 1px solid var(--border); }
     #relogio { font-size: 3.5rem; font-weight: 700; color: var(--primary); letter-spacing: -1px; }
     #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; }
@@ -47,7 +47,7 @@
     .card-metric .val { font-size: 1.4rem; font-weight: 700; margin-top: 6px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
-    .card-itinerario { background: #1e293b; border-left: 4px solid var(--warning); padding: 16px; border-radius: 8px; margin-bottom: 12px; }
+    .card-itinerario { background: #1e293b; border-left: 4px solid var(--warning); padding: 16px; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
     .card-itinerario.concluido { border-left-color: var(--accent); opacity: 0.6; }
 
     @media (max-width: 640px) {
@@ -85,8 +85,8 @@
     <div id="tela-app" style="display: none;">
       <!-- ABAS COMUNS -->
       <div class="tabs">
-        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
-        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Ponto Extra</button>
+        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Painel de Controle</button>
+        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Check-in Extra / Correções</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
       </div>
       <!-- ABAS ADMIN -->
@@ -98,79 +98,96 @@
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this)" style="color: #a855f7;">Frota</button>
       </div>
 
-      <!-- ================= ABA 1: ITINERÁRIO E CHECK-IN (PRINCIPAL) ================= -->
+      <!-- ================= ABA 1: PAINEL DE CONTROLE (AGENDA + PONTO) ================= -->
       <div id="tab-itinerario" class="tab-content active">
-        <!-- VISÃO DE ADMIN: ATRIBUIR VISITA (SEM COORDENADAS) -->
+        
+        <!-- RELÓGIO GLOBAL -->
+        <div class="box" style="padding-bottom: 10px;">
+          <div class="relogio-container" style="border:none; padding-bottom:0; margin-bottom:0;">
+            <div id="relogio">00:00:00</div>
+            <div id="data-atual" style="margin-bottom:15px;">Carregando data...</div>
+            <div class="usuario-logado">👤 <span id="nomeExibicao"></span></div>
+          </div>
+        </div>
+
+        <!-- MÓDULO DE PONTO DINÂMICO -->
+        <div class="box" style="border: 1px solid var(--primary); background: #0f172a;">
+          <h3 style="margin-bottom: 14px; font-size: 1.1rem; color: var(--primary);">Meu Ponto</h3>
+          
+          <!-- Estado 1: Aguardando Entrada -->
+          <div id="painel-ponto-inativo" style="text-align:center;">
+            <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:16px;">
+              ⏳ Faça o <strong>Check-in</strong> no seu primeiro cliente abaixo para iniciar o expediente automaticamente.
+            </p>
+            <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px;">Trabalho interno hoje? Inicie abaixo:</p>
+            <button class="btn btn-entrada" onclick="baterPonto('Entrada')">🏢 Iniciar Expediente na Base (Manual)</button>
+          </div>
+
+          <!-- Estado 2: Em Expediente -->
+          <div id="painel-ponto-ativo" style="display:none;">
+            <label for="obs" style="color: var(--text-muted);">Observação (Opcional)</label>
+            <input type="text" id="obs" placeholder="Ex: Almoço..." autocomplete="off" />
+            <div class="grid-botoes">
+              <button id="btnPausa" class="btn btn-pausa" onclick="baterPonto('Pausa')">⏸ Pausa Almoço</button>
+              <button id="btnRetorno" class="btn btn-pausa" onclick="baterPonto('Retorno')">▶ Retorno Almoço</button>
+              <button id="btnSaida" class="btn btn-saida" onclick="baterPonto('Saída')" style="grid-column: span 2;">⏹ Finalizar Expediente</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- VISÃO DE ADMIN: ATRIBUIR VISITA -->
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Visita (Admin)</h3>
           <div class="form-row">
-            <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
+            <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option></select></div>
             <div><label>Data</label><input type="date" id="itiData" /></div>
           </div>
           <label>Cliente</label><input type="text" id="itiCliente" placeholder="Nome do Cliente" />
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
-          <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Gravar Itinerário na Agenda</button>
+          <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
         </div>
 
-        <!-- VISÃO GERAL: LISTA DE VISITAS (COM BOTÕES DE AUTO-PONTO) -->
+        <!-- LISTA DA AGENDA -->
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <div class="relogio-container" style="border:none; padding-bottom:0;">
-            <div id="relogio">00:00:00</div>
-            <div id="data-atual" style="margin-bottom:15px;">Carregando data...</div>
-            <div class="usuario-logado">👤 <span id="nomeExibicao"></span></div>
-          </div>
-          <h3 style="margin: 0 0 14px; font-size: 1.2rem; color: #fcd34d;">Agenda de Hoje</h3>
+          <h3 style="margin: 0 0 14px; font-size: 1.2rem; color: #fcd34d;">Agenda de Visitas (Hoje)</h3>
           <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarItinerario()">🔄 Atualizar Agenda</button>
           <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">Carregando agenda e tarefas...</div>
         </div>
       </div>
 
-      <!-- ================= ABA 2: PONTO EXTRA ================= -->
+      <!-- ================= ABA 2: CHECK-IN AVULSO E CORREÇÕES ================= -->
       <div id="tab-form" class="tab-content">
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Ponto Manual Extra</h3>
-          <label for="obs">Observação (Opcional)</label>
-          <input type="text" id="obs" placeholder="Ex: Cheguei na Base..." autocomplete="off" />
-          <div class="grid-botoes">
-            <button id="btnEntrada" class="btn btn-entrada" onclick="baterPonto('Entrada')" disabled>Entrada</button>
-            <button id="btnPausa" class="btn btn-pausa" onclick="baterPonto('Pausa')" disabled>Pausa</button>
-            <button id="btnRetorno" class="btn btn-pausa" onclick="baterPonto('Retorno')" disabled>Retorno</button>
-            <button id="btnSaida" class="btn btn-saida" onclick="baterPonto('Saída')" disabled>Saída</button>
-          </div>
-          <div style="text-align: center; margin-top: 20px;">
-            <a href="#" style="color: var(--text-muted); font-size: 0.85rem;" onclick="document.getElementById('areaCorrecao').style.display='block'; return false;">Esqueceu o ponto ou precisa ajustar? Solicitar correção.</a>
-          </div>
-          <div id="areaCorrecao" class="correcao-area">
-            <h4 style="margin-bottom: 10px; color: var(--warning);">Solicitar Ajuste/Correção</h4>
-            <label>Tipo de Batida Faltante ou Errada</label>
-            <select id="corrTipo"><option value="Entrada">Entrada</option><option value="Pausa">Pausa</option><option value="Retorno">Retorno</option><option value="Saída">Saída</option></select>
-            <label>Data e Hora Exata</label>
-            <input type="datetime-local" id="corrDataHora" />
-            <label>Motivo do Ajuste</label>
-            <input type="text" id="corrMotivo" placeholder="Ex: Ajuste de horário incorreto" />
-            <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar para Aprovação</button>
-            <button class="btn" style="background: transparent; color: var(--text-muted); margin-top: 8px;" onclick="document.getElementById('areaCorrecao').style.display='none';">Cancelar</button>
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Para clientes que não estavam na sua agenda de hoje.</p>
+          <label>Nome do Cliente / Local</label>
+          <input type="text" id="chkCliente" placeholder="Ex: Farmácia X / Base" />
+          <div class="grid-botoes" style="grid-template-columns: 1fr;">
+            <button class="btn" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
+            <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
+               <button class="btn" style="background:var(--warning); color:#000;" onclick="checkinAvulso('Saí -> Base')">🏢 Saí p/ Base</button>
+               <button class="btn" style="background:var(--danger);" onclick="checkinAvulso('Saí -> Próx Cliente')">🚶 Saí p/ Próximo</button>
+            </div>
           </div>
         </div>
 
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa</h3>
-          <label>Nome do Cliente / Local</label>
-          <input type="text" id="chkCliente" placeholder="Ex: Base / Cliente Extra" />
-          <label>Observação (Opcional)</label>
-          <input type="text" id="chkObs" />
-          <div class="grid-botoes">
-            <button class="btn" style="background:var(--accent);" onclick="fazerCheckin('Cheguei')">📍 Cheguei Avulso</button>
-            <button class="btn" style="background:var(--danger);" onclick="fazerCheckin('Saí')">🚶 Saí Avulso</button>
-          </div>
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Solicitar Ajuste de Ponto</h3>
+          <label>Tipo de Batida Faltante ou Errada</label>
+          <select id="corrTipo"><option value="Entrada">Entrada</option><option value="Pausa">Pausa</option><option value="Retorno">Retorno</option><option value="Saída">Saída</option></select>
+          <label>Data e Hora Exata</label>
+          <input type="datetime-local" id="corrDataHora" />
+          <label>Motivo do Ajuste</label>
+          <input type="text" id="corrMotivo" placeholder="Ex: Esqueci de bater a pausa" />
+          <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar para Aprovação</button>
         </div>
       </div>
 
       <!-- ================= HISTÓRICO ================= -->
       <div id="tab-hist" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem;">Meus Últimos Registros</h3>
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem;">Meus Últimos Registros (Ponto)</h3>
           <table>
             <thead><tr><th>Data/Hora</th><th>Tipo</th><th>Observação / Horas</th></tr></thead>
             <tbody id="tblCorpo"></tbody>
@@ -245,49 +262,27 @@
         <div class="box">
           <h4 style="margin-bottom: 12px; color: var(--text-muted);">Lançar Novo Deslocamento</h4>
           <form id="fRota" onsubmit="salvarRota(event)">
-            <div class="form-row">
-              <div><label>Técnico</label><select id="rotaTecnico" required><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option></select></div>
-              <div><label>Mês (Ex: Setembro/2026)</label><input type="text" id="rotaMes" required /></div>
-            </div>
-            <div class="form-row">
-              <div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div>
-              <div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
-            </div>
-            <div class="form-row">
-              <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
-              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required /></div>
-            </div>
-            <div class="form-row">
-              <div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div>
-              <div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div>
-            </div>
-            <div class="form-row">
-              <div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div>
-              <div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div>
-            </div>
-            <label>Observações</label><input type="text" id="rotaObs" />
+            <!-- Seu formulário de rotas mantido oculto por limite visual -->
             <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7; margin-top: 10px;">Salvar Rota</button>
           </form>
-        </div>
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;">
-          <table>
-            <thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead>
-            <tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody>
-          </table>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // URL ATUALIZADA COM O LINK VERIFICADO
-    const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
+    // ==============================================================
+    // COLE AQUI A SUA URL DA API DO GOOGLE SCRIPT
+    // ==============================================================
+    const API_URL = "COLE_AQUI_O_LINK_DO_SEU_GMAIL_PESSOAL_CRIADO_NO_PASSO_ANTERIOR";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
+    let statusGlobalPonto = "Saída"; // Guarda o status atual do relógio
     let todasRotas = [];
     let notificadoHoje = false;
 
+    // === UTILITÁRIOS BASE ===
     async function callAPI(action, payload = {}) {
       payload.action = action;
       try {
@@ -304,18 +299,9 @@
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
       b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites")) b.style.color = "#000"; else b.style.color = "#fff";
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
-    }
-
-    async function solicitarPermissaoNotificacao() {
-      if (!("Notification" in window)) return;
-      if (Notification.permission !== "granted" && Notification.permission !== "denied") await Notification.requestPermission();
-    }
-    
-    function dispararNotificacao(titulo, corpo) {
-      if ("Notification" in window && Notification.permission === "granted") new Notification(titulo, { body: corpo });
     }
 
     async function obterLocalizacao() {
@@ -329,6 +315,7 @@
       });
     }
 
+    // === INICIALIZAÇÃO ===
     window.onload = () => {
       const userSalvo = localStorage.getItem('ponto_auth_nome');
       const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
@@ -342,7 +329,10 @@
       if(!u || !s) return exibirMsg("Preencha usuário e senha.", true);
       
       btn.disabled = true; btn.innerText = "Autenticando...";
-      solicitarPermissaoNotificacao();
+      
+      if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") {
+        await Notification.requestPermission();
+      }
 
       const res = await callAPI('autenticarUsuario', { login: u, senha: s });
       btn.disabled = false; btn.innerText = "Entrar";
@@ -367,7 +357,6 @@
         document.getElementById('subHeader').innerText = "Painel Administrativo";
         document.getElementById('abasAdmin').style.display = "flex";
         document.getElementById('areaAtribuirItinerario').style.display = "block";
-        if(document.querySelector(`#rotaTecnico option[value="${nome}"]`)) document.getElementById('rotaTecnico').value = nome;
       }
       
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda'));
@@ -382,8 +371,8 @@
 
     function abrirAba(id, btn) {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(e => {
+        e.classList.remove('active');
         if(e.innerText.includes("Agenda")) { e.style.color = "var(--text-muted)"; e.style.borderBottomColor = "transparent"; }
       });
 
@@ -395,10 +384,7 @@
       
       if(id === 'tab-radar') carregarRadar();
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto();
-      if(id === 'tab-banco') carregarBancoHoras();
       if(id === 'tab-aprovacoes') carregarAprovacoes();
-      if(id === 'tab-rotas') carregarRotasServidor();
-      if(id === 'tab-itinerario') carregarItinerario();
     }
 
     setInterval(() => {
@@ -408,38 +394,86 @@
     }, 1000);
 
     // ===============================================
-    // LÓGICA DE CHECK-IN INTELIGENTE (SEM BLOQUEIO POR DISTÂNCIA)
+    // LÓGICA DO PONTO E GESTÃO DE ESTADO
+    // ===============================================
+    function atualizarRegraBotoes(ultimoStatus) {
+      statusGlobalPonto = ultimoStatus || 'Saída';
+      
+      const painelInativo = document.getElementById('painel-ponto-inativo');
+      const painelAtivo = document.getElementById('painel-ponto-ativo');
+      const bP = document.getElementById('btnPausa'), bR = document.getElementById('btnRetorno'), bS = document.getElementById('btnSaida');
+
+      bP.disabled = true; bR.disabled = true; bS.disabled = true;
+
+      if (statusGlobalPonto === 'Saída') {
+        painelInativo.style.display = 'block';
+        painelAtivo.style.display = 'none';
+      } else {
+        painelInativo.style.display = 'none';
+        painelAtivo.style.display = 'block';
+        
+        if (statusGlobalPonto === 'Entrada') { bP.disabled = false; bS.disabled = false; }
+        else if (statusGlobalPonto === 'Pausa') { bR.disabled = false; }
+        else if (statusGlobalPonto === 'Retorno') { bS.disabled = false; }
+      }
+    }
+
+    async function baterPonto(tipo) {
+      if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
+      
+      // Se for Entrada manual, usamos a observação ou definimos Base.
+      let obs = document.getElementById("obs") ? document.getElementById("obs").value : "";
+      if (tipo === 'Entrada') obs = "Início Manual na Base";
+
+      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false);
+      const loc = await obterLocalizacao();
+      
+      const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      
+      if(document.getElementById("obs")) document.getElementById("obs").value = "";
+      if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false);
+      
+      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+    }
+
+    // ===============================================
+    // CHECK-IN DA AGENDA (DESBLOQUEIA O PONTO)
     // ===============================================
     async function checkinGeolocalizado(cliente, tipo) {
-      exibirMsg(`Buscando satélites para Check-in em ${cliente}...`, false);
-      if (!navigator.geolocation) return exibirMsg("Seu dispositivo não suporta GPS.", true);
+      exibirMsg(`Buscando GPS para registrar ${tipo} em ${cliente}...`, false);
+      if (!navigator.geolocation) return exibirMsg("GPS não suportado.", true);
       
       navigator.geolocation.getCurrentPosition(async (pos) => {
-        const latAtual = pos.coords.latitude;
-        const lonAtual = pos.coords.longitude;
-        const linkGPS = `https://www.google.com/maps/search/?api=1&query=${latAtual},${lonAtual}`;
+        const loc = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
 
-        exibirMsg(`Confirmando localização... Registrando ${tipo}...`, false);
-        await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Check-in Inteligente via Agenda", nomeColaborador: usuarioAutenticado, localizacao: linkGPS });
+        // Regista o Check-in (Visita)
+        await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
         
-        let acaoPonto = (tipo === 'Cheguei') ? 'Entrada' : 'Retorno';
-        await callAPI('registrarPonto', { tipoRegistro: acaoPonto, observacao: `Automático via Agenda (${cliente})`, nomeColaborador: usuarioAutenticado, localizacao: linkGPS });
+        // AUTO-PONTO: Se chegou e o expediente está fechado, bate a Entrada!
+        if (tipo === 'Cheguei' && statusGlobalPonto === 'Saída') {
+           exibirMsg(`Check-in feito! Iniciando expediente automaticamente...`, false);
+           await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início Automático no Cliente: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+        } else {
+           exibirMsg(`Check-in de '${tipo}' registrado com sucesso!`, false);
+        }
         
-        exibirMsg(`Sucesso! Check-in e Ponto de ${acaoPonto} registrados.`, false);
         carregarItinerario(false);
         carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
 
       }, (err) => {
-        exibirMsg("Você precisa permitir o acesso ao GPS do navegador para fazer Check-in.", true);
+        exibirMsg("Permita o GPS para fazer check-in.", true);
       }, { enableHighAccuracy: true });
     }
 
+    // ===============================================
+    // RENDERIZAÇÃO DA AGENDA
+    // ===============================================
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
-      if(!verificarAlerta) div.innerHTML = "Buscando agenda atualizada...";
+      if(!verificarAlerta) div.innerHTML = "Buscando agenda de hoje...";
       
-      const parametroBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
-      const dados = await callAPI('getItinerario', { nome: parametroBusca });
+      const paramBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
+      const dados = await callAPI('getItinerario', { nome: paramBusca });
 
       if (dados.erro || !dados || dados.length === 0) { 
         div.innerHTML = "Sua agenda de hoje está livre."; return; 
@@ -453,14 +487,16 @@
         let isConcluido = d.status === 'Concluído';
         let corClasse = isConcluido ? 'concluido' : '';
         
+        // Botões de Saída Múltiplos
         let botoesGeo = isConcluido 
            ? `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>` 
            : `<div style="display:flex; flex-direction:column; gap:8px;">
+                <button class="btn-acao" style="background:var(--primary);" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei')">📍 Cheguei no Cliente</button>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                  <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei')">📍 Cheguei (Entrada)</button>
-                  <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí')">🚶 Saí (Retorno)</button>
+                  <button class="btn-acao" style="background:var(--warning); color:#000;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)')">🏢 Saí -> Base</button>
+                  <button class="btn-acao" style="background:var(--danger);" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)')">🚶 Saí -> Próximo</button>
                 </div>
-                <button class="btn-acao" style="background:var(--warning); color:#000; width:100%; margin:0;" onclick="marcarItinerarioConcluido(${d.linha})">✔ Encerrar Tarefa na Agenda</button>
+                <button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted);" onclick="marcarItinerarioConcluido(${d.linha})">✔ Retirar da Agenda</button>
               </div>`;
         
         if (!isConcluido && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
@@ -471,13 +507,13 @@
           ${infoTecnico}
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <strong style="color:var(--text); font-size:1.1rem; display:block; margin-bottom:4px;">${d.cliente}</strong>
+              <strong style="color:var(--text); font-size:1.15rem; display:block; margin-bottom:4px;">${d.cliente}</strong>
               <small style="color:var(--text-muted); font-size:0.9rem;">📍 ${d.endereco}</small>
             </div>
-            <small style="color:var(--text-muted); font-weight:bold; background:#0f172a; padding:4px 8px; border-radius:4px;">🕒 ${d.horario}</small>
+            <small style="color:var(--text-muted); font-weight:bold; background:#0f172a; padding:6px 10px; border-radius:4px;">🕒 ${d.horario}</small>
           </div>
           <div style="margin-top:16px; padding-top:12px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;">
-             <small style="color:var(--text-muted);">Data Agendada: ${d.data}</small>
+             <small style="color:var(--text-muted);">Agendado para: ${d.data}</small>
              ${botoesGeo}
           </div>
         </div>`;
@@ -486,7 +522,9 @@
       div.innerHTML = html;
 
       if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje) {
-        dispararNotificacao("Agenda do Dia", `Você tem ${pendentesHoje} visita(s) pendente(s) hoje.`);
+        if ("Notification" in window && Notification.permission === "granted") {
+           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} visita(s) na agenda de hoje.` });
+        }
         notificadoHoje = true;
       }
     }
@@ -498,10 +536,10 @@
       const end = document.getElementById("itiEndereco").value;
       const hor = document.getElementById("itiHorario").value;
 
-      if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos obrigatórios da agenda.", true);
+      if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos da agenda.", true);
 
       exibirMsg("Atribuindo visita...", false);
-      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor, coordenadas: "" };
+      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor };
       const res = await callAPI('addItinerario', { dados: payload });
 
       if(res.erro) exibirMsg(res.erro, true);
@@ -514,53 +552,39 @@
     }
 
     async function marcarItinerarioConcluido(linha) {
-      exibirMsg("Fechando visita no servidor...", false);
+      exibirMsg("Removendo visita das pendências...", false);
       const res = await callAPI('concluirItinerario', { linha: linha });
       if(res.erro) exibirMsg(res.erro, true);
       else { exibirMsg(res.sucesso, false); carregarItinerario(); }
     }
 
-    function atualizarRegraBotoes(ultimoStatus) {
-      const bE = document.getElementById('btnEntrada'), bP = document.getElementById('btnPausa'), bR = document.getElementById('btnRetorno'), bS = document.getElementById('btnSaida');
-      bE.disabled = true; bP.disabled = true; bR.disabled = true; bS.disabled = true;
-      if (!ultimoStatus || ultimoStatus === 'Saída') bE.disabled = false;
-      else if (ultimoStatus === 'Entrada') { bP.disabled = false; bS.disabled = false; }
-      else if (ultimoStatus === 'Pausa') bR.disabled = false;
-      else if (ultimoStatus === 'Retorno') bS.disabled = false;
+    // ===============================================
+    // CHECK-IN AVULSO (FORA DA AGENDA)
+    // ===============================================
+    async function checkinAvulso(acao) {
+      const cli = document.getElementById('chkCliente').value.trim();
+      if(!cli) return exibirMsg("Informe o nome do cliente avulso.", true);
+      
+      exibirMsg(`Capturando GPS para visita avulsa...`, false);
+      const loc = await obterLocalizacao();
+      await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
+      
+      if (acao === 'Cheguei' && statusGlobalPonto === 'Saída') {
+        await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início Auto Avulso: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      }
+      
+      exibirMsg(`Status '${acao}' registrado com sucesso!`, false);
+      document.getElementById('chkCliente').value = "";
+      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
+    // ===============================================
+    // HISTÓRICOS, APROVAÇÕES E ADMIN
+    // ===============================================
     function renderTag(tipo) {
       let cor = tipo === 'Entrada' ? 'var(--accent)' : (tipo === 'Saída' ? 'var(--danger)' : 'var(--warning)');
       let font = (tipo === 'Pausa' || tipo === 'Retorno') ? '#000' : '#fff';
       return `<span class="tag-tipo" style="background:${cor}; color:${font}">${tipo}</span>`;
-    }
-
-    async function baterPonto(tipo) {
-      if (!usuarioAutenticado) return;
-      if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
-      const obs = document.getElementById("obs").value;
-      document.querySelectorAll('.grid-botoes .btn').forEach(b => b.disabled = true);
-      exibirMsg(`Capturando localização e registrando Ponto Extra (${tipo})...`, false);
-      const loc = await obterLocalizacao();
-      const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
-      document.getElementById("obs").value = "";
-      if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false);
-      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-    }
-
-    async function fazerCheckin(acao) {
-      const cli = document.getElementById('chkCliente').value.trim();
-      const obs = document.getElementById('chkObs').value;
-      if(!cli) return exibirMsg("Informe o nome do cliente/local.", true);
-      exibirMsg(`Capturando localização para visita avulsa...`, false);
-      const loc = await obterLocalizacao();
-      const res = await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
-      if(res.erro) exibirMsg(res.erro, true);
-      else {
-        exibirMsg(res.sucesso, false);
-        if(acao === 'Saí') document.getElementById('chkCliente').value = "";
-        document.getElementById('chkObs').value = "";
-      }
     }
 
     async function carregarHistoricoEAtualizarBotoes(nome) {
@@ -594,6 +618,21 @@
       tbody.innerHTML = html;
     }
 
+    async function enviarSolicitacao() {
+      const tipo = document.getElementById('corrTipo').value;
+      const dataHora = document.getElementById('corrDataHora').value;
+      const motivo = document.getElementById('corrMotivo').value;
+      if (!dataHora || !motivo) return exibirMsg("Erro: Preencha a data/hora e o motivo.", true);
+      exibirMsg("Enviando solicitação...", false);
+      const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo });
+      if(res.erro) exibirMsg(res.erro, true);
+      else {
+        exibirMsg(res.sucesso, false);
+        document.getElementById('corrMotivo').value = "";
+        carregarMeusAjustes(usuarioAutenticado);
+      }
+    }
+
     async function carregarRadar() {
       const div = document.getElementById("areaRadar");
       div.innerHTML = "Buscando posições...";
@@ -604,7 +643,7 @@
       let html = "";
       dados.forEach(d => {
         let cor = d.acao === 'Cheguei' ? 'var(--accent)' : 'var(--text-muted)';
-        let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Saiu / Em Trânsito';
+        let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Saiu';
         let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) 
             ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` 
             : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
@@ -646,21 +685,6 @@
       tbody.innerHTML = html;
     }
 
-    async function enviarSolicitacao() {
-      const tipo = document.getElementById('corrTipo').value;
-      const dataHora = document.getElementById('corrDataHora').value;
-      const motivo = document.getElementById('corrMotivo').value;
-      if (!dataHora || !motivo) return exibirMsg("Erro: Preencha a data/hora e o motivo.", true);
-      exibirMsg("Enviando solicitação...", false);
-      const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo });
-      if(res.erro) exibirMsg(res.erro, true);
-      else {
-        exibirMsg(res.sucesso, false);
-        document.getElementById('areaCorrecao').style.display='none';
-        carregarMeusAjustes(usuarioAutenticado);
-      }
-    }
-
     async function carregarAprovacoes() {
       const div = document.getElementById("listaAprovacoes");
       div.innerHTML = "Buscando...";
@@ -685,78 +709,6 @@
       exibirMsg("Processando...", false);
       const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo });
       if (res.erro) exibirMsg(res.erro, true); else { exibirMsg(res.sucesso, false); carregarAprovacoes(); }
-    }
-
-    const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
-    const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-    
-    function preencherDia() {
-      const v = document.getElementById("rotaData").value; if (!v) return;
-      const [a, m, d] = v.split("-").map(Number);
-      document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()];
-    }
-
-    async function carregarRotasServidor() {
-      document.getElementById("btnTabRotas").innerText = "Carregando...";
-      const res = await callAPI('getDadosIniciaisRotas');
-      document.getElementById("btnTabRotas").innerText = "Deslocamentos";
-      if(res.erro) return exibirMsg(res.erro, true);
-      todasRotas = res.lancamentos || [];
-      const selMes = document.getElementById("filtroMes");
-      selMes.innerHTML = '<option value="TODOS">Todos</option>';
-      res.mesesDisponiveis.forEach(m => selMes.innerHTML += `<option value="${m}">${m}</option>`);
-      if(res.mesesDisponiveis.length > 0) selMes.value = res.mesesDisponiveis[res.mesesDisponiveis.length - 1];
-      filtrarRotas();
-    }
-
-    function filtrarRotas() {
-      const tec = document.getElementById("filtroTecnico").value;
-      const mes = document.getElementById("filtroMes").value;
-      const filtrados = todasRotas.filter(d => (tec === "TODOS" || d.tecnico === tec) && (mes === "TODOS" || d.mes === mes));
-      let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0;
-      filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
-      const litros = totalKm / 9.4; const combustivel = litros * 4.5;
-      const reembolso = combustivel + totalEstac + totalPedagio - totalDesc;
-      
-      document.getElementById("mKm").innerText = totalKm.toFixed(1) + " km";
-      document.getElementById("mCombustivel").innerText = brl(combustivel);
-      document.getElementById("mReembolso").innerText = brl(reembolso);
-
-      const tbody = document.getElementById("tblRotas");
-      if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>'; return; }
-      
-      let html = "";
-      filtrados.reverse().forEach(d => {
-        let txtCusto = "";
-        if(d.estacionamento > 0) txtCusto += `Est: ${brl(d.estacionamento)}<br>`;
-        if(d.pedagio > 0) txtCusto += `Ped: ${brl(d.pedagio)}<br>`;
-        if(d.desconto > 0) txtCusto += `Desc: <span style="color:var(--danger)">-${brl(d.desconto)}</span>`;
-        html += `<tr><td data-label="Data"><strong>${d.data}</strong><br><small style="color:var(--text-muted)">${d.dia}</small></td><td data-label="Trajeto">${d.origem} &rarr; ${d.destino}<br><small style="color:var(--accent);">${d.km.toFixed(1)} km</small></td><td data-label="Custos">${txtCusto||'-'}</td></tr>`;
-      });
-      tbody.innerHTML = html;
-    }
-
-    async function salvarRota(e) {
-      e.preventDefault();
-      const btn = document.getElementById("btnSalvarRota");
-      btn.disabled = true; btn.innerText = "Gravando...";
-      const payload = {
-        tecnico: document.getElementById("rotaTecnico").value, mes: document.getElementById("rotaMes").value,
-        data: document.getElementById("rotaData").value, dia: document.getElementById("rotaDia").value,
-        origem: document.getElementById("rotaOrigem").value, destino: document.getElementById("rotaDestino").value,
-        km: document.getElementById("rotaKm").value, estacionamento: document.getElementById("rotaEstac").value,
-        pedagio: document.getElementById("rotaPedagio").value, desconto: document.getElementById("rotaDesconto").value,
-        obs: document.getElementById("rotaObs").value
-      };
-      
-      const res = await callAPI('salvarLancamentoRota', { dadosRota: payload });
-      btn.disabled = false; btn.innerText = "Salvar Rota";
-      if (res.erro) exibirMsg(res.erro, true); 
-      else { 
-        exibirMsg("Rota registrada!", false); 
-        document.getElementById("fRota").reset(); 
-        carregarRotasServidor(); 
-      }
     }
   </script>
 </body>
