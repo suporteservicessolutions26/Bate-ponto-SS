@@ -307,7 +307,6 @@
   </div>
 
   <script>
-    // A URL DA SUA API (Inalterada)
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
@@ -415,7 +414,7 @@
         if(id === 'tab-itinerario') { btn.style.color = "#fcd34d"; btn.style.borderBottomColor = "#fcd34d"; }
       }
       
-      // Funções corretamente mapeadas (Bug do Banco e da Frota resolvidos)
+      // CARREGAMENTO SEPARADO (Bugs da Frota e Horas agora resolvidos)
       if(id === 'tab-radar') carregarRadar();
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto();
       if(id === 'tab-banco') carregarBancoHoras();
@@ -486,44 +485,37 @@
     }
 
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda) {
-      exibirMsg(`Buscando GPS para registrar ${tipo} em${cliente}...`, false);
-      if (!navigator.geolocation) return exibirMsg("GPS não suportado.", true);
+      exibirMsg(`Capturando GPS para registrar ${tipo} em${cliente}...`, false);
+      const loc = await obterLocalizacao();
+
+      await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
       
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const loc = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
+      let msgExtra = "";
+      
+      if (tipo === 'Cheguei') {
+         if (statusGlobalPonto === 'Saída') {
+             await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Auto-Ponto (Início Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             msgExtra = " e Entrada Iniciada";
+         } else if (statusGlobalPonto === 'Pausa') {
+             await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto-Ponto (Retorno): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             msgExtra = " e Retorno da Pausa Registrado";
+         }
+      } 
+      else if (tipo.includes('Fim de Expediente')) {
+         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Auto-Ponto (Fim Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+         msgExtra = " e Expediente Encerrado";
+      }
 
-        await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
-        
-        let msgExtra = "";
-        
-        if (tipo === 'Cheguei') {
-           if (statusGlobalPonto === 'Saída') {
-               await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Auto-Ponto (Início Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-               msgExtra = " e Entrada Iniciada";
-           } else if (statusGlobalPonto === 'Pausa') {
-               await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto-Ponto (Retorno): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-               msgExtra = " e Retorno da Pausa Registrado";
-           }
-        } 
-        else if (tipo.includes('Fim de Expediente')) {
-           await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Auto-Ponto (Fim Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-           msgExtra = " e Expediente Encerrado";
-        }
-
-        if (tipo.includes('Saí') && linhaAgenda) {
-            await callAPI('concluirItinerario', { linha: linhaAgenda });
-            msgExtra += " (Visita Removida)";
-        }
-        
-        exibirMsg(`Ação registrada com sucesso${msgExtra}!`, false);
-        
-        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
-        carregarItinerario(false);
-        carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-
-      }, (err) => {
-        exibirMsg("Permita o GPS para fazer check-in.", true);
-      }, { enableHighAccuracy: true });
+      if (tipo.includes('Saí') && linhaAgenda) {
+          await callAPI('concluirItinerario', { linha: linhaAgenda });
+          msgExtra += " (Visita Removida)";
+      }
+      
+      exibirMsg(`Ação registrada com sucesso${msgExtra}!`, false);
+      
+      sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
+      carregarItinerario(false);
+      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
     async function carregarItinerario(verificarAlerta = false) {
@@ -721,17 +713,20 @@
       }
     }
 
+    // === NOVO RADAR FRONTEND (ADAPTADO À NOVA LEITURA) ===
     async function carregarRadar() {
       const div = document.getElementById("areaRadar");
-      div.innerHTML = "Buscando posições...";
+      div.innerHTML = "Buscando as últimas posições nas folhas de ponto...";
+      
       const dados = await callAPI('getRadarEquipa');
       if (dados.erro || !dados || dados.length === 0) { 
-        div.innerHTML = "Nenhum check-in registrado."; return; 
+        div.innerHTML = "Nenhuma localização encontrada."; return; 
       }
+      
       let html = "";
       dados.forEach(d => {
-        let cor = d.acao === 'Cheguei' ? 'var(--accent)' : 'var(--text-muted)';
-        let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Saiu';
+        let cor = (d.acao === 'Entrada' || d.acao === 'Retorno') ? 'var(--accent)' : (d.acao === 'Pausa' ? 'var(--warning)' : 'var(--danger)');
+        let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 Em Atividade' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : '🏠 Fim de Expediente');
         let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) 
             ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` 
             : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
@@ -740,7 +735,7 @@
           <div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">${d.nome}</strong><small style="color:${cor}; font-weight:bold;">${icon}</small></div>
           <div style="color:var(--primary); margin-top:4px;">${d.cliente}</div>
           <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;">
-             <small style="color:var(--text-muted);">Última ação: ${d.dataHora}</small>
+             <small style="color:var(--text-muted);">Última ação: ${d.acao} às ${d.dataHora.split(' ')[1] || d.dataHora}</small>
              ${linkMapa}
           </div>
         </div>`;
@@ -902,7 +897,6 @@
       document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()];
     }
 
-    // --- FUNÇÃO CORRIGIDA ---
     async function carregarRotasServidor() {
       const res = await callAPI('getDadosIniciaisRotas');
       if(res.erro) return exibirMsg(res.erro, true);
