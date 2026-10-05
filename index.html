@@ -83,10 +83,10 @@
     </div>
 
     <div id="tela-app" style="display: none;">
-      <!-- ABAS COMUNS -->
+      <!-- ABAS COMUNS (AGENDA AGORA É A PRINCIPAL) -->
       <div class="tabs">
         <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
-        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Ponto Extra</button>
+        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Ponto</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
       </div>
       <!-- ABAS ADMIN -->
@@ -100,6 +100,7 @@
 
       <!-- ================= ABA 1: ITINERÁRIO E CHECK-IN (PRINCIPAL) ================= -->
       <div id="tab-itinerario" class="tab-content active">
+        <!-- VISÃO DE ADMIN: ATRIBUIR VISITA (SEM COORDENADAS) -->
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Visita (Admin)</h3>
           <div class="form-row">
@@ -108,12 +109,11 @@
           </div>
           <label>Cliente</label><input type="text" id="itiCliente" placeholder="Nome do Cliente" />
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
-          <label>Coordenadas do Cliente (ATENÇÃO: Apenas Decimais)</label>
-          <input type="text" id="itiCoords" placeholder="Ex: -22.8643, -43.3412" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
           <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Gravar Itinerário na Agenda</button>
         </div>
 
+        <!-- VISÃO GERAL: LISTA DE VISITAS (COM BOTÕES DE AUTO-PONTO) -->
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <div class="relogio-container" style="border:none; padding-bottom:0;">
             <div id="relogio">00:00:00</div>
@@ -126,7 +126,7 @@
         </div>
       </div>
 
-      <!-- ================= ABA 2: PONTO EXTRA ================= -->
+      <!-- ================= ABA 2: Ponto ================= -->
       <div id="tab-form" class="tab-content">
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Ponto Manual Extra</h3>
@@ -281,9 +281,9 @@
 
   <script>
     // ==============================================================
-    // ⚠️ ATENÇÃO: COLE AQUI O NOVO LINK GERADO PELA CONTA @GMAIL.COM
+    // ⚠️ ATENÇÃO: COLE AQUI O LINK FUNCIONAL GERADO NO PASSO ANTERIOR
     // ==============================================================
-    const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
+    const API_URL = "COLE_AQUI_O_LINK_DO_SEU_GMAIL_PESSOAL_CRIADO_NO_PASSO_ANTERIOR";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
@@ -318,16 +318,6 @@
     
     function dispararNotificacao(titulo, corpo) {
       if ("Notification" in window && Notification.permission === "granted") new Notification(titulo, { body: corpo });
-    }
-
-    function calcularDistancia(lat1, lon1, lat2, lon2) {
-      const R = 6371e3; 
-      const rad = Math.PI / 180;
-      const dLat = (lat2 - lat1) * rad;
-      const dLon = (lon2 - lon1) * rad;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) + Math.cos(lat1 * rad) * Math.cos(lat2 * rad) * Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c; 
     }
 
     async function obterLocalizacao() {
@@ -419,7 +409,10 @@
       document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
     }, 1000);
 
-    async function checkinGeolocalizado(cliente, coordsDestino, tipo) {
+    // ===============================================
+    // LÓGICA DE CHECK-IN INTELIGENTE (SEM BLOQUEIO POR DISTÂNCIA)
+    // ===============================================
+    async function checkinGeolocalizado(cliente, tipo) {
       exibirMsg(`Buscando satélites para Check-in em ${cliente}...`, false);
       if (!navigator.geolocation) return exibirMsg("Seu dispositivo não suporta GPS.", true);
       
@@ -427,20 +420,6 @@
         const latAtual = pos.coords.latitude;
         const lonAtual = pos.coords.longitude;
         const linkGPS = `https://www.google.com/maps/search/?api=1&query=${latAtual},${lonAtual}`;
-
-        if (coordsDestino && coordsDestino.includes(',')) {
-          let partes = coordsDestino.split(',');
-          let latDest = parseFloat(partes[0].trim());
-          let lonDest = parseFloat(partes[1].trim());
-
-          let distMetros = calcularDistancia(latAtual, lonAtual, latDest, lonDest);
-          
-          if (distMetros > 300) {
-            return exibirMsg(`BLOQUEADO: Você está a ${distMetros.toFixed(0)} metros do cliente. Aproxime-se do local exato.`, true);
-          }
-        } else {
-           exibirMsg("Aviso: Cliente sem coordenadas cadastradas. Check-in livre autorizado.", false);
-        }
 
         exibirMsg(`Confirmando localização... Registrando ${tipo}...`, false);
         await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Check-in Inteligente via Agenda", nomeColaborador: usuarioAutenticado, localizacao: linkGPS });
@@ -480,8 +459,8 @@
            ? `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>` 
            : `<div style="display:flex; flex-direction:column; gap:8px;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                  <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', '${d.coordenadas}', 'Cheguei')">📍 Cheguei (Entrada)</button>
-                  <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', '${d.coordenadas}', 'Saí')">🚶 Saí (Retorno)</button>
+                  <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei')">📍 Cheguei (Entrada)</button>
+                  <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí')">🚶 Saí (Retorno)</button>
                 </div>
                 <button class="btn-acao" style="background:var(--warning); color:#000; width:100%; margin:0;" onclick="marcarItinerarioConcluido(${d.linha})">✔ Encerrar Tarefa na Agenda</button>
               </div>`;
@@ -495,8 +474,7 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
               <strong style="color:var(--text); font-size:1.1rem; display:block; margin-bottom:4px;">${d.cliente}</strong>
-              <small style="color:var(--text-muted); font-size:0.9rem;">📍 ${d.endereco}</small><br>
-              <small style="color:var(--primary); font-size:0.75rem;">GPS Base: ${d.coordenadas || "Não cadastrado"}</small>
+              <small style="color:var(--text-muted); font-size:0.9rem;">📍 ${d.endereco}</small>
             </div>
             <small style="color:var(--text-muted); font-weight:bold; background:#0f172a; padding:4px 8px; border-radius:4px;">🕒 ${d.horario}</small>
           </div>
@@ -520,13 +498,12 @@
       const data = document.getElementById("itiData").value;
       const cli = document.getElementById("itiCliente").value;
       const end = document.getElementById("itiEndereco").value;
-      const coord = document.getElementById("itiCoords").value;
       const hor = document.getElementById("itiHorario").value;
 
       if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos obrigatórios da agenda.", true);
 
       exibirMsg("Atribuindo visita...", false);
-      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor, coordenadas: coord };
+      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor, coordenadas: "" };
       const res = await callAPI('addItinerario', { dados: payload });
 
       if(res.erro) exibirMsg(res.erro, true);
@@ -534,7 +511,6 @@
         exibirMsg(res.sucesso, false);
         document.getElementById("itiCliente").value = "";
         document.getElementById("itiEndereco").value = "";
-        document.getElementById("itiCoords").value = "";
         carregarItinerario();
       }
     }
@@ -545,7 +521,7 @@
       if(res.erro) exibirMsg(res.erro, true);
       else { exibirMsg(res.sucesso, false); carregarItinerario(); }
     }
-    
+
     function atualizarRegraBotoes(ultimoStatus) {
       const bE = document.getElementById('btnEntrada'), bP = document.getElementById('btnPausa'), bR = document.getElementById('btnRetorno'), bS = document.getElementById('btnSaida');
       bE.disabled = true; bP.disabled = true; bR.disabled = true; bS.disabled = true;
@@ -566,7 +542,7 @@
       if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
       const obs = document.getElementById("obs").value;
       document.querySelectorAll('.grid-botoes .btn').forEach(b => b.disabled = true);
-      exibirMsg(`Capturando localização e registrando Ponto Extra (${tipo})...`, false);
+      exibirMsg(`Capturando localização e registrando Ponto (${tipo})...`, false);
       const loc = await obterLocalizacao();
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       document.getElementById("obs").value = "";
