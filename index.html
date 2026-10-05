@@ -120,6 +120,7 @@
           <div class="relogio-container" style="border:none; padding-bottom:0;">
             <div id="relogio">00:00:00</div>
             <div id="data-atual" style="margin-bottom:15px;">Carregando data...</div>
+            <div class="usuario-logado">👤 <span id="nomeExibicao"></span></div>
           </div>
           <h3 style="margin: 0 0 14px; font-size: 1.2rem; color: #fcd34d;">Agenda de Hoje</h3>
           <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarItinerario()">🔄 Atualizar Agenda</button>
@@ -284,6 +285,7 @@
   </div>
 
   <script>
+    // URL ATUALIZADA
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
@@ -308,7 +310,7 @@
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
       b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("Bloqueado") || msg.includes("satélites")) b.style.color = "#000"; else b.style.color = "#fff";
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
     }
@@ -452,7 +454,6 @@
             return exibirMsg(`BLOQUEADO: Você está a ${distMetros.toFixed(0)} metros do cliente. Aproxime-se do local exato.`, true);
           }
         } else {
-           // Cliente sem coordenadas no sistema passa, mas notifica
            exibirMsg("Aviso: Cliente sem coordenadas cadastradas. Check-in livre autorizado.", false);
         }
 
@@ -496,11 +497,11 @@
         let botoesGeo = isConcluido 
            ? `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>` 
            : `<div style="display:flex; flex-direction:column; gap:8px;">
-                <div>
-                  <button class="btn-acao" style="background:var(--primary);" onclick="checkinGeolocalizado('${d.cliente}', '${d.coordenadas}', 'Cheguei')">📍 Cheguei (Bater Entrada)</button>
-                  <button class="btn-acao" style="background:var(--danger);" onclick="checkinGeolocalizado('${d.cliente}', '${d.coordenadas}', 'Saí')">🚶 Saí (Bater Retorno)</button>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                  <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', '${d.coordenadas}', 'Cheguei')">📍 Cheguei (Entrada)</button>
+                  <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', '${d.coordenadas}', 'Saí')">🚶 Saí (Retorno)</button>
                 </div>
-                <button class="btn-acao" style="background:var(--warning); color:#000; width:100%;" onclick="marcarItinerarioConcluido(${d.linha})">✔ Encerrar Tarefa na Agenda</button>
+                <button class="btn-acao" style="background:var(--warning); color:#000; width:100%; margin:0;" onclick="marcarItinerarioConcluido(${d.linha})">✔ Encerrar Tarefa na Agenda</button>
               </div>`;
         
         if (!isConcluido && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
