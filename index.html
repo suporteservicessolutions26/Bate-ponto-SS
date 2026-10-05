@@ -83,10 +83,10 @@
     </div>
 
     <div id="tela-app" style="display: none;">
-      <!-- ABAS COMUNS (AGENDA AGORA É A PRINCIPAL) -->
+      <!-- ABAS COMUNS -->
       <div class="tabs">
         <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
-        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Ponto</button>
+        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Ponto Extra</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
       </div>
       <!-- ABAS ADMIN -->
@@ -126,7 +126,7 @@
         </div>
       </div>
 
-      <!-- ================= ABA 2: Ponto ================= -->
+      <!-- ================= ABA 2: PONTO EXTRA ================= -->
       <div id="tab-form" class="tab-content">
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Ponto Manual Extra</h3>
@@ -280,10 +280,8 @@
   </div>
 
   <script>
-    // ==============================================================
-    // ⚠️ ATENÇÃO: COLE AQUI O LINK FUNCIONAL GERADO NO PASSO ANTERIOR
-    // ==============================================================
-    const API_URL = "COLE_AQUI_O_LINK_DO_SEU_GMAIL_PESSOAL_CRIADO_NO_PASSO_ANTERIOR";
+    // URL ATUALIZADA COM O LINK VERIFICADO
+    const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
@@ -542,7 +540,7 @@
       if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
       const obs = document.getElementById("obs").value;
       document.querySelectorAll('.grid-botoes .btn').forEach(b => b.disabled = true);
-      exibirMsg(`Capturando localização e registrando Ponto (${tipo})...`, false);
+      exibirMsg(`Capturando localização e registrando Ponto Extra (${tipo})...`, false);
       const loc = await obterLocalizacao();
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       document.getElementById("obs").value = "";
