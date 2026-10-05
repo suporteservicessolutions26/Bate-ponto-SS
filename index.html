@@ -101,7 +101,6 @@
       <!-- ================= ABA 1: PAINEL DE CONTROLE (AGENDA + PONTO) ================= -->
       <div id="tab-itinerario" class="tab-content active">
         
-        <!-- RELÓGIO GLOBAL -->
         <div class="box" style="padding-bottom: 10px;">
           <div class="relogio-container" style="border:none; padding-bottom:0; margin-bottom:0;">
             <div id="relogio">00:00:00</div>
@@ -110,12 +109,10 @@
           </div>
         </div>
 
-        <!-- MÓDULO DE PONTO DINÂMICO INTELIGENTE -->
         <div class="box" style="border: 1px solid var(--primary); background: #0f172a;">
           <h3 style="margin-bottom: 6px; font-size: 1.1rem; color: var(--primary);">Gestão de Ponto</h3>
           <div id="status-atual-texto" style="font-weight:bold; font-size:0.9rem; margin-bottom:14px; text-align:center;">Buscando status...</div>
           
-          <!-- Estado 1: Aguardando Entrada -->
           <div id="painel-ponto-inativo" style="text-align:center;">
             <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:16px;">
               ⏳ Inicie o expediente clicando em "Cheguei" no seu primeiro cliente da Agenda.
@@ -125,7 +122,6 @@
             <button class="btn btn-entrada" onclick="baterPonto('Entrada')">🏢 Iniciar Expediente na Base</button>
           </div>
 
-          <!-- Estado 2: Em Expediente ou Pausa -->
           <div id="painel-ponto-ativo" style="display:none;">
             <label for="obs" style="color: var(--text-muted);">Observação (Opcional)</label>
             <input type="text" id="obs" placeholder="Ex: Almoço / Na Base..." autocomplete="off" />
@@ -137,7 +133,6 @@
           </div>
         </div>
 
-        <!-- VISÃO DE ADMIN: ATRIBUIR VISITA -->
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Visita (Admin)</h3>
           <div class="form-row">
@@ -150,7 +145,6 @@
           <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
         </div>
 
-        <!-- LISTA DA AGENDA -->
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <h3 style="margin: 0 0 14px; font-size: 1.2rem; color: #fcd34d;">Agenda de Visitas</h3>
           <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarItinerario(true)">🔄 Atualizar Agenda</button>
@@ -214,10 +208,22 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN: GERAL ================= -->
+      <!-- ================= ADMIN: GERAL (COM FILTRO E PDF) ================= -->
       <div id="tab-admin-ponto" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--accent);">Visão Geral (Todos)</h3>
+          
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral</h3>
+            
+            <!-- NOVOS FILTROS E BOTÃO DE EXPORTAÇÃO PDF -->
+            <div style="display:flex; gap:10px; align-items:center;">
+               <select id="filtroGeralColab" style="margin:0; padding:8px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()">
+                 <option value="TODOS">Por Colaborador (Todos)</option>
+               </select>
+               <button class="btn-acao" style="background:#dc2626; margin:0;" onclick="exportarGeralPDF()">📄 Exportar em PDF</button>
+            </div>
+          </div>
+
           <table>
             <thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Tipo</th><th>Resumo</th></tr></thead>
             <tbody id="tblGeral"></tbody>
@@ -248,12 +254,12 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN: ROTAS ================= -->
+      <!-- ================= ADMIN: ROTAS E FROTA (RESTAURADO) ================= -->
       <div id="tab-rotas" class="tab-content">
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #a855f7;">Gestão de Frota e Reembolsos</h3>
           <div class="form-row" style="margin-bottom: 16px;">
-            <div><label>Filtrar Técnico:</label><select id="filtroTecnico" onchange="filtrarRotas()"><option value="TODOS">Todos os Técnicos</option><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option></select></div>
+            <div><label>Filtrar Técnico:</label><select id="filtroTecnico" onchange="filtrarRotas()"><option value="TODOS">Todos os Técnicos</option><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
             <div><label>Filtrar Mês:</label><select id="filtroMes" onchange="filtrarRotas()"><option value="TODOS">Todos os Meses</option></select></div>
           </div>
           <div class="metrics">
@@ -262,12 +268,40 @@
             <div class="card-metric"><div class="label">Reembolso Total</div><div class="val" id="mReembolso" style="color:var(--accent);">R$ 0,00</div></div>
           </div>
         </div>
+        
         <div class="box">
           <h4 style="margin-bottom: 12px; color: var(--text-muted);">Lançar Novo Deslocamento</h4>
           <form id="fRota" onsubmit="salvarRota(event)">
-            <!-- Formulário encurtado apenas na visão aqui para gestão de espaço, mantém-se a lógica inteira abaixo -->
+            <div class="form-row">
+              <div><label>Técnico</label><select id="rotaTecnico" required><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
+              <div><label>Mês (Ex: Setembro/2026)</label><input type="text" id="rotaMes" required /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div>
+              <div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
+            </div>
+            <div class="form-row">
+              <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
+              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div>
+              <div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div>
+              <div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div>
+            </div>
+            <label>Observações</label><input type="text" id="rotaObs" />
             <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7; margin-top: 10px;">Salvar Rota</button>
           </form>
+        </div>
+        
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;">
+          <table>
+            <thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead>
+            <tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
@@ -275,14 +309,15 @@
 
   <script>
     // ==============================================================
-    // A URL DA SUA API (Inalterada)
+    // A URL DA SUA API 
     // ==============================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
-    let statusGlobalPonto = "Saída"; // Guarda o status atual do relógio
+    let statusGlobalPonto = "Saída";
     let todasRotas = [];
+    let dadosGeralGlobais = []; // Guarda dados da aba Geral para o Filtro/PDF
     let notificadoHoje = false;
 
     // === UTILITÁRIOS BASE ===
@@ -302,7 +337,7 @@
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
       b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso")) b.style.color = "#000"; else b.style.color = "#fff";
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
     }
@@ -388,6 +423,7 @@
       if(id === 'tab-radar') carregarRadar();
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto();
       if(id === 'tab-aprovacoes') carregarAprovacoes();
+      if(id === 'tab-rotas') carregarRotasServidor();
     }
 
     setInterval(() => {
@@ -407,7 +443,6 @@
       const bP = document.getElementById('btnPausa'), bR = document.getElementById('btnRetorno'), bS = document.getElementById('btnSaida');
       const statusTxt = document.getElementById('status-atual-texto');
 
-      // Oculta os 3 para depois mostrar só o que deve
       bP.style.display = 'none'; bR.style.display = 'none'; bS.style.display = 'none';
 
       if (statusGlobalPonto === 'Saída') {
@@ -426,16 +461,15 @@
         else if (statusGlobalPonto === 'Pausa') { 
             if(statusTxt) statusTxt.innerHTML = "<span style='color:var(--warning)'>⏸ Em Pausa (Almoço)</span>";
             bR.style.display = 'block'; 
-            bR.style.gridColumn = 'span 2'; // Ocupa a linha toda
+            bR.style.gridColumn = 'span 2'; 
         }
         else if (statusGlobalPonto === 'Retorno') { 
             if(statusTxt) statusTxt.innerHTML = "<span style='color:var(--accent)'>🟢 Em Expediente (Retorno)</span>";
             bS.style.display = 'block'; 
-            bS.style.gridColumn = 'span 2'; // Ocupa a linha toda
+            bS.style.gridColumn = 'span 2'; 
         }
       }
 
-      // Re-renderiza a agenda se já estiver em memória, para atualizar o texto do botão "Cheguei"
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
       if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
     }
@@ -467,10 +501,8 @@
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const loc = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
 
-        // Regista sempre o Check-in (Visita)
         await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
         
-        // MOTOR INTELIGENTE DO PONTO E FINALIZAÇÃO
         let msgExtra = "";
         
         if (tipo === 'Cheguei') {
@@ -487,7 +519,6 @@
            msgExtra = " e Expediente Encerrado";
         }
 
-        // Se a ação for uma saída, remove o cliente da agenda automaticamente.
         if (tipo.includes('Saí') && linhaAgenda) {
             await callAPI('concluirItinerario', { linha: linhaAgenda });
             msgExtra += " (Visita Removida)";
@@ -495,7 +526,6 @@
         
         exibirMsg(`Ação registrada com sucesso${msgExtra}!`, false);
         
-        // Limpa o cache para carregar a nova lista de visitas (agora sem este cliente, se foi saída)
         sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
         carregarItinerario(false);
         carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
@@ -506,7 +536,7 @@
     }
 
     // ===============================================
-    // RENDERIZAÇÃO DA AGENDA (CACHE VELOZ E BOTÕES ADAPTÁVEIS)
+    // RENDERIZAÇÃO DA AGENDA (CACHE VELOZ)
     // ===============================================
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
@@ -536,7 +566,6 @@
       let pendentesHoje = 0;
       const hojeStr = new Date().toLocaleDateString('pt-BR');
 
-      // Adapta o texto do botão "Cheguei" com base no status do Ponto
       let txtChegada = "📍 Cheguei no Cliente";
       if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)";
       if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
@@ -545,7 +574,6 @@
         let isConcluido = d.status === 'Concluído';
         let corClasse = isConcluido ? 'concluido' : '';
         
-        // ADMIN EXCLUSIVO: Pode forçar a remoção se o técnico esqueceu
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') 
            ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="marcarItinerarioConcluido(${d.linha})">✔ Forçar Remoção da Agenda (Admin)</button>`
            : ``;
@@ -657,7 +685,7 @@
     }
 
     // ===============================================
-    // HISTÓRICOS, APROVAÇÕES E ADMIN
+    // HISTÓRICOS E APROVAÇÕES
     // ===============================================
     function renderTag(tipo) {
       let cor = tipo === 'Entrada' ? 'var(--accent)' : (tipo === 'Saída' ? 'var(--danger)' : 'var(--warning)');
@@ -738,19 +766,101 @@
       div.innerHTML = html;
     }
 
+    // ===============================================
+    // ADMIN: FILTRO GERAL E EXPORTAÇÃO PDF
+    // ===============================================
     async function carregarVisaoGeralPonto() {
       const tbody = document.getElementById("tblGeral");
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Buscando...</td></tr>';
+      
       const dados = await callAPI('getTodosHistoricos');
-      if (dados.erro || !dados || dados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'; return; }
+      if (dados.erro || !dados || dados.length === 0) { 
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'; 
+          return; 
+      }
+      
+      dadosGeralGlobais = dados;
+      
+      const select = document.getElementById("filtroGeralColab");
+      const colabs = [...new Set(dados.map(d => d.nome))].sort();
+      select.innerHTML = '<option value="TODOS">Por Colaborador (Todos)</option>';
+      colabs.forEach(c => select.innerHTML += `<option value="${c}">${c}</option>`);
+
+      filtrarGeralPonto();
+    }
+
+    function filtrarGeralPonto() {
+      const filtro = document.getElementById("filtroGeralColab").value;
+      const tbody = document.getElementById("tblGeral");
+      
+      let filtrados = dadosGeralGlobais;
+      if (filtro !== "TODOS") {
+         filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
+      }
+
+      if (filtrados.length === 0) { 
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; 
+          return; 
+      }
+
       let html = "";
-      [...dados].reverse().forEach(d => {
+      [...filtrados].reverse().forEach(d => {
         let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
         html += `<tr><td data-label="Data">${d.dataHora}</td><td data-label="Colaborador"><strong>${d.nome}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Resumo">${d.obs||'-'}${infoExtra}</td></tr>`;
       });
       tbody.innerHTML = html;
     }
 
+    function exportarGeralPDF() {
+      const filtro = document.getElementById("filtroGeralColab").value;
+      const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto" : `Relatório de Ponto - ${filtro}`;
+      
+      let janela = window.open('', '', 'width=900,height=700');
+      janela.document.write(`
+        <html>
+          <head>
+            <title>${titulo}</title>
+            <style>
+              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #1e293b; background: #fff;}
+              .cabecalho { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
+              .cabecalho h2 { color: #0f172a; margin: 0 0 10px 0; font-size: 24px; }
+              .cabecalho p { color: #64748b; margin: 0; font-size: 14px; }
+              table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
+              th { background-color: #f1f5f9; color: #334155; padding: 12px; font-weight: bold; border-bottom: 2px solid #cbd5e1; }
+              td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #475569; }
+              .tag { font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; }
+              .tag-Entrada { background: #d1fae5; color: #065f46; }
+              .tag-Pausa { background: #fef3c7; color: #92400e; }
+              .tag-Retorno { background: #e0e7ff; color: #3730a3; }
+              .tag-Saída { background: #fee2e2; color: #991b1b; }
+            </style>
+          </head>
+          <body>
+            <div class="cabecalho">
+              <h2>${titulo}</h2>
+              <p><strong>Portal Services & Solutions</strong> - Documento gerado em: ${new Date().toLocaleString('pt-BR')}</p>
+            </div>
+            <table>
+              <thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Tipo de Registo</th><th>Observações e Horas Extra</th></tr></thead>
+              <tbody>
+      `);
+
+      let filtrados = dadosGeralGlobais;
+      if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
+
+      [...filtrados].reverse().forEach(d => {
+        let tagClass = `tag-${d.tipo}`;
+        let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><span style="color:#059669; font-weight:bold;">Total do dia: ${d.total}h</span>` : '';
+        janela.document.write(`<tr><td><strong>${d.dataHora}</strong></td><td>${d.nome}</td><td><span class="tag ${tagClass}">${d.tipo}</span></td><td>${d.obs || '-'}${infoExtra}</td></tr>`);
+      });
+
+      janela.document.write(`</tbody></table><script>window.onload = function() { setTimeout(function(){ window.print(); window.close(); }, 500); }<\/script></body></html>`);
+      janela.document.close();
+    }
+
+    // ===============================================
+    // RESTANTE ADMIN
+    // ===============================================
     async function carregarBancoHoras() {
       const mesAno = document.getElementById('mesFiltro').value.trim();
       if(!mesAno || mesAno.length !== 7) return exibirMsg("Utilize o formato MM/YYYY (ex: 09/2026)", true);
