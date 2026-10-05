@@ -117,7 +117,7 @@
           <!-- Estado 1: Aguardando Entrada -->
           <div id="painel-ponto-inativo" style="text-align:center;">
             <p style="color:var(--text-muted); font-size:0.95rem; margin-bottom:16px;">
-              ⏳ Faça o <strong>Check-in</strong> no seu primeiro cliente abaixo para iniciar o expediente automaticamente.
+              ⏳ Faça o <strong>Check-in</strong> no seu primeiro cliente da Agenda para iniciar o expediente automaticamente.
             </p>
             <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px;">Trabalho interno hoje? Inicie abaixo:</p>
             <button class="btn btn-entrada" onclick="baterPonto('Entrada')">🏢 Iniciar Expediente na Base (Manual)</button>
@@ -322,8 +322,8 @@
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in")) b.style.color = "#000"; else b.style.color = "#fff";
+      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") ? "#fcd34d" : "var(--accent)");
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
     }
@@ -460,22 +460,31 @@
     }
 
     // ===============================================
-    // CHECK-IN DA AGENDA (DESBLOQUEIA O PONTO)
+    // CHECK-IN DA AGENDA (DESBLOQUEIA O PONTO + FINALIZAÇÃO)
     // ===============================================
-    async function checkinGeolocalizado(cliente, tipo) {
-      exibirMsg(`Buscando GPS para registrar ${tipo} em ${cliente}...`, false);
+    async function checkinGeolocalizado(cliente, tipo, linhaAgenda) {
+      exibirMsg(`Buscando GPS para registrar ${tipo} em${cliente}...`, false);
       if (!navigator.geolocation) return exibirMsg("GPS não suportado.", true);
       
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const loc = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
 
+        // Regista o Check-in (Visita)
         await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
         
+        // AUTO-PONTO: Se chegou e o expediente está fechado, bate a Entrada!
+        let acaoPonto = (tipo === 'Cheguei') ? 'Entrada' : 'Retorno';
         if (tipo === 'Cheguei' && statusGlobalPonto === 'Saída') {
            exibirMsg(`Check-in feito! Iniciando expediente automaticamente...`, false);
-           await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início Automático no Cliente: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+           await callAPI('registrarPonto', { tipoRegistro: acaoPonto, observacao: `Início Automático no Cliente: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+        }
+        
+        // FINALIZAÇÃO AUTOMÁTICA: Se for uma ação de saída, conclui a visita na agenda
+        if (tipo.includes('Saí') && linhaAgenda) {
+            await callAPI('concluirItinerario', { linha: linhaAgenda });
+            exibirMsg(`Check-in de Saída registado! A visita foi concluída e removida da agenda.`, false);
         } else {
-           exibirMsg(`Check-in de '${tipo}' registrado com sucesso!`, false);
+            exibirMsg(`Check-in de '${tipo}' registrado com sucesso!`, false);
         }
         
         // Limpa o cache para forçar a renderização dos dados atualizados
@@ -522,16 +531,21 @@
       dados.forEach(d => {
         let isConcluido = d.status === 'Concluído';
         let corClasse = isConcluido ? 'concluido' : '';
+
+        // O Admin tem um botão manual extra para forçar a remoção da agenda caso o técnico esqueça
+        let btnConcluirAdmin = (perfilAutenticado === 'Admin') 
+           ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="marcarItinerarioConcluido(${d.linha})">✔ Forçar Remoção da Agenda (Admin)</button>`
+           : ``;
         
         let botoesGeo = isConcluido 
            ? `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>` 
            : `<div style="display:flex; flex-direction:column; gap:8px;">
-                <button class="btn-acao" style="background:var(--primary);" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei')">📍 Cheguei no Cliente</button>
+                <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha})">📍 Cheguei no Cliente</button>
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                  <button class="btn-acao" style="background:var(--warning); color:#000;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)')">🏢 Saí -> Base</button>
-                  <button class="btn-acao" style="background:var(--danger);" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)')">🚶 Saí -> Próximo</button>
+                  <button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button>
+                  <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 Saí -> Próximo</button>
                 </div>
-                <button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted);" onclick="marcarItinerarioConcluido(${d.linha})">✔ Retirar da Agenda</button>
+                ${btnConcluirAdmin}
               </div>`;
         
         if (!isConcluido && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
@@ -571,7 +585,7 @@
       const end = document.getElementById("itiEndereco").value;
       const hor = document.getElementById("itiHorario").value;
 
-      if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos da agenda.", true);
+      if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos obrigatórios da agenda.", true);
 
       exibirMsg("Atribuindo visita...", false);
       const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor, coordenadas: "" };
