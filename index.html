@@ -139,7 +139,7 @@
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Visita (Admin)</h3>
           <div class="form-row">
-            <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option></select></div>
+            <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
             <div><label>Data</label><input type="date" id="itiData" /></div>
           </div>
           <label>Cliente</label><input type="text" id="itiCliente" placeholder="Nome do Cliente" />
@@ -262,23 +262,47 @@
         <div class="box">
           <h4 style="margin-bottom: 12px; color: var(--text-muted);">Lançar Novo Deslocamento</h4>
           <form id="fRota" onsubmit="salvarRota(event)">
-            <!-- Seu formulário de rotas mantido oculto por limite visual -->
+            <div class="form-row">
+              <div><label>Técnico</label><select id="rotaTecnico" required><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option></select></div>
+              <div><label>Mês (Ex: Setembro/2026)</label><input type="text" id="rotaMes" required /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div>
+              <div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
+            </div>
+            <div class="form-row">
+              <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
+              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div>
+              <div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div>
+            </div>
+            <div class="form-row">
+              <div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div>
+              <div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div>
+            </div>
+            <label>Observações</label><input type="text" id="rotaObs" />
             <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7; margin-top: 10px;">Salvar Rota</button>
           </form>
+        </div>
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;">
+          <table>
+            <thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead>
+            <tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody>
+          </table>
         </div>
       </div>
     </div>
   </div>
 
   <script>
-    // ==============================================================
-    // COLE AQUI A SUA URL DA API DO GOOGLE SCRIPT
-    // ==============================================================
+    // URL DEFINITIVA DA API
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
-    let statusGlobalPonto = "Saída"; // Guarda o status atual do relógio
+    let statusGlobalPonto = "Saída";
     let todasRotas = [];
     let notificadoHoje = false;
 
@@ -421,7 +445,6 @@
     async function baterPonto(tipo) {
       if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
       
-      // Se for Entrada manual, usamos a observação ou definimos Base.
       let obs = document.getElementById("obs") ? document.getElementById("obs").value : "";
       if (tipo === 'Entrada') obs = "Início Manual na Base";
 
@@ -446,10 +469,8 @@
       navigator.geolocation.getCurrentPosition(async (pos) => {
         const loc = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
 
-        // Regista o Check-in (Visita)
         await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
         
-        // AUTO-PONTO: Se chegou e o expediente está fechado, bate a Entrada!
         if (tipo === 'Cheguei' && statusGlobalPonto === 'Saída') {
            exibirMsg(`Check-in feito! Iniciando expediente automaticamente...`, false);
            await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início Automático no Cliente: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
@@ -457,6 +478,8 @@
            exibirMsg(`Check-in de '${tipo}' registrado com sucesso!`, false);
         }
         
+        // Limpa o cache para forçar a renderização dos dados atualizados
+        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
         carregarItinerario(false);
         carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
 
@@ -466,28 +489,40 @@
     }
 
     // ===============================================
-    // RENDERIZAÇÃO DA AGENDA
+    // RENDERIZAÇÃO DA AGENDA (CACHE VELOZ)
     // ===============================================
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
-      if(!verificarAlerta) div.innerHTML = "Buscando agenda de hoje...";
-      
-      const paramBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
-      const dados = await callAPI('getItinerario', { nome: paramBusca });
+      const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
+
+      if (cacheLocal && !verificarAlerta) {
+        renderizarAgendaHTML(JSON.parse(cacheLocal), false);
+      } else if (!cacheLocal && !verificarAlerta) {
+        div.innerHTML = "Buscando agenda no servidor...";
+      }
+
+      const parametroBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
+      const dados = await callAPI('getItinerario', { nome: parametroBusca });
 
       if (dados.erro || !dados || dados.length === 0) { 
-        div.innerHTML = "Sua agenda de hoje está livre."; return; 
+        div.innerHTML = "Sua agenda de hoje está livre."; 
+        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
+        return; 
       }
       
+      sessionStorage.setItem('cacheAgenda_' + usuarioAutenticado, JSON.stringify(dados));
+      renderizarAgendaHTML(dados, verificarAlerta);
+    }
+
+    function renderizarAgendaHTML(dados, verificarAlerta) {
       let html = "";
       let pendentesHoje = 0;
       const hojeStr = new Date().toLocaleDateString('pt-BR');
 
-      [...dados].reverse().forEach(d => {
+      dados.forEach(d => {
         let isConcluido = d.status === 'Concluído';
         let corClasse = isConcluido ? 'concluido' : '';
         
-        // Botões de Saída Múltiplos
         let botoesGeo = isConcluido 
            ? `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>` 
            : `<div style="display:flex; flex-direction:column; gap:8px;">
@@ -519,7 +554,7 @@
         </div>`;
       });
       
-      div.innerHTML = html;
+      document.getElementById("listaItinerario").innerHTML = html;
 
       if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje) {
         if ("Notification" in window && Notification.permission === "granted") {
@@ -539,7 +574,7 @@
       if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos da agenda.", true);
 
       exibirMsg("Atribuindo visita...", false);
-      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor };
+      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor, coordenadas: "" };
       const res = await callAPI('addItinerario', { dados: payload });
 
       if(res.erro) exibirMsg(res.erro, true);
@@ -547,6 +582,7 @@
         exibirMsg(res.sucesso, false);
         document.getElementById("itiCliente").value = "";
         document.getElementById("itiEndereco").value = "";
+        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
         carregarItinerario();
       }
     }
@@ -555,7 +591,11 @@
       exibirMsg("Removendo visita das pendências...", false);
       const res = await callAPI('concluirItinerario', { linha: linha });
       if(res.erro) exibirMsg(res.erro, true);
-      else { exibirMsg(res.sucesso, false); carregarItinerario(); }
+      else { 
+        exibirMsg(res.sucesso, false); 
+        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
+        carregarItinerario(); 
+      }
     }
 
     // ===============================================
@@ -709,6 +749,78 @@
       exibirMsg("Processando...", false);
       const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo });
       if (res.erro) exibirMsg(res.erro, true); else { exibirMsg(res.sucesso, false); carregarAprovacoes(); }
+    }
+
+    const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+    const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+    
+    function preencherDia() {
+      const v = document.getElementById("rotaData").value; if (!v) return;
+      const [a, m, d] = v.split("-").map(Number);
+      document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()];
+    }
+
+    async function carregarRotasServidor() {
+      document.getElementById("btnTabRotas").innerText = "Carregando...";
+      const res = await callAPI('getDadosIniciaisRotas');
+      document.getElementById("btnTabRotas").innerText = "Deslocamentos";
+      if(res.erro) return exibirMsg(res.erro, true);
+      todasRotas = res.lancamentos || [];
+      const selMes = document.getElementById("filtroMes");
+      selMes.innerHTML = '<option value="TODOS">Todos</option>';
+      res.mesesDisponiveis.forEach(m => selMes.innerHTML += `<option value="${m}">${m}</option>`);
+      if(res.mesesDisponiveis.length > 0) selMes.value = res.mesesDisponiveis[res.mesesDisponiveis.length - 1];
+      filtrarRotas();
+    }
+
+    function filtrarRotas() {
+      const tec = document.getElementById("filtroTecnico").value;
+      const mes = document.getElementById("filtroMes").value;
+      const filtrados = todasRotas.filter(d => (tec === "TODOS" || d.tecnico === tec) && (mes === "TODOS" || d.mes === mes));
+      let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0;
+      filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
+      const litros = totalKm / 9.4; const combustivel = litros * 4.5;
+      const reembolso = combustivel + totalEstac + totalPedagio - totalDesc;
+      
+      document.getElementById("mKm").innerText = totalKm.toFixed(1) + " km";
+      document.getElementById("mCombustivel").innerText = brl(combustivel);
+      document.getElementById("mReembolso").innerText = brl(reembolso);
+
+      const tbody = document.getElementById("tblRotas");
+      if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>'; return; }
+      
+      let html = "";
+      filtrados.reverse().forEach(d => {
+        let txtCusto = "";
+        if(d.estacionamento > 0) txtCusto += `Est: ${brl(d.estacionamento)}<br>`;
+        if(d.pedagio > 0) txtCusto += `Ped: ${brl(d.pedagio)}<br>`;
+        if(d.desconto > 0) txtCusto += `Desc: <span style="color:var(--danger)">-${brl(d.desconto)}</span>`;
+        html += `<tr><td data-label="Data"><strong>${d.data}</strong><br><small style="color:var(--text-muted)">${d.dia}</small></td><td data-label="Trajeto">${d.origem} &rarr; ${d.destino}<br><small style="color:var(--accent);">${d.km.toFixed(1)} km</small></td><td data-label="Custos">${txtCusto||'-'}</td></tr>`;
+      });
+      tbody.innerHTML = html;
+    }
+
+    async function salvarRota(e) {
+      e.preventDefault();
+      const btn = document.getElementById("btnSalvarRota");
+      btn.disabled = true; btn.innerText = "Gravando...";
+      const payload = {
+        tecnico: document.getElementById("rotaTecnico").value, mes: document.getElementById("rotaMes").value,
+        data: document.getElementById("rotaData").value, dia: document.getElementById("rotaDia").value,
+        origem: document.getElementById("rotaOrigem").value, destino: document.getElementById("rotaDestino").value,
+        km: document.getElementById("rotaKm").value, estacionamento: document.getElementById("rotaEstac").value,
+        pedagio: document.getElementById("rotaPedagio").value, desconto: document.getElementById("rotaDesconto").value,
+        obs: document.getElementById("rotaObs").value
+      };
+      
+      const res = await callAPI('salvarLancamentoRota', { dadosRota: payload });
+      btn.disabled = false; btn.innerText = "Salvar Rota";
+      if (res.erro) exibirMsg(res.erro, true); 
+      else { 
+        exibirMsg("Rota registrada!", false); 
+        document.getElementById("fRota").reset(); 
+        carregarRotasServidor(); 
+      }
     }
   </script>
 </body>
