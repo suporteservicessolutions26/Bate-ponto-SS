@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
@@ -484,44 +483,37 @@
     }
 
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda) {
-      exibirMsg(`Buscando GPS para registrar ${tipo} em${cliente}...`, false);
-      if (!navigator.geolocation) return exibirMsg("GPS não suportado.", true);
+      exibirMsg(`Capturando GPS para registrar ${tipo} em${cliente}...`, false);
+      const loc = await obterLocalizacao();
+
+      await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
       
-      navigator.geolocation.getCurrentPosition(async (pos) => {
-        const loc = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`;
+      let msgExtra = "";
+      
+      if (tipo === 'Cheguei') {
+         if (statusGlobalPonto === 'Saída') {
+             await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Auto-Ponto (Início Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             msgExtra = " e Entrada Iniciada";
+         } else if (statusGlobalPonto === 'Pausa') {
+             await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto-Ponto (Retorno): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             msgExtra = " e Retorno da Pausa Registrado";
+         }
+      } 
+      else if (tipo.includes('Fim de Expediente')) {
+         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Auto-Ponto (Fim Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+         msgExtra = " e Expediente Encerrado";
+      }
 
-        await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda", nomeColaborador: usuarioAutenticado, localizacao: loc });
-        
-        let msgExtra = "";
-        
-        if (tipo === 'Cheguei') {
-           if (statusGlobalPonto === 'Saída') {
-               await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Auto-Ponto (Início Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-               msgExtra = " e Entrada Iniciada";
-           } else if (statusGlobalPonto === 'Pausa') {
-               await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto-Ponto (Retorno): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-               msgExtra = " e Retorno da Pausa Registrado";
-           }
-        } 
-        else if (tipo.includes('Fim de Expediente')) {
-           await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Auto-Ponto (Fim Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-           msgExtra = " e Expediente Encerrado";
-        }
-
-        if (tipo.includes('Saí') && linhaAgenda) {
-            await callAPI('concluirItinerario', { linha: linhaAgenda });
-            msgExtra += " (Visita Removida)";
-        }
-        
-        exibirMsg(`Ação registrada com sucesso${msgExtra}!`, false);
-        
-        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
-        carregarItinerario(false);
-        carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-
-      }, (err) => {
-        exibirMsg("Permita o GPS para fazer check-in.", true);
-      }, { enableHighAccuracy: true });
+      if (tipo.includes('Saí') && linhaAgenda) {
+          await callAPI('concluirItinerario', { linha: linhaAgenda });
+          msgExtra += " (Visita Removida)";
+      }
+      
+      exibirMsg(`Ação registrada com sucesso${msgExtra}!`, false);
+      
+      sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
+      carregarItinerario(false);
+      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
     async function carregarItinerario(verificarAlerta = false) {
@@ -728,8 +720,8 @@
       }
       let html = "";
       dados.forEach(d => {
-        let cor = d.acao === 'Cheguei' ? 'var(--accent)' : 'var(--text-muted)';
-        let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Saiu';
+        let cor = d.acao === 'Cheguei' || d.acao.includes('Ponto') ? 'var(--accent)' : 'var(--text-muted)';
+        let icon = d.acao === 'Cheguei' ? '📍 No Cliente' : (d.acao.includes('Ponto') ? '📍 No Ponto' : '🚗 Em Trânsito / Saiu');
         let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) 
             ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` 
             : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
