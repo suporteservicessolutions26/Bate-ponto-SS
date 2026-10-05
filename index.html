@@ -47,8 +47,12 @@
     .card-metric .val { font-size: 1.4rem; font-weight: 700; margin-top: 6px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
-    .card-itinerario { background: #1e293b; border-left: 4px solid var(--primary); padding: 16px; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
-    .card-itinerario.concluido { border-left-color: var(--accent); opacity: 0.6; }
+    /* CORES DINÂMICAS PARA A AGENDA */
+    .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 16px; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: 0.2s;}
+    .card-itinerario.pendente { border-left-color: var(--primary); }
+    .card-itinerario.andamento { border-left-color: var(--warning); border-width: 4px; box-shadow: 0 0 12px rgba(245, 158, 11, 0.2); }
+    .card-itinerario.concluido { border-left-color: var(--accent); opacity: 0.5; }
+    .card-itinerario.perdida { border-left-color: var(--danger); opacity: 0.4; background: #1e1e24; }
 
     @media (max-width: 640px) {
       .grid-botoes, .form-row { grid-template-columns: 1fr; }
@@ -146,7 +150,7 @@
         </div>
 
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.2rem; color: #fcd34d;">Agenda de Visitas</h3>
+          <h3 style="margin: 0 0 14px; font-size: 1.2rem; color: #fcd34d;">Fila de Visitas</h3>
           <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarItinerario(true)">🔄 Atualizar Agenda</button>
           <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">Carregando agenda e tarefas...</div>
         </div>
@@ -208,13 +212,11 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN: GERAL (COM FILTRO E PDF) ================= -->
+      <!-- ================= ADMIN: GERAL ================= -->
       <div id="tab-admin-ponto" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral</h3>
-            
             <div style="display:flex; gap:10px; align-items:center;">
                <select id="filtroGeralColab" style="margin:0; padding:8px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()">
                  <option value="TODOS">Por Colaborador (Todos)</option>
@@ -222,7 +224,6 @@
                <button class="btn-acao" style="background:#dc2626; margin:0;" onclick="exportarGeralPDF()">📄 Exportar em PDF</button>
             </div>
           </div>
-
           <table>
             <thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Tipo</th><th>Resumo</th></tr></thead>
             <tbody id="tblGeral"></tbody>
@@ -331,8 +332,8 @@
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso")) b.style.color = "#000"; else b.style.color = "#fff";
+      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("atualizada") ? "#fcd34d" : "var(--accent)");
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("atualizada")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
     }
@@ -414,10 +415,8 @@
         if(id === 'tab-itinerario') { btn.style.color = "#fcd34d"; btn.style.borderBottomColor = "#fcd34d"; }
       }
       
-      // CARREGAMENTO SEPARADO (Bugs da Frota e Horas agora resolvidos)
       if(id === 'tab-radar') carregarRadar();
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto();
-      if(id === 'tab-banco') carregarBancoHoras();
       if(id === 'tab-aprovacoes') carregarAprovacoes();
       if(id === 'tab-rotas') carregarRotasServidor();
     }
@@ -484,7 +483,19 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
+    // ===============================================
+    // LÓGICA DE AÇÃO DA AGENDA (MOTOR DE FLUXO)
+    // ===============================================
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda) {
+      if (tipo === 'Forçar Remoção') {
+          if(!confirm("Remover esta visita da agenda?")) return;
+          exibirMsg("Forçando remoção...", false);
+          await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
+          sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
+          carregarItinerario(false);
+          return;
+      }
+
       exibirMsg(`Capturando GPS para registrar ${tipo} em${cliente}...`, false);
       const loc = await obterLocalizacao();
 
@@ -500,6 +511,9 @@
              await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto-Ponto (Retorno): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
              msgExtra = " e Retorno da Pausa Registrado";
          }
+         
+         // Atualiza o estado da agenda para EM ANDAMENTO
+         if (linhaAgenda) await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       } 
       else if (tipo.includes('Fim de Expediente')) {
          await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Auto-Ponto (Fim Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
@@ -507,8 +521,8 @@
       }
 
       if (tipo.includes('Saí') && linhaAgenda) {
-          await callAPI('concluirItinerario', { linha: linhaAgenda });
-          msgExtra += " (Visita Removida)";
+          await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
+          msgExtra += " (Visita Concluída)";
       }
       
       exibirMsg(`Ação registrada com sucesso${msgExtra}!`, false);
@@ -518,6 +532,9 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
+    // ===============================================
+    // ORDENAÇÃO E AVALIAÇÃO DE STATUS (FRONTEND)
+    // ===============================================
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
@@ -542,26 +559,60 @@
     }
 
     function renderizarAgendaHTML(dados, verificarAlerta) {
+      const agora = new Date();
+      
+      // 1. Processar Datas e Regra de Tolerância (18:00h)
+      dados.forEach(d => {
+        const [dia, mes, ano] = d.data.split('/');
+        const [hora, min] = d.horario.split(':');
+        d.objData = new Date(ano, mes - 1, dia, hora, min);
+        
+        const limiteVisita = new Date(ano, mes - 1, dia, 18, 0); 
+        
+        // Se for Pendente e passou das 18h do dia da visita, é dada como Perdida.
+        if (d.status === 'Pendente' && agora > limiteVisita) {
+           d.status = 'Perdida';
+           callAPI('atualizarStatusItinerario', { linha: d.linha, status: 'Perdida' }); // Atualiza no Servidor silenciosamente
+        }
+      });
+
+      // 2. Ordenar de Forma Crescente (O que está mais perto de acontecer no topo)
+      dados.sort((a, b) => a.objData - b.objData);
+
       let html = "";
       let pendentesHoje = 0;
-      const hojeStr = new Date().toLocaleDateString('pt-BR');
+      const hojeStr = agora.toLocaleDateString('pt-BR');
 
       let txtChegada = "📍 Cheguei no Cliente";
       if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)";
       if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
 
       dados.forEach(d => {
+        // Se a visita foi Perdida e o usuário for Técnico, não renderiza (Sai da fila dele)
+        if (d.status === 'Perdida' && perfilAutenticado !== 'Admin') return; 
+
         let isConcluido = d.status === 'Concluído';
-        let corClasse = isConcluido ? 'concluido' : '';
+        let isPerdida = d.status === 'Perdida';
+        let isAndamento = d.status === 'Em Andamento';
+        
+        let corClasse = isConcluido ? 'concluido' : (isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente'));
         
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') 
-           ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="marcarItinerarioConcluido(${d.linha})">✔ Forçar Remoção da Agenda (Admin)</button>`
+           ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>`
            : ``;
         
-        let botoesGeo = isConcluido 
-           ? `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>` 
-           : `<div style="display:flex; flex-direction:column; gap:8px;">
-                <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha})">${txtChegada}</button>
+        let botoesGeo = "";
+        
+        if (isConcluido) {
+            botoesGeo = `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>`;
+        } else if (isPerdida) {
+            botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem inicio até às 18h)</span>`;
+            if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin;
+        } else if (isAndamento) {
+            // Oculta o "Cheguei" e mostra as opções de saída
+            botoesGeo = `
+              <span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Visita em Andamento</span>
+              <div style="display:flex; flex-direction:column; gap:8px;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                   <button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button>
                   <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 Saí -> Próximo</button>
@@ -569,8 +620,16 @@
                 <button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Saí -> Fim de Expediente</button>
                 ${btnConcluirAdmin}
               </div>`;
+        } else {
+            // Se está Pendente, ele SÓ pode clicar em Cheguei. Não pode concluir.
+            botoesGeo = `
+              <div style="display:flex; flex-direction:column; gap:8px;">
+                <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha})">${txtChegada}</button>
+                ${btnConcluirAdmin}
+              </div>`;
+        }
         
-        if (!isConcluido && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
+        if ((d.status === 'Pendente' || d.status === 'Em Andamento') && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
 
         let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem; margin-bottom:8px; display:block;">👤 Técnico: ${d.tecnico}</span>` : '';
 
@@ -584,13 +643,13 @@
             <small style="color:var(--text-muted); font-weight:bold; background:#0f172a; padding:6px 10px; border-radius:4px;">🕒 ${d.horario}</small>
           </div>
           <div style="margin-top:16px; padding-top:12px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;">
-             <small style="color:var(--text-muted);">Agendado para: ${d.data}</small>
+             <small style="color:var(--text-muted);">Agendado para: ${d.data} - <span style="font-weight:bold; color:var(--text);">${d.status}</span></small>
              ${botoesGeo}
           </div>
         </div>`;
       });
       
-      document.getElementById("listaItinerario").innerHTML = html;
+      document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; color:var(--text-muted);">Nenhuma visita pendente.</div>`;
 
       if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje) {
         if ("Notification" in window && Notification.permission === "granted") {
@@ -620,17 +679,6 @@
         document.getElementById("itiEndereco").value = "";
         sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
         carregarItinerario();
-      }
-    }
-
-    async function marcarItinerarioConcluido(linha) {
-      exibirMsg("Removendo visita das pendências...", false);
-      const res = await callAPI('concluirItinerario', { linha: linha });
-      if(res.erro) exibirMsg(res.erro, true);
-      else { 
-        exibirMsg(res.sucesso, false); 
-        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
-        carregarItinerario(); 
       }
     }
 
@@ -713,20 +761,17 @@
       }
     }
 
-    // === NOVO RADAR FRONTEND (ADAPTADO À NOVA LEITURA) ===
     async function carregarRadar() {
       const div = document.getElementById("areaRadar");
-      div.innerHTML = "Buscando as últimas posições nas folhas de ponto...";
-      
+      div.innerHTML = "Buscando posições...";
       const dados = await callAPI('getRadarEquipa');
       if (dados.erro || !dados || dados.length === 0) { 
-        div.innerHTML = "Nenhuma localização encontrada."; return; 
+        div.innerHTML = "Nenhum check-in registrado."; return; 
       }
-      
       let html = "";
       dados.forEach(d => {
         let cor = (d.acao === 'Entrada' || d.acao === 'Retorno') ? 'var(--accent)' : (d.acao === 'Pausa' ? 'var(--warning)' : 'var(--danger)');
-        let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 Em Atividade' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : '🏠 Fim de Expediente');
+        let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 Em Atividade' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : '🏠 Fim Expediente');
         let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) 
             ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` 
             : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
