@@ -1,6 +1,6 @@
-
 <!DOCTYPE html>
 <html lang="pt-BR">
+<!-- Forçando novo build no GitHub Actions para limpar a fila -->
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
@@ -216,7 +216,6 @@
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral</h3>
             
-            <!-- NOVOS FILTROS E BOTÃO DE EXPORTAÇÃO PDF -->
             <div style="display:flex; gap:10px; align-items:center;">
                <select id="filtroGeralColab" style="margin:0; padding:8px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()">
                  <option value="TODOS">Por Colaborador (Todos)</option>
@@ -255,7 +254,7 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN: ROTAS E FROTA (RESTAURADO) ================= -->
+      <!-- ================= ADMIN: ROTAS E FROTA ================= -->
       <div id="tab-rotas" class="tab-content">
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #a855f7;">Gestão de Frota e Reembolsos</h3>
@@ -309,19 +308,15 @@
   </div>
 
   <script>
-    // ==============================================================
-    // A URL DA SUA API 
-    // ==============================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
     let perfilAutenticado = "";
     let statusGlobalPonto = "Saída";
     let todasRotas = [];
-    let dadosGeralGlobais = []; // Guarda dados da aba Geral para o Filtro/PDF
+    let dadosGeralGlobais = []; 
     let notificadoHoje = false;
 
-    // === UTILITÁRIOS BASE ===
     async function callAPI(action, payload = {}) {
       payload.action = action;
       try {
@@ -354,7 +349,6 @@
       });
     }
 
-    // === INICIALIZAÇÃO ===
     window.onload = () => {
       const userSalvo = localStorage.getItem('ponto_auth_nome');
       const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
@@ -433,9 +427,6 @@
       document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
     }, 1000);
 
-    // ===============================================
-    // LÓGICA DO PONTO ESTADO E INTERFACE
-    // ===============================================
     function atualizarRegraBotoes(ultimoStatus) {
       statusGlobalPonto = ultimoStatus || 'Saída';
       
@@ -492,9 +483,6 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // ===============================================
-    // INTEGRAÇÃO INTELIGENTE AGENDA + PONTO
-    // ===============================================
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda) {
       exibirMsg(`Buscando GPS para registrar ${tipo} em${cliente}...`, false);
       if (!navigator.geolocation) return exibirMsg("GPS não suportado.", true);
@@ -536,9 +524,6 @@
       }, { enableHighAccuracy: true });
     }
 
-    // ===============================================
-    // RENDERIZAÇÃO DA AGENDA (CACHE VELOZ)
-    // ===============================================
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
@@ -655,9 +640,6 @@
       }
     }
 
-    // ===============================================
-    // CHECK-IN AVULSO (TAMBÉM INTEGRA COM PONTO)
-    // ===============================================
     async function checkinAvulso(acao) {
       const cli = document.getElementById('chkCliente').value.trim();
       if(!cli) return exibirMsg("Informe o nome do cliente avulso.", true);
@@ -685,9 +667,6 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // ===============================================
-    // HISTÓRICOS E APROVAÇÕES
-    // ===============================================
     function renderTag(tipo) {
       let cor = tipo === 'Entrada' ? 'var(--accent)' : (tipo === 'Saída' ? 'var(--danger)' : 'var(--warning)');
       let font = (tipo === 'Pausa' || tipo === 'Retorno') ? '#000' : '#fff';
@@ -767,9 +746,6 @@
       div.innerHTML = html;
     }
 
-    // ===============================================
-    // ADMIN: FILTRO GERAL E EXPORTAÇÃO PDF
-    // ===============================================
     async function carregarVisaoGeralPonto() {
       const tbody = document.getElementById("tblGeral");
       tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Buscando...</td></tr>';
@@ -814,7 +790,7 @@
 
     function exportarGeralPDF() {
       const filtro = document.getElementById("filtroGeralColab").value;
-      const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto" : `Relatório de Ponto - ${filtro}`;
+      const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto - Todos" : `Relatório de Ponto - ${filtro}`;
       
       let janela = window.open('', '', 'width=900,height=700');
       janela.document.write(`
@@ -852,16 +828,31 @@
       [...filtrados].reverse().forEach(d => {
         let tagClass = `tag-${d.tipo}`;
         let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><span style="color:#059669; font-weight:bold;">Total do dia: ${d.total}h</span>` : '';
-        janela.document.write(`<tr><td><strong>${d.dataHora}</strong></td><td>${d.nome}</td><td><span class="tag ${tagClass}">${d.tipo}</span></td><td>${d.obs || '-'}${infoExtra}</td></tr>`);
+        
+        janela.document.write(`
+          <tr>
+            <td><strong>${d.dataHora}</strong></td>
+            <td>${d.nome}</td>
+            <td><span class="tag ${tagClass}">${d.tipo}</span></td>
+            <td>${d.obs || 'Nenhuma'}${infoExtra}</td>
+          </tr>
+        `);
       });
 
-      janela.document.write(`</tbody></table><script>window.onload = function() { setTimeout(function(){ window.print(); window.close(); }, 500); }<\/script></body></html>`);
+      janela.document.write(`
+              </tbody>
+            </table>
+            <script>
+              window.onload = function() { 
+                setTimeout(function(){ window.print(); window.close(); }, 500);
+              }
+            <\/script>
+          </body>
+        </html>
+      `);
       janela.document.close();
     }
 
-    // ===============================================
-    // RESTANTE ADMIN
-    // ===============================================
     async function carregarBancoHoras() {
       const mesAno = document.getElementById('mesFiltro').value.trim();
       if(!mesAno || mesAno.length !== 7) return exibirMsg("Utilize o formato MM/YYYY (ex: 09/2026)", true);
