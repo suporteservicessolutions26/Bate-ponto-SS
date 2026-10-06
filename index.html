@@ -5,15 +5,26 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Portal Services & Solutions</title>
   
-  <!-- LIGAÇÃO À APP MOBILE PWA E LOGÓTIPO ATUALIZADO -->
-  <link rel="manifest" href="manifest.json">
+  <!-- LIGAÇÃO À APP MOBILE PWA E LOGÓTIPO ATUALIZADO (FORÇANDO A CACHE) -->
+  <link rel="manifest" href="manifest.json?v=2">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./Logo2.jpeg">
-  <link rel="icon" href="./Logo2.jpeg" type="image/jpeg">
+  <link rel="apple-touch-icon" href="./Logo2.jpeg?v=2">
+  <link rel="icon" href="./Logo2.jpeg?v=2" type="image/jpeg">
 
   <style>
-    :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
-    [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
+    /* VARIÁVEIS DO TEMA ESCURO (PADRÃO) */
+    :root { 
+      --bg: #0f172a; --card-bg: #1e293b; --border: #334155; 
+      --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; 
+      --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; 
+    }
+    
+    /* VARIÁVEIS DO TEMA CLARO */
+    [data-theme="light"] {
+      --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1;
+      --text: #0f172a; --text-muted: #64748b; --primary: #2563eb;
+      --accent: #059669; --warning: #d97706; --danger: #dc2626;
+    }
     [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
     [data-theme="light"] .box { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
     [data-theme="light"] .usuario-logado, [data-theme="light"] .card-metric, [data-theme="light"] .aviso-interno { background: #f1f5f9; }
@@ -126,11 +137,10 @@
 
     <div id="msgStatus"></div>
 
-    <!-- TELA DE LOGIN COM A NOVA LOGO -->
+    <!-- TELA DE LOGIN COM A LOGO -->
     <div id="tela-login" class="box">
       <div class="logo-container">
-        <!-- Puxando a logo que está no GitHub -->
-        <img src="./Logo2.jpeg" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
+        <img src="./Logo2.jpeg?v=2" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
       </div>
       
       <h3 style="margin-bottom: 16px; text-align: center;">Acesso ao Sistema</h3>
@@ -1054,7 +1064,6 @@
       document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()];
     }
 
-    // AUTO-KM FROTA
     async function autoCalcularKM() {
        const origem = document.getElementById("rotaOrigem").value.trim();
        const destino = document.getElementById("rotaDestino").value.trim();
