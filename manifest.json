@@ -1,0 +1,16 @@
+{
+  "name": "Portal Services & Solutions",
+  "short_name": "Portal SS",
+  "start_url": "./index.html",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#0f172a",
+  "description": "Portal de Gestão Field Service",
+  "icons": [
+    {
+      "src": "https://cdn-icons-png.flaticon.com/512/5956/5956592.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
