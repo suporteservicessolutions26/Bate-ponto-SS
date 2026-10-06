@@ -5,14 +5,33 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>Portal Services & Solutions</title>
   <style>
-    :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; }
+    /* VARIÁVEIS DO TEMA ESCURO (PADRÃO) */
+    :root { 
+      --bg: #0f172a; --card-bg: #1e293b; --border: #334155; 
+      --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; 
+      --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; 
+    }
+    
+    /* VARIÁVEIS DO TEMA CLARO */
+    [data-theme="light"] {
+      --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1;
+      --text: #0f172a; --text-muted: #64748b; --primary: #2563eb;
+      --accent: #059669; --warning: #d97706; --danger: #dc2626;
+    }
+    [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
+    [data-theme="light"] .box { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    [data-theme="light"] .usuario-logado, [data-theme="light"] .card-metric, [data-theme="light"] .aviso-interno { background: #f1f5f9; }
+    [data-theme="light"] th { background: #e2e8f0; color: #1e293b; }
+    [data-theme="light"] .card-itinerario, [data-theme="light"] .card-radar { background: #f8fafc; }
+    [data-theme="light"] .status-badge { background: #e2e8f0; color: #0f172a; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; transition: background-color 0.3s, color 0.3s; }
     body { background: var(--bg); color: var(--text); padding: 20px 16px; -webkit-tap-highlight-color: transparent; }
     .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
     header { display: flex; justify-content: space-between; align-items: center; }
     header h2 { font-size: 1.3rem; line-height: 1.2; }
     .box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 10px; margin-bottom: 16px; }
-    input, select { background: #0f172a; border: 1px solid var(--border); color: #fff; padding: 12px; border-radius: 6px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; }
+    input, select { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 6px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; }
     input:focus, select:focus { border-color: var(--primary); }
     label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; }
     .btn { color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: 0.2s; }
@@ -29,7 +48,7 @@
     #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; margin-top: 5px; margin-bottom: 15px; }
     .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; background: #334155; color: #fff; margin-bottom: 10px; }
     .aviso-interno { background: #0f172a; padding: 12px; text-align: center; border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; margin-bottom: 16px; }
-    .aviso-interno span { cursor: pointer; } .aviso-interno span:hover { text-decoration: underline; color: #fff; }
+    .aviso-interno span { cursor: pointer; } .aviso-interno span:hover { text-decoration: underline; color: var(--primary); }
 
     .usuario-logado { margin-top: 10px; display: inline-block; background: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); }
     .tabs { display: flex; border-bottom: 2px solid var(--border); margin-top: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
@@ -41,6 +60,7 @@
     td { padding: 12px 10px; border-bottom: 1px solid #243044; }
     .tag-tipo { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 4px; font-weight: 600; display: inline-block; }
     #msgStatus { padding: 12px; border-radius: 6px; display: none; font-size: 0.9rem; text-align: center; margin-bottom: 16px; font-weight: bold; position: sticky; top: 10px; z-index: 999;}
+    .correcao-area { background: #0f172a; padding: 16px; border-radius: 8px; margin-top: 20px; border: 1px dashed var(--border); display: none; }
     .card-radar { background: #0f172a; border-left: 4px solid var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 10px; }
     .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 10px; }
@@ -72,7 +92,10 @@
         <h2>Portal Services & Solutions</h2>
         <p style="color:var(--text-muted); font-size:0.85rem;" id="subHeader">Faça login para continuar</p>
       </div>
-      <button id="btnSair" class="btn-logout" style="display:none;" onclick="logout()">Sair</button>
+      <div style="display:flex; gap:10px; align-items:center;">
+         <button class="btn-logout" style="font-size:1.2rem; padding:4px 8px; border:none;" onclick="toggleTema()" title="Mudar Tema">🌓</button>
+         <button id="btnSair" class="btn-logout" style="display:none;" onclick="logout()">Sair</button>
+      </div>
     </header>
 
     <div id="msgStatus"></div>
@@ -125,7 +148,7 @@
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
           
-          <div style="margin-bottom:12px; background:#1e293b; padding:10px; border-radius:6px; border:1px solid var(--border);">
+          <div style="margin-bottom:12px; background:var(--card-bg); padding:10px; border-radius:6px; border:1px solid var(--border);">
             <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;">
                <input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:auto; margin:0; width:18px; height:18px;"> Agendamento Recorrente
             </label>
@@ -133,11 +156,10 @@
 
           <div class="form-row">
             <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
-            
             <div id="boxDataUnica"><label>Data</label><input type="date" id="itiData" /></div>
           </div>
 
-          <div id="boxDataRecorrente" style="display:none; background:#0f172a; padding:12px; border-radius:6px; border:1px dashed var(--warning); margin-bottom:14px;">
+          <div id="boxDataRecorrente" style="display:none; background:var(--bg); padding:12px; border-radius:6px; border:1px dashed var(--warning); margin-bottom:14px;">
              <div class="form-row" style="margin-bottom:10px;">
                 <div><label>Data Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div>
                 <div><label>Data Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div>
@@ -342,6 +364,14 @@
     let dadosGeralGlobais = []; 
     let notificadoHoje = false;
 
+    // CONTROLO DE TEMA (CLARO/ESCURO)
+    function toggleTema() {
+      const el = document.documentElement;
+      const tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      el.setAttribute('data-theme', tema);
+      localStorage.setItem('ponto_tema', tema);
+    }
+
     async function callAPI(action, payload = {}) {
       payload.action = action;
       try {
@@ -375,6 +405,7 @@
     }
 
     window.onload = () => {
+      if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
       const userSalvo = localStorage.getItem('ponto_auth_nome');
       const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
       if (userSalvo && perfilSalvo) entrarNoSistema(userSalvo, perfilSalvo);
@@ -399,6 +430,7 @@
       else {
         localStorage.setItem('ponto_auth_nome', res.nome);
         localStorage.setItem('ponto_auth_perfil', res.perfil);
+        localStorage.setItem('ponto_login_time', Date.now()); // Para o Auto-Logout
         entrarNoSistema(res.nome, res.perfil);
       }
     }
@@ -422,7 +454,9 @@
     }
 
     function logout() {
-      localStorage.removeItem('ponto_auth_nome'); localStorage.removeItem('ponto_auth_perfil');
+      localStorage.removeItem('ponto_auth_nome'); 
+      localStorage.removeItem('ponto_auth_perfil');
+      localStorage.removeItem('ponto_login_time');
       sessionStorage.clear();
       location.reload();
     }
@@ -447,10 +481,17 @@
       if(id === 'tab-rotas') carregarRotasServidor();
     }
 
+    // RELÓGIO & SEGURANÇA AUTO-LOGOUT (12H)
     setInterval(() => {
       const a = new Date();
       document.getElementById('relogio').innerText = a.toLocaleTimeString('pt-BR');
       document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+      
+      // Expulsar se passarem 12h sem fazer login
+      let horaLogin = localStorage.getItem('ponto_login_time');
+      if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) {
+         logout();
+      }
     }, 1000);
 
     function atualizarRegraBotoes(ultimoStatus) {
@@ -639,6 +680,9 @@
               </div>`;
         }
         
+        // INTEGRAÇÃO GPS (MAPS)
+        let btnMaps = d.endereco ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endereco)}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.8rem; background:transparent; border: 1px solid var(--primary); color:var(--primary); padding:6px 12px; border-radius:6px; text-decoration:none; font-weight:bold;">🗺️ Abrir Rota no Maps</a>` : '';
+
         if ((d.status === 'Pendente' || d.status === 'Em Andamento') && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
         let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem; margin-bottom:8px; display:block;">👤 Técnico: ${d.tecnico}</span>` : '';
 
@@ -647,7 +691,8 @@
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
               <strong style="color:var(--text); font-size:1.15rem; display:block; margin-bottom:4px;">${d.cliente}</strong>
-              <small style="color:var(--text-muted); font-size:0.9rem;">📍 ${d.endereco}</small>
+              <small style="color:var(--text-muted); font-size:0.9rem;">📍 ${d.endereco}</small><br>
+              ${btnMaps}
             </div>
             <small style="color:var(--text-muted); font-weight:bold; background:#0f172a; padding:6px 10px; border-radius:4px;">🕒 ${d.horario}</small>
           </div>
@@ -666,7 +711,6 @@
       }
     }
 
-    // NOVA LÓGICA DE AGENDAMENTO (ÚNICO OU RECORRENTE)
     function toggleRecorrencia() {
        const isRec = document.getElementById("itiRecorrente").checked;
        document.getElementById("boxDataUnica").style.display = isRec ? "none" : "block";
@@ -696,10 +740,8 @@
         const diasMarcados = Array.from(document.querySelectorAll('.chk-dia:checked')).map(cb => parseInt(cb.value));
         if(diasMarcados.length === 0) return exibirMsg("Selecione pelo menos um dia da semana para repetir.", true);
 
-        // Define a hora para meio-dia para evitar problemas de fuso horário no cálculo
         let dataAtual = new Date(dIni + "T12:00:00");
         let dataFinal = new Date(dFim + "T12:00:00");
-        
         if(dataAtual > dataFinal) return exibirMsg("A Data de Início deve ser antes da Data Fim.", true);
 
         while(dataAtual <= dataFinal) {
@@ -715,12 +757,8 @@
       }
 
       exibirMsg(`A gravar ${datasParaGravar.length} compromisso(s)...`, false);
-      document.getElementById("btnSair").focus(); // Tira o foco do botão para evitar duplos cliques
       
-      const payloads = datasParaGravar.map(dt => ({
-         tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: ""
-      }));
-
+      const payloads = datasParaGravar.map(dt => ({ tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: "" }));
       const res = await callAPI('addItinerarioMulti', { dadosArray: payloads });
 
       if(res.erro) exibirMsg(res.erro, true);
@@ -909,8 +947,14 @@
       const tbody = document.getElementById("tblGeral");
       
       let filtrados = dadosGeralGlobais;
-      if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
-      if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; return; }
+      if (filtro !== "TODOS") {
+         filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
+      }
+
+      if (filtrados.length === 0) { 
+          tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; 
+          return; 
+      }
 
       let html = "";
       [...filtrados].reverse().forEach(d => {
