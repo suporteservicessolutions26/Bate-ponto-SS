@@ -5,10 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Portal Services & Solutions</title>
   
-  <!-- LIGAÇÃO À APP MOBILE PWA -->
+  <!-- LIGAÇÃO À APP MOBILE PWA E LOGÓTIPO ATUALIZADO -->
   <link rel="manifest" href="manifest.json">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="https://cdn-icons-png.flaticon.com/512/5956/5956592.png">
+  <link rel="apple-touch-icon" href="./Logo2.jpeg">
+  <link rel="icon" href="./Logo2.jpeg" type="image/jpeg">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
@@ -73,6 +74,10 @@
     #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:20px; border-radius:12px; border:1px solid var(--border); }
     #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:6px; width:100%; height:120px; touch-action: none; margin-bottom:10px; }
 
+    /* DESIGN DA LOGO NO LOGIN */
+    .logo-container { text-align: center; margin-bottom: 20px; }
+    .logo-img { max-width: 180px; height: auto; border-radius: 8px; }
+
     @media (max-width: 640px) {
       .grid-botoes, .form-row { grid-template-columns: 1fr; }
       table, thead, tbody, tr, td { display: block; width: 100%; }
@@ -121,7 +126,13 @@
 
     <div id="msgStatus"></div>
 
+    <!-- TELA DE LOGIN COM A NOVA LOGO -->
     <div id="tela-login" class="box">
+      <div class="logo-container">
+        <!-- Puxando a logo que está no GitHub -->
+        <img src="./Logo2.jpeg" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
+      </div>
+      
       <h3 style="margin-bottom: 16px; text-align: center;">Acesso ao Sistema</h3>
       <label>Usuário</label>
       <input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
@@ -162,7 +173,7 @@
         </div>
         <div id="aviso-trabalho-interno" class="aviso-interno">
            <span style="color: var(--text-muted); font-size: 0.9rem;" onclick="abrirAba('tab-form', document.querySelectorAll('.tab-btn')[1])">
-             ⏳ Seu expediente está fechado. Inicie abaixo no <strong>"📍 Cheguei"</strong> ou <u>clique aqui se fará apenas Trabalho Interno.</u>
+             ⏳ Seu expediente está fechado. Inicie abaixo no <strong>"📍 Cheguei"</strong> ou <u>clique aqui se fará apenas Trabalho Interno na Base hoje.</u>
            </span>
         </div>
 
@@ -385,10 +396,8 @@
     let usuarioAutenticado = ""; let perfilAutenticado = ""; let statusGlobalPonto = "Saída";
     let todasRotas = []; let dadosGeralGlobais = []; let notificadoHoje = false;
     
-    // Variáveis do Modal de Saída
     let pendenteCliente = ""; let pendenteAcao = ""; let pendenteLinhaAgenda = null;
 
-    // REGISTO PWA LIGADO
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
 
     function toggleTema() {
@@ -445,7 +454,7 @@
       if (res.erro) exibirMsg(res.erro, true);
       else {
         localStorage.setItem('ponto_auth_nome', res.nome); localStorage.setItem('ponto_auth_perfil', res.perfil);
-        localStorage.setItem('ponto_login_time', Date.now()); // Auto-Logout
+        localStorage.setItem('ponto_login_time', Date.now()); 
         entrarNoSistema(res.nome, res.perfil);
       }
     }
@@ -495,7 +504,6 @@
       document.getElementById('relogio').innerText = a.toLocaleTimeString('pt-BR');
       document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
       
-      // AUTO-LOGOUT 12H (Segurança)
       let horaLogin = localStorage.getItem('ponto_login_time');
       if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) logout();
     }, 1000);
@@ -562,9 +570,6 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // =====================================
-    // GEOFENCE E CHAMADA DA AGENDA
-    // =====================================
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
       if (tipo === 'Forçar Remoção') {
           if(!confirm("Remover este compromisso da agenda?")) return;
@@ -578,34 +583,19 @@
       exibirMsg(`Capturando GPS e validando localização...`, false);
       
       let loc = "Sem GPS";
-      let posObj = null;
-
       try {
-         posObj = await new Promise((resolve, reject) => {
-            if (!navigator.geolocation) reject("Sem GPS");
-            navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 });
-         });
+         const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); });
          loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`;
          
-         // GEOFENCE (Só valida no Check-in se houver endereço na agenda)
          if (tipo === 'Cheguei' && enderecoCliente && enderecoCliente.length > 5) {
             const geoRes = await callAPI('verificarGeofence', { lat: posObj.coords.latitude, lon: posObj.coords.longitude, endereco: enderecoCliente });
             if (!geoRes.ok) {
-               if(!confirm(geoRes.msg + "\n\nDeseja forçar o check-in mesmo assim?")) {
-                  exibirMsg("Check-in cancelado.", true);
-                  return;
-               }
+               if(!confirm(geoRes.msg + "\n\nDeseja forçar o check-in mesmo assim?")) { exibirMsg("Check-in cancelado.", true); return; }
             }
          }
-      } catch(e) {
-         if(!confirm("Não conseguimos capturar seu GPS. Continuar sem localização?")) return;
-      }
+      } catch(e) { if(!confirm("Não conseguimos capturar seu GPS. Continuar sem localização?")) return; }
 
-      // SE FOR SAÍDA, ABRE O MODAL PARA FOTO E ASSINATURA (SE FOR DA AGENDA)
-      if (tipo.includes('Saí') && linhaAgenda) {
-          prepararModalAgenda(cliente, tipo, linhaAgenda);
-          return;
-      }
+      if (tipo.includes('Saí') && linhaAgenda) { prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
 
       processarVisita(cliente, tipo, linhaAgenda, loc, "");
     }
@@ -641,79 +631,43 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // =====================================
-    // GESTÃO DO MODAL DE COMPROVATIVOS
-    // =====================================
-    let assinando = false;
-    let canvas, ctx;
-
+    let assinando = false; let canvas, ctx;
     function initAssinatura() {
-       canvas = document.getElementById('canvasAssinatura');
-       ctx = canvas.getContext('2d');
-       
+       canvas = document.getElementById('canvasAssinatura'); ctx = canvas.getContext('2d');
        const startPos = (e) => { assinando = true; desenhar(e); };
        const endPos = () => { assinando = false; ctx.beginPath(); };
        const desenhar = (e) => {
-          if(!assinando) return;
-          e.preventDefault(); // Previne scroll ao assinar
+          if(!assinando) return; e.preventDefault(); 
           const rect = canvas.getBoundingClientRect();
-          const x = (e.clientX || e.touches[0].clientX) - rect.left;
-          const y = (e.clientY || e.touches[0].clientY) - rect.top;
-          ctx.lineWidth = 2; ctx.lineCap = 'round';
-          ctx.lineTo(x, y); ctx.stroke();
+          const x = (e.clientX || e.touches[0].clientX) - rect.left; const y = (e.clientY || e.touches[0].clientY) - rect.top;
+          ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(x, y); ctx.stroke();
           ctx.beginPath(); ctx.moveTo(x, y);
        };
-
        canvas.addEventListener('mousedown', startPos); canvas.addEventListener('mouseup', endPos); canvas.addEventListener('mousemove', desenhar);
        canvas.addEventListener('touchstart', startPos); canvas.addEventListener('touchend', endPos); canvas.addEventListener('touchmove', desenhar);
     }
-
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-    function prepararModalAgenda(cliente, acao, linha) {
-       pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha;
-       abrirModal();
-    }
-    
+    function prepararModalAgenda(cliente, acao, linha) { pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; abrirModal(); }
     function prepararModalAvulso(acao) {
        const cli = document.getElementById('chkCliente').value.trim();
        if(!cli) return exibirMsg("Informe o nome do local avulso.", true);
-       pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null;
-       abrirModal();
+       pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; abrirModal();
     }
-
-    function abrirModal() {
-       limparAssinatura();
-       document.getElementById('fotoVisita').value = "";
-       document.getElementById('modal-overlay').style.display = 'block';
-       document.getElementById('modal-box').style.display = 'block';
-    }
-
-    function fecharModal() {
-       document.getElementById('modal-overlay').style.display = 'none';
-       document.getElementById('modal-box').style.display = 'none';
-    }
+    function abrirModal() { limparAssinatura(); document.getElementById('fotoVisita').value = ""; document.getElementById('modal-overlay').style.display = 'block'; document.getElementById('modal-box').style.display = 'block'; }
+    function fecharModal() { document.getElementById('modal-overlay').style.display = 'none'; document.getElementById('modal-box').style.display = 'none'; }
 
     async function enviarComprovativoEFechar() {
-       const btn = document.getElementById('btnConfirmarModal');
-       btn.innerText = "A Enviar..."; btn.disabled = true;
-
+       const btn = document.getElementById('btnConfirmarModal'); btn.innerText = "A Enviar..."; btn.disabled = true;
        let linksExtra = "";
-       
-       // 1. Verificar e enviar Foto
        const fotoInput = document.getElementById('fotoVisita');
        if (fotoInput.files && fotoInput.files[0]) {
            exibirMsg("A enviar foto para o Google Drive...", false);
            const reader = new FileReader();
-           const fotoResult = await new Promise((resolve) => {
-              reader.onload = (e) => resolve(e.target.result);
-              reader.readAsDataURL(fotoInput.files[0]);
-           });
+           const fotoResult = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(fotoInput.files[0]); });
            const resF = await callAPI('uploadComprovativo', { base64: fotoResult, nomeArquivo: `Foto_${pendenteCliente}_${Date.now()}.jpg` });
            if(resF.sucesso) linksExtra += ` [Foto: ${resF.url}]`;
        }
-
-       // 2. Verificar e enviar Assinatura (se o canvas não estiver vazio)
        const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
        if (canvas.toDataURL() !== blank.toDataURL()) {
            exibirMsg("A enviar assinatura...", false);
@@ -721,33 +675,19 @@
            if(resA.sucesso) linksExtra += ` [Assinatura: ${resA.url}]`;
        }
 
-       fecharModal();
-       btn.innerText = "Concluir Saída"; btn.disabled = false;
-
-       // Seguir com o Check-in/Ponto
+       fecharModal(); btn.innerText = "Concluir Saída"; btn.disabled = false;
        exibirMsg("A concluir localização...", false);
        let loc = "Sem GPS";
-       try {
-           const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); });
-           loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`;
-       } catch(e) {}
+       try { const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); }); loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`; } catch(e) {}
 
-       if (pendenteLinhaAgenda) {
-           processarVisita(pendenteCliente, pendenteAcao, pendenteLinhaAgenda, loc, linksExtra);
-       } else {
-           // Fluxo Avulso
+       if (pendenteLinhaAgenda) { processarVisita(pendenteCliente, pendenteAcao, pendenteLinhaAgenda, loc, linksExtra); } 
+       else {
            await callAPI('registrarCheckin', { cliente: pendenteCliente, acao: pendenteAcao, observacao: "Visita Avulsa" + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
            let msgExtra = "";
-           if (pendenteAcao.includes('Fim de Expediente')) {
-               await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${pendenteCliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-               msgExtra = " e Expediente Encerrado";
-           }
-           exibirMsg(`Registrado com sucesso${msgExtra}!`, false);
-           document.getElementById('chkCliente').value = "";
-           carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+           if (pendenteAcao.includes('Fim de Expediente')) { await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${pendenteCliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado"; }
+           exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
        }
     }
-
 
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
@@ -800,7 +740,6 @@
                 ${btnConcluirAdmin}
               </div>`;
         } else {
-            // AQUI PASSA O ENDEREÇO PARA GEOFENCE
             botoesGeo = `
               <div style="display:flex; flex-direction:column; gap:8px;">
                 <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '${d.endereco}')">${txtChegada}</button>
@@ -808,9 +747,7 @@
               </div>`;
         }
         
-        // BOTÃO GOOGLE MAPS
-        let btnMaps = d.endereco ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endereco)}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.8rem; background:transparent; border: 1px solid var(--primary); color:var(--primary); padding:6px 12px; border-radius:6px; text-decoration:none; font-weight:bold;">🗺️️ Abrir no Maps</a>` : '';
-
+        let btnMaps = d.endereco ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endereco)}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.8rem; background:transparent; border: 1px solid var(--primary); color:var(--primary); padding:6px 12px; border-radius:6px; text-decoration:none; font-weight:bold;">🗺 Abrir no Maps</a>` : '';
         if ((d.status === 'Pendente' || d.status === 'Em Andamento') && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
         let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem; margin-bottom:8px; display:block;">👤 Técnico: ${d.tecnico}</span>` : '';
 
@@ -845,14 +782,11 @@
     }
 
     async function salvarNovoItinerario() {
-      const tec = document.getElementById("itiTecnico").value;
-      const cli = document.getElementById("itiCliente").value.trim();
-      const end = document.getElementById("itiEndereco").value.trim();
-      const hor = document.getElementById("itiHorario").value;
+      const tec = document.getElementById("itiTecnico").value; const cli = document.getElementById("itiCliente").value.trim();
+      const end = document.getElementById("itiEndereco").value.trim(); const hor = document.getElementById("itiHorario").value;
       const isRec = document.getElementById("itiRecorrente").checked;
 
       if(!cli || !end || !hor) return exibirMsg("Preencha o Local, Endereço e Horário.", true);
-
       let datasParaGravar = [];
 
       if (!isRec) {
@@ -860,8 +794,7 @@
         if(!dataU) return exibirMsg("Preencha a data do compromisso.", true);
         datasParaGravar.push(dataU); 
       } else {
-        const dIni = document.getElementById("itiDataIni").value;
-        const dFim = document.getElementById("itiDataFim").value;
+        const dIni = document.getElementById("itiDataIni").value; const dFim = document.getElementById("itiDataFim").value;
         if(!dIni || !dFim) return exibirMsg("Preencha o período.", true);
         const diasMarcados = Array.from(document.querySelectorAll('.chk-dia:checked')).map(cb => parseInt(cb.value));
         if(diasMarcados.length === 0) return exibirMsg("Selecione os dias da semana.", true);
@@ -886,8 +819,7 @@
       else {
         exibirMsg(res.sucesso, false);
         document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
-        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
-        carregarItinerario();
+        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario();
       }
     }
 
@@ -903,10 +835,10 @@
       let msgExtra = "";
       if (acao === 'Cheguei') {
         if (statusGlobalPonto === 'Saída') {
-           await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Auto Avulso: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+           await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
            msgExtra = " e Entrada Iniciada";
         } else if (statusGlobalPonto === 'Pausa') {
-           await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto Avulso Retorno: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+           await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
            msgExtra = " e Retorno Registrado";
         }
       }
@@ -935,9 +867,7 @@
         sessionStorage.setItem('cacheHist_' + nome, JSON.stringify(dados));
         renderizarHistoricoHTML(dados);
         let lastPonto = 'Saída';
-        for (let i = dados.length - 1; i >= 0; i--) {
-          if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { lastPonto = dados[i].tipo; break; }
-        }
+        for (let i = dados.length - 1; i >= 0; i--) { if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { lastPonto = dados[i].tipo; break; } }
         atualizarRegraBotoes(lastPonto);
       }
       carregarMeusAjustes(nome);
@@ -949,16 +879,9 @@
       let html = "";
       [...dados].reverse().forEach(d => {
         let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
-        
-        // Detetar Links de Comprovativos na Observação e criar botões bonitos
         let obsFormatada = d.obs;
-        if(obsFormatada.includes('[Foto:')) {
-           obsFormatada = obsFormatada.replace(/\[Foto:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none;">📸 Ver Foto</a>`);
-        }
-        if(obsFormatada.includes('[Assinatura:')) {
-           obsFormatada = obsFormatada.replace(/\[Assinatura:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--accent); font-size:0.8rem; text-decoration:none;">✍️ Ver Assinatura</a>`);
-        }
-
+        if(obsFormatada.includes('[Foto:')) obsFormatada = obsFormatada.replace(/\[Foto:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none;">📸 Ver Foto</a>`);
+        if(obsFormatada.includes('[Assinatura:')) obsFormatada = obsFormatada.replace(/\[Assinatura:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--accent); font-size:0.8rem; text-decoration:none;">✍️ Ver Assinatura</a>`);
         html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Ação">${renderTag(d.tipo)}</td><td data-label="Obs">${obsFormatada || '-'}${infoExtra}</td></tr>`;
       });
       tbody.innerHTML = html;
