@@ -8,9 +8,9 @@
   "description": "Portal de Gestão Field Service",
   "icons": [
     {
-      "src": "https://cdn-icons-png.flaticon.com/512/5956/5956592.png",
+      "src": "Logo2.jpeg",
       "sizes": "512x512",
-      "type": "image/png"
+      "type": "image/jpeg"
     }
   ]
 }
