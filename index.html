@@ -26,9 +26,14 @@
     .grid-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
     .btn-entrada { background: var(--accent); } .btn-pausa { background: var(--warning); color: #000; } .btn-saida { background: var(--danger); }
     .btn-acao { padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; }
-    .relogio-container { text-align: center; margin-bottom: 24px; padding: 10px 0 20px; border-bottom: 1px solid var(--border); }
-    #relogio { font-size: 3.5rem; font-weight: 700; color: var(--primary); letter-spacing: -1px; }
-    #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; }
+    
+    /* DESIGN DO RELÓGIO */
+    .header-relogio { background: var(--card-bg); border: 1px solid var(--border); border-bottom: 4px solid var(--primary); border-radius: 10px 10px 0 0; padding: 20px; text-align: center; }
+    #relogio { font-size: 3.5rem; font-weight: 700; color: var(--primary); letter-spacing: -1px; line-height: 1; }
+    #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; margin-top: 5px; margin-bottom: 15px; }
+    .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; background: #334155; color: #fff; margin-bottom: 10px; }
+    .aviso-interno { background: #0f172a; padding: 12px; text-align: center; border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; margin-bottom: 16px; }
+
     .usuario-logado { margin-top: 10px; display: inline-block; background: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); }
     .tabs { display: flex; border-bottom: 2px solid var(--border); margin-top: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
     .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; flex: 1; border-bottom: 2px solid transparent; margin-bottom: -2px; }
@@ -88,7 +93,7 @@
     <div id="tela-app" style="display: none;">
       <!-- ABAS COMUNS -->
       <div class="tabs">
-        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Painel e Agenda</button>
+        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
         <button class="tab-btn" onclick="abrirAba('tab-form', this)">Avulsos / Correções</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
       </div>
@@ -101,66 +106,57 @@
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this)" style="color: #a855f7;">Frota</button>
       </div>
 
-      <!-- ================= ABA 1: PAINEL DE CONTROLE (AGENDA E PONTO) ================= -->
+      <!-- ================= ABA 1: AGENDA ================= -->
       <div id="tab-itinerario" class="tab-content active">
-        <div class="box" style="padding-bottom: 10px;">
-          <div class="relogio-container" style="border:none; padding-bottom:0; margin-bottom:0;">
-            <div id="relogio">00:00:00</div>
-            <div id="data-atual" style="margin-bottom:15px;">Carregando data...</div>
-            <div class="usuario-logado">👤 <span id="nomeExibicao"></span></div>
-          </div>
-        </div>
-
-        <div class="box" style="border: 1px solid var(--primary); background: #0f172a;">
-          <h3 style="margin-bottom: 6px; font-size: 1.1rem; color: var(--primary);">Gestão de Ponto</h3>
-          <div id="status-atual-texto" style="font-weight:bold; font-size:0.9rem; margin-bottom:14px; text-align:center;">Buscando status...</div>
+        
+        <!-- HEADER COM RELÓGIO E AÇÕES RÁPIDAS -->
+        <div class="header-relogio">
+          <div id="relogio">00:00:00</div>
+          <div id="data-atual">Carregando data...</div>
+          <div id="status-badge" class="status-badge">Buscando status...</div>
+          <br>
+          <div class="usuario-logado" style="margin-top:0;">👤 <span id="nomeExibicao"></span></div>
           
-          <div id="painel-ponto-inativo" style="text-align:center;">
-            <p style="color:var(--text-muted); font-size:0.85rem; margin-bottom:16px;">
-              ⏳ Inicie o expediente clicando em "Cheguei" no seu primeiro cliente da Agenda.
-            </p>
-            <hr style="border-color:var(--border); margin-bottom:12px;">
-            <p style="color:var(--text-muted); font-size:0.8rem; margin-bottom:8px;">Trabalho interno hoje? (Sem visitas na rua)</p>
-            <button class="btn btn-entrada" onclick="baterPonto('Entrada')">🏢 Iniciar Expediente na Base</button>
-          </div>
-
-          <div id="painel-ponto-ativo" style="display:none;">
-            <label for="obs" style="color: var(--text-muted);">Observação (Opcional)</label>
-            <input type="text" id="obs" placeholder="Ex: Almoço / Na Base..." autocomplete="off" />
-            <div class="grid-botoes" id="botoes-ponto-ativos">
-              <button id="btnPausa" class="btn btn-pausa" onclick="baterPonto('Pausa')">⏸ Iniciar Pausa</button>
-              <button id="btnRetorno" class="btn btn-pausa" style="background:var(--accent); color:#fff;" onclick="baterPonto('Retorno')">▶ Voltar da Pausa</button>
-              <button id="btnSaida" class="btn btn-saida" onclick="baterPonto('Saída')">⏹ Fim de Expediente</button>
-            </div>
+          <!-- BOTÕES DE PAUSA/SAÍDA DINÂMICOS -->
+          <div id="acoes-rapidas" style="display:none; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
+             <button id="btnPausaRapida" class="btn-acao" style="background:var(--warning); color:#000; padding: 8px 16px;" onclick="baterPontoRapido('Pausa')">⏸ Pausa Almoço</button>
+             <button id="btnRetornoRapido" class="btn-acao" style="background:var(--accent); color:#fff; padding: 8px 16px;" onclick="baterPontoRapido('Retorno')">▶ Voltar da Pausa</button>
+             <button id="btnSaidaRapida" class="btn-acao" style="background:var(--danger); color:#fff; padding: 8px 16px;" onclick="baterPontoRapido('Saída')">⏹ Encerrar Expediente</button>
           </div>
         </div>
+        
+        <div id="aviso-trabalho-interno" class="aviso-interno">
+           <span style="color: var(--text-muted); font-size: 0.9rem;">⏳ O seu expediente está fechado. Para iniciar, clique em <strong>"📍 Cheguei"</strong> no seu primeiro compromisso (Cliente ou Base) na agenda abaixo.</span>
+        </div>
 
-        <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Visita (Admin)</h3>
+        <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
           <div class="form-row">
             <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
             <div><label>Data</label><input type="date" id="itiData" /></div>
           </div>
-          <label>Cliente</label><input type="text" id="itiCliente" placeholder="Nome do Cliente" />
+          <label>Cliente ou Local</label><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" />
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
           <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
         </div>
 
-        <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.2rem; color: #fcd34d;">Fila de Visitas</h3>
-          <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarItinerario(true)">🔄 Atualizar Agenda</button>
-          <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">Carregando agenda e tarefas...</div>
+        <div style="padding: 10px 0; background: transparent; border: none; margin-top:10px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+             <h3 style="margin: 0; font-size: 1.2rem; color: #fcd34d;">Fila de Visitas e Tarefas</h3>
+             <button style="background:transparent; border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:6px; cursor:pointer;" onclick="carregarItinerario(true)">🔄 Atualizar</button>
+          </div>
+          <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">Carregando agenda...</div>
         </div>
       </div>
 
-      <!-- ================= ABA 2: CHECK-IN AVULSO E CORREÇÕES ================= -->
+      <!-- ================= ABA 2: AVULSOS E CORREÇÕES ================= -->
       <div id="tab-form" class="tab-content">
+        
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Para clientes extras fora da agenda.</p>
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
           <label>Nome do Cliente / Local</label>
-          <input type="text" id="chkCliente" placeholder="Ex: Farmácia X / Loja Y" />
+          <input type="text" id="chkCliente" placeholder="Ex: Loja Extra Y" />
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
             <button class="btn" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
@@ -210,7 +206,7 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN: GERAL E PDF ================= -->
+      <!-- ================= ADMIN: GERAL (COM FILTRO E PDF) ================= -->
       <div id="tab-admin-ponto" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
@@ -330,8 +326,8 @@
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("sucesso") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso")) b.style.color = "#000"; else b.style.color = "#fff";
+      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("atualizada") ? "#fcd34d" : "var(--accent)");
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("atualizada")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
     }
@@ -426,38 +422,40 @@
       document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
     }, 1000);
 
+    // CONTROLO DE INTERFACE DO NOVO HEADER
     function atualizarRegraBotoes(ultimoStatus) {
       statusGlobalPonto = ultimoStatus || 'Saída';
       
-      const painelInativo = document.getElementById('painel-ponto-inativo');
-      const painelAtivo = document.getElementById('painel-ponto-ativo');
-      const bP = document.getElementById('btnPausa'), bR = document.getElementById('btnRetorno'), bS = document.getElementById('btnSaida');
-      const statusTxt = document.getElementById('status-atual-texto');
-
-      bP.style.display = 'none'; bR.style.display = 'none'; bS.style.display = 'none';
+      const badge = document.getElementById('status-badge');
+      const acoesRapidas = document.getElementById('acoes-rapidas');
+      const bPausa = document.getElementById('btnPausaRapida');
+      const bRetorno = document.getElementById('btnRetornoRapido');
+      const bSaida = document.getElementById('btnSaidaRapida');
+      const avisoInterno = document.getElementById('aviso-trabalho-interno');
 
       if (statusGlobalPonto === 'Saída') {
-        painelInativo.style.display = 'block';
-        painelAtivo.style.display = 'none';
-        if(statusTxt) statusTxt.innerHTML = "<span style='color:var(--danger)'>🔴 Fora de Expediente</span>";
+        badge.innerHTML = '🔴 Fora de Expediente';
+        badge.style.background = '#450a0a'; badge.style.color = '#fca5a5';
+        acoesRapidas.style.display = 'none';
+        if(avisoInterno) avisoInterno.style.display = 'block';
       } else {
-        painelInativo.style.display = 'none';
-        painelAtivo.style.display = 'block';
+        acoesRapidas.style.display = 'flex';
+        if(avisoInterno) avisoInterno.style.display = 'none';
         
         if (statusGlobalPonto === 'Entrada') { 
-            if(statusTxt) statusTxt.innerHTML = "<span style='color:var(--accent)'>🟢 Em Expediente</span>";
-            bP.style.display = 'block'; bS.style.display = 'block'; 
-            bP.style.gridColumn = 'span 1'; bS.style.gridColumn = 'span 1';
+            badge.innerHTML = '🟢 Em Expediente';
+            badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7';
+            bPausa.style.display = 'block'; bRetorno.style.display = 'none'; bSaida.style.display = 'block';
         }
         else if (statusGlobalPonto === 'Pausa') { 
-            if(statusTxt) statusTxt.innerHTML = "<span style='color:var(--warning)'>⏸ Em Pausa (Almoço)</span>";
-            bR.style.display = 'block'; 
-            bR.style.gridColumn = 'span 2'; 
+            badge.innerHTML = '🟡 Em Pausa (Almoço)';
+            badge.style.background = '#78350f'; badge.style.color = '#fcd34d';
+            bPausa.style.display = 'none'; bRetorno.style.display = 'block'; bSaida.style.display = 'none';
         }
         else if (statusGlobalPonto === 'Retorno') { 
-            if(statusTxt) statusTxt.innerHTML = "<span style='color:var(--accent)'>🟢 Em Expediente (Retorno)</span>";
-            bS.style.display = 'block'; 
-            bS.style.gridColumn = 'span 2'; 
+            badge.innerHTML = '🟢 Em Expediente (Pós-Almoço)';
+            badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7';
+            bPausa.style.display = 'none'; bRetorno.style.display = 'none'; bSaida.style.display = 'block';
         }
       }
 
@@ -465,18 +463,26 @@
       if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
     }
 
-    async function baterPonto(tipo) {
+    async function baterPontoRapido(tipo) {
+       baterPontoManual(tipo, true);
+    }
+
+    async function baterPontoManual(tipo, isRapido = false) {
       if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
       
-      let obs = document.getElementById("obs") ? document.getElementById("obs").value : "";
-      if (tipo === 'Entrada') obs = "Início Manual na Base";
+      let obs = "";
+      if (!isRapido && document.getElementById("obsManual")) {
+         obs = document.getElementById("obsManual").value;
+      }
+      
+      if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
 
       exibirMsg(`Capturando GPS e registrando ${tipo}...`, false);
       const loc = await obterLocalizacao();
       
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
-      if(document.getElementById("obs")) document.getElementById("obs").value = "";
+      if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
       if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false);
       
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
@@ -484,7 +490,7 @@
 
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda) {
       if (tipo === 'Forçar Remoção') {
-          if(!confirm("Remover esta visita da agenda?")) return;
+          if(!confirm("Remover este compromisso da agenda?")) return;
           exibirMsg("Forçando remoção...", false);
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
           sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
@@ -501,16 +507,16 @@
       
       if (tipo === 'Cheguei') {
          if (statusGlobalPonto === 'Saída') {
-             await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Auto-Ponto (Início Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início de Expediente (${cliente})`, nomeColaborador: usuarioAutenticado, localizacao: loc });
              msgExtra = " e Entrada Iniciada";
          } else if (statusGlobalPonto === 'Pausa') {
-             await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto-Ponto (Retorno): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno de Pausa (${cliente})`, nomeColaborador: usuarioAutenticado, localizacao: loc });
              msgExtra = " e Retorno da Pausa Registrado";
          }
          if (linhaAgenda) await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       } 
       else if (tipo.includes('Fim de Expediente')) {
-         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Auto-Ponto (Fim Visita): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim de Expediente (${cliente})`, nomeColaborador: usuarioAutenticado, localizacao: loc });
          msgExtra = " e Expediente Encerrado";
       }
 
@@ -571,7 +577,7 @@
       let pendentesHoje = 0;
       const hojeStr = agora.toLocaleDateString('pt-BR');
 
-      let txtChegada = "📍 Cheguei no Cliente";
+      let txtChegada = "📍 Cheguei no Local";
       if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)";
       if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
 
@@ -597,7 +603,7 @@
             if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin;
         } else if (isAndamento) {
             botoesGeo = `
-              <span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Visita em Andamento</span>
+              <span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Atendimento em Andamento</span>
               <div style="display:flex; flex-direction:column; gap:8px;">
                 <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
                   <button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button>
@@ -634,11 +640,11 @@
         </div>`;
       });
       
-      document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; color:var(--text-muted);">Nenhuma visita pendente.</div>`;
+      document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; color:var(--text-muted);">Nenhum compromisso pendente.</div>`;
 
       if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje) {
         if ("Notification" in window && Notification.permission === "granted") {
-           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} visita(s) na agenda de hoje.` });
+           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda de hoje.` });
         }
         notificadoHoje = true;
       }
@@ -653,7 +659,7 @@
 
       if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos obrigatórios da agenda.", true);
 
-      exibirMsg("Atribuindo visita...", false);
+      exibirMsg("Atribuindo compromisso...", false);
       const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor, coordenadas: "" };
       const res = await callAPI('addItinerario', { dados: payload });
 
@@ -669,7 +675,7 @@
 
     async function checkinAvulso(acao) {
       const cli = document.getElementById('chkCliente').value.trim();
-      if(!cli) return exibirMsg("Informe o nome do cliente avulso.", true);
+      if(!cli) return exibirMsg("Informe o nome do local avulso.", true);
       
       exibirMsg(`Capturando GPS para visita avulsa...`, false);
       const loc = await obterLocalizacao();
