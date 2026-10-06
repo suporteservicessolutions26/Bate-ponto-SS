@@ -25,7 +25,8 @@
     .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
     .grid-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
     .btn-entrada { background: var(--accent); } .btn-pausa { background: var(--warning); color: #000; } .btn-saida { background: var(--danger); }
-    .btn-acao { padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; }
+    .btn-acao { padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
+    .btn-acao:active { transform: scale(0.98); }
     
     /* DESIGN DO RELÓGIO */
     .header-relogio { background: var(--card-bg); border: 1px solid var(--border); border-bottom: 4px solid var(--primary); border-radius: 10px 10px 0 0; padding: 20px; text-align: center; }
@@ -33,6 +34,8 @@
     #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; margin-top: 5px; margin-bottom: 15px; }
     .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; background: #334155; color: #fff; margin-bottom: 10px; }
     .aviso-interno { background: #0f172a; padding: 12px; text-align: center; border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; margin-bottom: 16px; }
+    .aviso-interno span { cursor: pointer; }
+    .aviso-interno span:hover { text-decoration: underline; color: #fff; }
 
     .usuario-logado { margin-top: 10px; display: inline-block; background: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); }
     .tabs { display: flex; border-bottom: 2px solid var(--border); margin-top: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
@@ -44,7 +47,6 @@
     td { padding: 12px 10px; border-bottom: 1px solid #243044; }
     .tag-tipo { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 4px; font-weight: 600; display: inline-block; }
     #msgStatus { padding: 12px; border-radius: 6px; display: none; font-size: 0.9rem; text-align: center; margin-bottom: 16px; font-weight: bold; position: sticky; top: 10px; z-index: 999;}
-    .correcao-area { background: #0f172a; padding: 16px; border-radius: 8px; margin-top: 20px; border: 1px dashed var(--border); display: none; }
     .card-radar { background: #0f172a; border-left: 4px solid var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 10px; }
     .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
     .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 10px; }
@@ -81,6 +83,7 @@
 
     <div id="msgStatus"></div>
 
+    <!-- TELA DE LOGIN -->
     <div id="tela-login" class="box">
       <h3 style="margin-bottom: 16px; text-align: center;">Acesso ao Sistema</h3>
       <label>Usuário</label>
@@ -90,11 +93,12 @@
       <button id="btnFazerLogin" class="btn btn-login" onclick="fazerLogin()">Entrar</button>
     </div>
 
+    <!-- TELA PRINCIPAL -->
     <div id="tela-app" style="display: none;">
       <!-- ABAS COMUNS -->
       <div class="tabs">
         <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
-        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Avulsos / Correções</button>
+        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Avulsos / Ponto Manual</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
       </div>
       <!-- ABAS ADMIN -->
@@ -106,7 +110,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this)" style="color: #a855f7;">Frota</button>
       </div>
 
-      <!-- ================= ABA 1: AGENDA ================= -->
+      <!-- ================= ABA 1: AGENDA E MOTOR DE PONTO ================= -->
       <div id="tab-itinerario" class="tab-content active">
         
         <!-- HEADER COM RELÓGIO E AÇÕES RÁPIDAS -->
@@ -125,8 +129,11 @@
           </div>
         </div>
         
+        <!-- AVISO DE TRABALHO INTERNO -->
         <div id="aviso-trabalho-interno" class="aviso-interno">
-           <span style="color: var(--text-muted); font-size: 0.9rem;">⏳ O seu expediente está fechado. Para iniciar, clique em <strong>"📍 Cheguei"</strong> no seu primeiro compromisso (Cliente ou Base) na agenda abaixo.</span>
+           <span style="color: var(--text-muted); font-size: 0.9rem;" onclick="abrirAba('tab-form', document.querySelectorAll('.tab-btn')[1])">
+             ⏳ Seu expediente está fechado. Inicie abaixo no <strong>"📍 Cheguei"</strong> ou <u>clique aqui se fará apenas Trabalho Interno na Base hoje.</u>
+           </span>
         </div>
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
@@ -150,9 +157,22 @@
         </div>
       </div>
 
-      <!-- ================= ABA 2: AVULSOS E CORREÇÕES ================= -->
+      <!-- ================= ABA 2: AVULSOS E PONTO MANUAL ================= -->
       <div id="tab-form" class="tab-content">
         
+        <div class="box">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--primary);">Ponto Manual / Trabalho Interno</h3>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Utilize apenas para dias na Base sem visitas externas e agendas.</p>
+          <label for="obsManual">Observação (Opcional)</label>
+          <input type="text" id="obsManual" placeholder="Ex: Organização de Estoque..." autocomplete="off" />
+          <div class="grid-botoes">
+            <button id="btnEntradaMan" class="btn btn-entrada" onclick="baterPontoManual('Entrada')">Entrada</button>
+            <button id="btnPausaMan" class="btn btn-pausa" onclick="baterPontoManual('Pausa')">Pausa</button>
+            <button id="btnRetornoMan" class="btn btn-pausa" onclick="baterPontoManual('Retorno')">Retorno</button>
+            <button id="btnSaidaMan" class="btn btn-saida" onclick="baterPontoManual('Saída')">Saída</button>
+          </div>
+        </div>
+
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
           <label>Nome do Cliente / Local</label>
@@ -206,7 +226,7 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN: GERAL (COM FILTRO E PDF) ================= -->
+      <!-- ================= ADMIN: GERAL (PDF) ================= -->
       <div id="tab-admin-ponto" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
@@ -302,6 +322,7 @@
   </div>
 
   <script>
+    // URL DEFINITIVA DA API - Atualizada conforme pedido!
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
     let usuarioAutenticado = "";
@@ -326,8 +347,8 @@
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("atualizada") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("atualizada")) b.style.color = "#000"; else b.style.color = "#fff";
+      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("sucesso") ? "#fcd34d" : "var(--accent)");
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
     }
@@ -457,6 +478,16 @@
             badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7';
             bPausa.style.display = 'none'; bRetorno.style.display = 'none'; bSaida.style.display = 'block';
         }
+      }
+
+      // Desbloqueio dos botões da Aba "Ponto Manual" para coerência
+      const mbE = document.getElementById('btnEntradaMan'), mbP = document.getElementById('btnPausaMan'), mbR = document.getElementById('btnRetornoMan'), mbS = document.getElementById('btnSaidaMan');
+      if(mbE) {
+          mbE.disabled = true; mbP.disabled = true; mbR.disabled = true; mbS.disabled = true;
+          if (statusGlobalPonto === 'Saída') mbE.disabled = false;
+          else if (statusGlobalPonto === 'Entrada') { mbP.disabled = false; mbS.disabled = false; }
+          else if (statusGlobalPonto === 'Pausa') mbR.disabled = false;
+          else if (statusGlobalPonto === 'Retorno') mbS.disabled = false;
       }
 
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
