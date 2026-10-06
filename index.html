@@ -37,7 +37,7 @@
     table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
     th { background: #131d2e; padding: 12px 10px; color: var(--text-muted); }
     td { padding: 12px 10px; border-bottom: 1px solid #243044; }
-    .tag-tipo { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 4px; font-weight: 600; }
+    .tag-tipo { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 4px; font-weight: 600; display: inline-block; }
     #msgStatus { padding: 12px; border-radius: 6px; display: none; font-size: 0.9rem; text-align: center; margin-bottom: 16px; font-weight: bold; position: sticky; top: 10px; z-index: 999;}
     .correcao-area { background: #0f172a; padding: 16px; border-radius: 8px; margin-top: 20px; border: 1px dashed var(--border); display: none; }
     .card-radar { background: #0f172a; border-left: 4px solid var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 10px; }
@@ -47,7 +47,6 @@
     .card-metric .val { font-size: 1.4rem; font-weight: 700; margin-top: 6px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
-    /* CORES DINÂMICAS PARA A AGENDA */
     .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 16px; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: 0.2s;}
     .card-itinerario.pendente { border-left-color: var(--primary); }
     .card-itinerario.andamento { border-left-color: var(--warning); border-width: 4px; box-shadow: 0 0 12px rgba(245, 158, 11, 0.2); }
@@ -102,9 +101,8 @@
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this)" style="color: #a855f7;">Frota</button>
       </div>
 
-      <!-- ================= ABA 1: PAINEL DE CONTROLE (AGENDA + PONTO) ================= -->
+      <!-- ================= ABA 1: PAINEL DE CONTROLE (AGENDA E PONTO) ================= -->
       <div id="tab-itinerario" class="tab-content active">
-        
         <div class="box" style="padding-bottom: 10px;">
           <div class="relogio-container" style="border:none; padding-bottom:0; margin-bottom:0;">
             <div id="relogio">00:00:00</div>
@@ -188,9 +186,9 @@
       <!-- ================= HISTÓRICO ================= -->
       <div id="tab-hist" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem;">Meus Últimos Registros (Ponto)</h3>
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem;">Meus Últimos Registros</h3>
           <table>
-            <thead><tr><th>Data/Hora</th><th>Tipo</th><th>Observação / Horas</th></tr></thead>
+            <thead><tr><th>Data/Hora</th><th>Ação</th><th>Observação / Horas</th></tr></thead>
             <tbody id="tblCorpo"></tbody>
           </table>
         </div>
@@ -212,20 +210,20 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN: GERAL ================= -->
+      <!-- ================= ADMIN: GERAL E PDF ================= -->
       <div id="tab-admin-ponto" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
-            <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral</h3>
+            <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral da Operação</h3>
             <div style="display:flex; gap:10px; align-items:center;">
                <select id="filtroGeralColab" style="margin:0; padding:8px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()">
                  <option value="TODOS">Por Colaborador (Todos)</option>
                </select>
-               <button class="btn-acao" style="background:#dc2626; margin:0;" onclick="exportarGeralPDF()">📄 Exportar em PDF</button>
+               <button class="btn-acao" style="background:#dc2626; margin:0;" onclick="exportarGeralPDF()">📄 Exportar Histórico (PDF)</button>
             </div>
           </div>
           <table>
-            <thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Tipo</th><th>Resumo</th></tr></thead>
+            <thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Ação</th><th>Resumo</th></tr></thead>
             <tbody id="tblGeral"></tbody>
           </table>
         </div>
@@ -332,8 +330,8 @@
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("atualizada") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("atualizada")) b.style.color = "#000"; else b.style.color = "#fff";
+      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("sucesso") ? "#fcd34d" : "var(--accent)");
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
       setTimeout(() => b.style.display = "none", 6000);
     }
@@ -417,6 +415,7 @@
       
       if(id === 'tab-radar') carregarRadar();
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto();
+      if(id === 'tab-banco') carregarBancoHoras();
       if(id === 'tab-aprovacoes') carregarAprovacoes();
       if(id === 'tab-rotas') carregarRotasServidor();
     }
@@ -483,9 +482,6 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // ===============================================
-    // LÓGICA DE AÇÃO DA AGENDA (MOTOR DE FLUXO)
-    // ===============================================
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda) {
       if (tipo === 'Forçar Remoção') {
           if(!confirm("Remover esta visita da agenda?")) return;
@@ -511,8 +507,6 @@
              await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Auto-Ponto (Retorno): ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
              msgExtra = " e Retorno da Pausa Registrado";
          }
-         
-         // Atualiza o estado da agenda para EM ANDAMENTO
          if (linhaAgenda) await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       } 
       else if (tipo.includes('Fim de Expediente')) {
@@ -532,9 +526,6 @@
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // ===============================================
-    // ORDENAÇÃO E AVALIAÇÃO DE STATUS (FRONTEND)
-    // ===============================================
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
@@ -561,7 +552,6 @@
     function renderizarAgendaHTML(dados, verificarAlerta) {
       const agora = new Date();
       
-      // 1. Processar Datas e Regra de Tolerância (18:00h)
       dados.forEach(d => {
         const [dia, mes, ano] = d.data.split('/');
         const [hora, min] = d.horario.split(':');
@@ -569,14 +559,12 @@
         
         const limiteVisita = new Date(ano, mes - 1, dia, 18, 0); 
         
-        // Se for Pendente e passou das 18h do dia da visita, é dada como Perdida.
         if (d.status === 'Pendente' && agora > limiteVisita) {
            d.status = 'Perdida';
-           callAPI('atualizarStatusItinerario', { linha: d.linha, status: 'Perdida' }); // Atualiza no Servidor silenciosamente
+           callAPI('atualizarStatusItinerario', { linha: d.linha, status: 'Perdida' }); 
         }
       });
 
-      // 2. Ordenar de Forma Crescente (O que está mais perto de acontecer no topo)
       dados.sort((a, b) => a.objData - b.objData);
 
       let html = "";
@@ -588,7 +576,6 @@
       if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
 
       dados.forEach(d => {
-        // Se a visita foi Perdida e o usuário for Técnico, não renderiza (Sai da fila dele)
         if (d.status === 'Perdida' && perfilAutenticado !== 'Admin') return; 
 
         let isConcluido = d.status === 'Concluído';
@@ -606,10 +593,9 @@
         if (isConcluido) {
             botoesGeo = `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>`;
         } else if (isPerdida) {
-            botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem inicio até às 18h)</span>`;
+            botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem início até 18h)</span>`;
             if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin;
         } else if (isAndamento) {
-            // Oculta o "Cheguei" e mostra as opções de saída
             botoesGeo = `
               <span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Visita em Andamento</span>
               <div style="display:flex; flex-direction:column; gap:8px;">
@@ -621,7 +607,6 @@
                 ${btnConcluirAdmin}
               </div>`;
         } else {
-            // Se está Pendente, ele SÓ pode clicar em Cheguei. Não pode concluir.
             botoesGeo = `
               <div style="display:flex; flex-direction:column; gap:8px;">
                 <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha})">${txtChegada}</button>
@@ -710,9 +695,12 @@
     }
 
     function renderTag(tipo) {
-      let cor = tipo === 'Entrada' ? 'var(--accent)' : (tipo === 'Saída' ? 'var(--danger)' : 'var(--warning)');
-      let font = (tipo === 'Pausa' || tipo === 'Retorno') ? '#000' : '#fff';
-      return `<span class="tag-tipo" style="background:${cor}; color:${font}">${tipo}</span>`;
+      if (tipo === 'Entrada' || tipo === 'Retorno') return `<span class="tag-tipo" style="background:var(--accent); color:#fff">${tipo}</span>`;
+      if (tipo === 'Saída') return `<span class="tag-tipo" style="background:var(--danger); color:#fff">${tipo}</span>`;
+      if (tipo === 'Pausa') return `<span class="tag-tipo" style="background:var(--warning); color:#000">${tipo}</span>`;
+      if (tipo === 'Cheguei') return `<span class="tag-tipo" style="background:#bae6fd; color:#0369a1">Chegada</span>`;
+      if (tipo.includes('Saí')) return `<span class="tag-tipo" style="background:#475569; color:#fff">${tipo}</span>`;
+      return `<span class="tag-tipo" style="background:#334155; color:#fff">${tipo}</span>`;
     }
 
     async function carregarHistoricoEAtualizarBotoes(nome) {
@@ -725,10 +713,18 @@
       let html = "";
       [...dados].reverse().forEach(d => {
         let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
-        html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Obs">${d.obs||'-'}${infoExtra}</td></tr>`;
+        html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Ação">${renderTag(d.tipo)}</td><td data-label="Obs">${d.obs||'-'}${infoExtra}</td></tr>`;
       });
       tbody.innerHTML = html;
-      atualizarRegraBotoes(dados[dados.length - 1].tipo);
+      
+      let lastPonto = 'Saída';
+      for (let i = dados.length - 1; i >= 0; i--) {
+        if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) {
+           lastPonto = dados[i].tipo;
+           break;
+        }
+      }
+      atualizarRegraBotoes(lastPonto);
       carregarMeusAjustes(nome);
     }
 
@@ -763,15 +759,15 @@
 
     async function carregarRadar() {
       const div = document.getElementById("areaRadar");
-      div.innerHTML = "Buscando posições...";
+      div.innerHTML = "Buscando posições na base de dados...";
       const dados = await callAPI('getRadarEquipa');
       if (dados.erro || !dados || dados.length === 0) { 
-        div.innerHTML = "Nenhum check-in registrado."; return; 
+        div.innerHTML = "Nenhuma localização encontrada."; return; 
       }
       let html = "";
       dados.forEach(d => {
-        let cor = (d.acao === 'Entrada' || d.acao === 'Retorno') ? 'var(--accent)' : (d.acao === 'Pausa' ? 'var(--warning)' : 'var(--danger)');
-        let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 Em Atividade' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : '🏠 Fim Expediente');
+        let cor = (d.acao === 'Entrada' || d.acao === 'Retorno' || d.acao === 'Cheguei') ? 'var(--accent)' : (d.acao === 'Pausa' ? 'var(--warning)' : 'var(--danger)');
+        let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 No Ponto' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : (d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Fim'));
         let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) 
             ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` 
             : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
@@ -847,11 +843,12 @@
               table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
               th { background-color: #f1f5f9; color: #334155; padding: 12px; font-weight: bold; border-bottom: 2px solid #cbd5e1; }
               td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #475569; }
-              .tag { font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; }
+              .tag { font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; background: #e2e8f0; color: #475569;}
               .tag-Entrada { background: #d1fae5; color: #065f46; }
               .tag-Pausa { background: #fef3c7; color: #92400e; }
               .tag-Retorno { background: #e0e7ff; color: #3730a3; }
               .tag-Saída { background: #fee2e2; color: #991b1b; }
+              .tag-Cheguei { background: #bae6fd; color: #0369a1; }
             </style>
           </head>
           <body>
@@ -860,7 +857,7 @@
               <p><strong>Portal Services & Solutions</strong> - Documento gerado em: ${new Date().toLocaleString('pt-BR')}</p>
             </div>
             <table>
-              <thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Tipo de Registo</th><th>Observações e Horas Extra</th></tr></thead>
+              <thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Tipo de Ação</th><th>Observações e Horas Extra</th></tr></thead>
               <tbody>
       `);
 
@@ -876,7 +873,7 @@
             <td><strong>${d.dataHora}</strong></td>
             <td>${d.nome}</td>
             <td><span class="tag ${tagClass}">${d.tipo}</span></td>
-            <td>${d.obs || 'Nenhuma'}${infoExtra}</td>
+            <td>${d.obs || '-'}${infoExtra}</td>
           </tr>
         `);
       });
