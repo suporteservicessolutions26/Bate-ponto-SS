@@ -4,27 +4,14 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
   <title>Portal Services & Solutions</title>
-  
-  <!-- LIGAÇÃO À APP MOBILE PWA E LOGÓTIPO ATUALIZADO (FORÇANDO A CACHE) -->
-  <link rel="manifest" href="manifest.json?v=2">
+  <link rel="manifest" href="manifest.json?v=3">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./Logo2.jpeg?v=2">
-  <link rel="icon" href="./Logo2.jpeg?v=2" type="image/jpeg">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=3">
+  <link rel="icon" href="./LogoSS.png?v=3" type="image/png">
 
   <style>
-    /* VARIÁVEIS DO TEMA ESCURO (PADRÃO) */
-    :root { 
-      --bg: #0f172a; --card-bg: #1e293b; --border: #334155; 
-      --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; 
-      --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; 
-    }
-    
-    /* VARIÁVEIS DO TEMA CLARO */
-    [data-theme="light"] {
-      --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1;
-      --text: #0f172a; --text-muted: #64748b; --primary: #2563eb;
-      --accent: #059669; --warning: #d97706; --danger: #dc2626;
-    }
+    :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
+    [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
     [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
     [data-theme="light"] .box { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
     [data-theme="light"] .usuario-logado, [data-theme="light"] .card-metric, [data-theme="light"] .aviso-interno { background: #f1f5f9; }
@@ -68,10 +55,13 @@
     .tag-tipo { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 4px; font-weight: 600; display: inline-block; }
     #msgStatus { padding: 12px; border-radius: 6px; display: none; font-size: 0.9rem; text-align: center; margin-bottom: 16px; font-weight: bold; position: sticky; top: 10px; z-index: 999;}
     .card-radar { background: #0f172a; border-left: 4px solid var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+    
+    /* DASHBOARD E MÉTRICAS */
     .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 10px; }
+    .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 10px; text-align: center; }
     .card-metric .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
     .card-metric .val { font-size: 1.4rem; font-weight: 700; margin-top: 6px; }
+    
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
     .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 16px; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: 0.2s;}
@@ -80,12 +70,15 @@
     .card-itinerario.concluido { border-left-color: var(--accent); opacity: 0.5; }
     .card-itinerario.perdida { border-left-color: var(--danger); opacity: 0.4; background: #1e1e24; }
 
-    /* MODAL DE COMPROVATIVOS */
+    /* MODAL DE COMPROVATIVOS E RATING */
     #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.8); z-index:9998; backdrop-filter: blur(3px); }
-    #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:20px; border-radius:12px; border:1px solid var(--border); }
+    #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:20px; border-radius:12px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; }
     #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:6px; width:100%; height:120px; touch-action: none; margin-bottom:10px; }
+    
+    .star-rating { font-size: 2rem; color: #334155; cursor: pointer; display: flex; justify-content: center; gap: 10px; margin-bottom:15px; }
+    .star-rating span { transition: 0.2s; }
+    .star-rating span.ativo { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.5); }
 
-    /* DESIGN DA LOGO NO LOGIN */
     .logo-container { text-align: center; margin-bottom: 20px; }
     .logo-img { max-width: 180px; height: auto; border-radius: 8px; }
 
@@ -102,24 +95,33 @@
 </head>
 <body>
   
-  <!-- MODAL DE AUDITORIA (FOTO/ASSINATURA) -->
+  <!-- MODAL DE AUDITORIA E AVALIAÇÃO -->
   <div id="modal-overlay"></div>
   <div id="modal-box">
-     <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.2rem;">Finalizar e Comprovar</h3>
-     <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:15px;">Estes dados serão anexados ao seu histórico de visitas.</p>
+     <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.2rem;" id="modalTitulo">Finalizar e Comprovar</h3>
      
-     <label>📸 Tirar Foto (Opcional)</label>
+     <div id="box-avaliacao" style="text-align:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid var(--border);">
+        <label style="color:var(--text); font-weight:bold;">Avaliação do Cliente</label>
+        <p style="font-size:0.75rem; margin-bottom:10px;">Como avalia o serviço prestado?</p>
+        <div class="star-rating" id="starContainer">
+           <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
+        </div>
+     </div>
+
+     <label id="lblFoto">📸 Tirar Foto (Opcional)</label>
      <input type="file" id="fotoVisita" accept="image/*" capture="environment" style="padding:8px;" />
      
-     <label>✍️ Assinatura do Cliente (Opcional)</label>
-     <canvas id="canvasAssinatura"></canvas>
-     <div style="text-align:right;">
-        <button class="btn-logout" style="font-size:0.75rem;" onclick="limparAssinatura()">Limpar Assinatura</button>
+     <div id="box-assinatura">
+       <label>✍️ Assinatura do Cliente (Opcional)</label>
+       <canvas id="canvasAssinatura"></canvas>
+       <div style="text-align:right;">
+          <button class="btn-logout" style="font-size:0.75rem;" onclick="limparAssinatura()">Limpar Assinatura</button>
+       </div>
      </div>
      
      <div style="display:flex; gap:10px; margin-top:20px;">
         <button class="btn btn-logout" style="flex:1;" onclick="fecharModal()">Cancelar</button>
-        <button class="btn btn-entrada" id="btnConfirmarModal" style="flex:2;" onclick="enviarComprovativoEFechar()">Concluir Saída</button>
+        <button class="btn btn-entrada" id="btnConfirmarModal" style="flex:2;" onclick="enviarComprovativoEFechar()">Concluir</button>
      </div>
   </div>
 
@@ -135,14 +137,17 @@
       </div>
     </header>
 
+    <!-- ALERTA DE FADIGA -->
+    <div id="alerta-fadiga" class="aviso-interno" style="display:none; background:#7f1d1d; color:#fca5a5; border-color:#991b1b; border-radius:10px; margin-bottom:16px;">
+      ⚠️ <strong>ALERTA DE FADIGA:</strong> Encontra-se a trabalhar há mais de 6 horas sem registo de pausa. Por favor, faça o registo de Almoço/Pausa imediatamente.
+    </div>
+
     <div id="msgStatus"></div>
 
-    <!-- TELA DE LOGIN COM A LOGO -->
     <div id="tela-login" class="box">
       <div class="logo-container">
-        <img src="./Logo2.jpeg?v=2" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
+        <img src="./LogoSS.png?v=3" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
       </div>
-      
       <h3 style="margin-bottom: 16px; text-align: center;">Acesso ao Sistema</h3>
       <label>Usuário</label>
       <input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
@@ -155,7 +160,7 @@
       <!-- ABAS COMUNS -->
       <div class="tabs">
         <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
-        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Avulsos / Ponto Manual</button>
+        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Avulsos / Manual</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
       </div>
       <!-- ABAS ADMIN -->
@@ -189,35 +194,20 @@
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
-          
           <div style="margin-bottom:12px; background:var(--card-bg); padding:10px; border-radius:6px; border:1px solid var(--border);">
-            <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;">
-               <input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:auto; margin:0; width:18px; height:18px;"> Agendamento Recorrente
-            </label>
+            <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:auto; margin:0; width:18px; height:18px;"> Agendamento Recorrente</label>
           </div>
-
           <div class="form-row">
             <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
             <div id="boxDataUnica"><label>Data</label><input type="date" id="itiData" /></div>
           </div>
-
           <div id="boxDataRecorrente" style="display:none; background:var(--bg); padding:12px; border-radius:6px; border:1px dashed var(--warning); margin-bottom:14px;">
-             <div class="form-row" style="margin-bottom:10px;">
-                <div><label>Data Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div>
-                <div><label>Data Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div>
-             </div>
+             <div class="form-row" style="margin-bottom:10px;"><div><label>Data Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div><div><label>Data Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div></div>
              <label style="color:var(--warning);">Repetir nos seguintes dias:</label>
              <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:0.9rem; margin-top:8px;">
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:auto;margin:0;">Seg</label>
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:auto;margin:0;">Ter</label>
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:auto;margin:0;">Qua</label>
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:auto;margin:0;">Qui</label>
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:auto;margin:0;">Sex</label>
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:auto;margin:0;">Sáb</label>
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="0" class="chk-dia" style="width:auto;margin:0;">Dom</label>
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:auto;margin:0;">Seg</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:auto;margin:0;">Ter</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:auto;margin:0;">Qua</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:auto;margin:0;">Qui</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:auto;margin:0;">Sex</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:auto;margin:0;">Sáb</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="0" class="chk-dia" style="width:auto;margin:0;">Dom</label>
              </div>
           </div>
-
           <label>Cliente ou Local</label><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" />
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
@@ -274,8 +264,16 @@
         </div>
       </div>
 
-      <!-- ================= HISTÓRICO ================= -->
+      <!-- ================= HISTÓRICO E DASHBOARD PESSOAL ================= -->
       <div id="tab-hist" class="tab-content">
+        <!-- GAMIFICAÇÃO: DASHBOARD PESSOAL -->
+        <h3 style="margin: 0 0 14px; font-size: 1.1rem; color:var(--primary);">Meu Desempenho (Neste Mês)</h3>
+        <div class="metrics">
+            <div class="card-metric"><div class="label">Visitas Concluídas</div><div class="val" id="lblVisitasMes" style="color:var(--accent);">0</div></div>
+            <div class="card-metric"><div class="label">Horas Trabalhadas</div><div class="val" id="lblTotalMes">00:00</div></div>
+            <div class="card-metric"><div class="label">Horas Extras</div><div class="val" id="lblExtraMes" style="color:var(--danger);">00:00</div></div>
+        </div>
+
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem;">Meus Últimos Registros</h3>
           <table>
@@ -307,16 +305,11 @@
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral da Operação</h3>
             <div style="display:flex; gap:10px; align-items:center;">
-               <select id="filtroGeralColab" style="margin:0; padding:8px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()">
-                 <option value="TODOS">Por Colaborador (Todos)</option>
-               </select>
+               <select id="filtroGeralColab" style="margin:0; padding:8px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()"><option value="TODOS">Por Colaborador (Todos)</option></select>
                <button class="btn-acao" style="background:#dc2626; margin:0;" onclick="exportarGeralPDF()">📄 Exportar Histórico (PDF)</button>
             </div>
           </div>
-          <table>
-            <thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Ação</th><th>Resumo</th></tr></thead>
-            <tbody id="tblGeral"></tbody>
-          </table>
+          <table><thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Ação</th><th>Resumo</th></tr></thead><tbody id="tblGeral"></tbody></table>
         </div>
       </div>
 
@@ -324,14 +317,8 @@
       <div id="tab-banco" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--primary);">Fechamento Mensal de Horas</h3>
-          <div style="display:flex; gap:10px; margin-bottom: 14px;">
-            <input type="text" id="mesFiltro" placeholder="MM/YYYY" maxlength="7" />
-            <button class="btn" style="width: auto; padding: 0 20px; background: var(--primary);" onclick="carregarBancoHoras()">Buscar</button>
-          </div>
-          <table>
-            <thead><tr><th>Colaborador</th><th>Total Mensal</th><th>Horas Extras</th></tr></thead>
-            <tbody id="tblBanco"><tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Insira o mês e clique em Buscar.</td></tr></tbody>
-          </table>
+          <div style="display:flex; gap:10px; margin-bottom: 14px;"><input type="text" id="mesFiltro" placeholder="MM/YYYY" maxlength="7" /><button class="btn" style="width: auto; padding: 0 20px; background: var(--primary);" onclick="carregarBancoHoras()">Buscar</button></div>
+          <table><thead><tr><th>Colaborador</th><th>Total Mensal</th><th>Horas Extras</th></tr></thead><tbody id="tblBanco"><tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Insira o mês e clique em Buscar.</td></tr></tbody></table>
         </div>
       </div>
 
@@ -365,37 +352,18 @@
               <div><label>Técnico</label><select id="rotaTecnico" required><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
               <div><label>Mês (Ex: Setembro/2026)</label><input type="text" id="rotaMes" required /></div>
             </div>
-            <div class="form-row">
-              <div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div>
-              <div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div>
-            </div>
+            <div class="form-row"><div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div><div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div></div>
             <div class="form-row">
               <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
-              <div>
-                 <label>Destino / Cliente</label>
-                 <input type="text" id="rotaDestino" required style="margin-bottom:4px;" />
-                 <button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância Automática</button>
-              </div>
+              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required style="margin-bottom:4px;" /><button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância</button></div>
             </div>
-            <div class="form-row">
-              <div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div>
-              <div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div>
-            </div>
-            <div class="form-row">
-              <div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div>
-              <div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div>
-            </div>
+            <div class="form-row"><div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div><div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div></div>
+            <div class="form-row"><div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div><div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div></div>
             <label>Observações</label><input type="text" id="rotaObs" />
             <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7; margin-top: 10px;">Salvar Rota</button>
           </form>
         </div>
-        
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;">
-          <table>
-            <thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead>
-            <tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody>
-          </table>
-        </div>
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;"><table><thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead><tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody></table></div>
       </div>
     </div>
   </div>
@@ -406,24 +374,23 @@
     let usuarioAutenticado = ""; let perfilAutenticado = ""; let statusGlobalPonto = "Saída";
     let todasRotas = []; let dadosGeralGlobais = []; let notificadoHoje = false;
     
+    // Variáveis Modal e Gamificação
     let pendenteCliente = ""; let pendenteAcao = ""; let pendenteLinhaAgenda = null;
+    let currentRating = 0; let tempoInicioExpediente = null;
 
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
 
     function toggleTema() {
-      const el = document.documentElement;
-      const tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      el.setAttribute('data-theme', tema);
-      localStorage.setItem('ponto_tema', tema);
+      const el = document.documentElement; const tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      el.setAttribute('data-theme', tema); localStorage.setItem('ponto_tema', tema);
     }
 
     async function callAPI(action, payload = {}) {
       payload.action = action;
       try {
         const response = await fetch(API_URL, { method: "POST", redirect: "follow", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }});
-        const text = await response.text();
-        try { return JSON.parse(text); } catch (e) { return { erro: "A API do Google bloqueou a leitura." }; }
-      } catch (err) { return { erro: "Falha de rede ao conectar com a API." }; }
+        const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { erro: "A API do Google bloqueou a leitura." }; }
+      } catch (err) { return { erro: "Falha de rede ao conectar." }; }
     }
 
     function exibirMsg(msg, isErro) {
@@ -436,25 +403,19 @@
     async function obterLocalizacao() {
       return new Promise((resolve) => {
         if (!navigator.geolocation) return resolve("GPS não suportado");
-        navigator.geolocation.getCurrentPosition(
-          (pos) => { resolve(`https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`); },
-          (err) => { resolve("Sem permissão de GPS"); },
-          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
-        );
+        navigator.geolocation.getCurrentPosition((pos) => { resolve(`https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`); }, (err) => { resolve("Sem permissão de GPS"); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
       });
     }
 
     window.onload = () => {
       if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
-      const userSalvo = localStorage.getItem('ponto_auth_nome');
-      const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
+      const userSalvo = localStorage.getItem('ponto_auth_nome'); const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
       if (userSalvo && perfilSalvo) entrarNoSistema(userSalvo, perfilSalvo);
       initAssinatura();
     };
 
     async function fazerLogin() {
-      const u = document.getElementById('loginUser').value.trim();
-      const s = document.getElementById('loginSenha').value;
+      const u = document.getElementById('loginUser').value.trim(); const s = document.getElementById('loginSenha').value;
       const btn = document.getElementById('btnFazerLogin');
       if(!u || !s) return exibirMsg("Preencha usuário e senha.", true);
       btn.disabled = true; btn.innerText = "Autenticando...";
@@ -463,103 +424,61 @@
       btn.disabled = false; btn.innerText = "Entrar";
       if (res.erro) exibirMsg(res.erro, true);
       else {
-        localStorage.setItem('ponto_auth_nome', res.nome); localStorage.setItem('ponto_auth_perfil', res.perfil);
-        localStorage.setItem('ponto_login_time', Date.now()); 
+        localStorage.setItem('ponto_auth_nome', res.nome); localStorage.setItem('ponto_auth_perfil', res.perfil); localStorage.setItem('ponto_login_time', Date.now()); 
         entrarNoSistema(res.nome, res.perfil);
       }
     }
 
     function entrarNoSistema(nome, perfil) {
-      usuarioAutenticado = nome; perfilAutenticado = perfil;
-      document.getElementById('nomeExibicao').innerText = nome;
-      document.getElementById('tela-login').style.display = "none";
-      document.getElementById('tela-app').style.display = "block";
-      document.getElementById('btnSair').style.display = "block";
-      
-      if (perfil === 'Admin') {
-        document.getElementById('subHeader').innerText = "Painel Administrativo";
-        document.getElementById('abasAdmin').style.display = "flex";
-        document.getElementById('areaAtribuirItinerario').style.display = "block";
-      }
-      abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda'));
-      carregarHistoricoEAtualizarBotoes(nome);
-      carregarItinerario(true); 
+      usuarioAutenticado = nome; perfilAutenticado = perfil; document.getElementById('nomeExibicao').innerText = nome;
+      document.getElementById('tela-login').style.display = "none"; document.getElementById('tela-app').style.display = "block"; document.getElementById('btnSair').style.display = "block";
+      if (perfil === 'Admin') { document.getElementById('subHeader').innerText = "Painel Administrativo"; document.getElementById('abasAdmin').style.display = "flex"; document.getElementById('areaAtribuirItinerario').style.display = "block"; }
+      abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); carregarHistoricoEAtualizarBotoes(nome); carregarItinerario(true); 
     }
 
-    function logout() {
-      localStorage.removeItem('ponto_auth_nome'); localStorage.removeItem('ponto_auth_perfil');
-      localStorage.removeItem('ponto_login_time'); sessionStorage.clear(); location.reload();
-    }
+    function logout() { localStorage.clear(); sessionStorage.clear(); location.reload(); }
 
     function abrirAba(id, btn) {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(e => {
-        e.classList.remove('active');
-        if(e.innerText.includes("Agenda")) { e.style.color = "var(--text-muted)"; e.style.borderBottomColor = "transparent"; }
-      });
+      document.querySelectorAll('.tab-btn').forEach(e => { e.classList.remove('active'); if(e.innerText.includes("Agenda")) { e.style.color = "var(--text-muted)"; e.style.borderBottomColor = "transparent"; } });
       document.getElementById(id).classList.add('active');
-      if(btn) {
-        btn.classList.add('active');
-        if(id === 'tab-itinerario') { btn.style.color = "#fcd34d"; btn.style.borderBottomColor = "#fcd34d"; }
-      }
-      if(id === 'tab-radar') carregarRadar();
-      if(id === 'tab-admin-ponto') carregarVisaoGeralPonto();
-      if(id === 'tab-banco') carregarBancoHoras();
-      if(id === 'tab-aprovacoes') carregarAprovacoes();
-      if(id === 'tab-rotas') carregarRotasServidor();
+      if(btn) { btn.classList.add('active'); if(id === 'tab-itinerario') { btn.style.color = "#fcd34d"; btn.style.borderBottomColor = "#fcd34d"; } }
+      if(id === 'tab-radar') carregarRadar(); if(id === 'tab-admin-ponto') carregarVisaoGeralPonto(); if(id === 'tab-banco') carregarBancoHoras(); if(id === 'tab-aprovacoes') carregarAprovacoes(); if(id === 'tab-rotas') carregarRotasServidor();
     }
 
     setInterval(() => {
-      const a = new Date();
-      document.getElementById('relogio').innerText = a.toLocaleTimeString('pt-BR');
-      document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-      
-      let horaLogin = localStorage.getItem('ponto_login_time');
-      if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) logout();
+      const a = new Date(); document.getElementById('relogio').innerText = a.toLocaleTimeString('pt-BR'); document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+      let horaLogin = localStorage.getItem('ponto_login_time'); if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) logout();
     }, 1000);
+
+    // FUNÇÕES DE TEMPO E FADIGA
+    function parseDataBR(str) { if(!str) return new Date(); let p = str.split(" "), d = p[0].split("/"), h = p[1].split(":"); return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]); }
+    function horasParaMin(hStr) { if(!hStr || hStr==='-' || hStr==='Erro') return 0; let p=hStr.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
+    function minParaHoras(min) { if(min<=0) return "00:00"; let h=Math.floor(min/60), m=min%60; return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m); }
 
     function atualizarRegraBotoes(ultimoStatus) {
       statusGlobalPonto = ultimoStatus || 'Saída';
-      const badge = document.getElementById('status-badge');
-      const acoesRapidas = document.getElementById('acoes-rapidas');
-      const bPausa = document.getElementById('btnPausaRapida');
-      const bRetorno = document.getElementById('btnRetornoRapido');
-      const bSaida = document.getElementById('btnSaidaRapida');
-      const avisoInterno = document.getElementById('aviso-trabalho-interno');
+      const badge = document.getElementById('status-badge'); const acoesRapidas = document.getElementById('acoes-rapidas');
+      const bPausa = document.getElementById('btnPausaRapida'); const bRetorno = document.getElementById('btnRetornoRapido'); const bSaida = document.getElementById('btnSaidaRapida'); const avisoInterno = document.getElementById('aviso-trabalho-interno');
 
       bPausa.style.display = 'none'; bRetorno.style.display = 'none'; bSaida.style.display = 'none';
-
-      if (statusGlobalPonto === 'Saída') {
-        badge.innerHTML = '🔴 Fora de Expediente';
-        badge.style.background = '#450a0a'; badge.style.color = '#fca5a5';
-        acoesRapidas.style.display = 'none';
-        if(avisoInterno) avisoInterno.style.display = 'block';
-      } else {
-        acoesRapidas.style.display = 'flex';
-        if(avisoInterno) avisoInterno.style.display = 'none';
-        
-        if (statusGlobalPonto === 'Entrada') { 
-            badge.innerHTML = '🟢 Em Expediente'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7';
-            bPausa.style.display = 'block'; bSaida.style.display = 'block'; 
-        }
-        else if (statusGlobalPonto === 'Pausa') { 
-            badge.innerHTML = '🟡 Em Pausa (Almoço)'; badge.style.background = '#78350f'; badge.style.color = '#fcd34d';
-            bRetorno.style.display = 'block'; 
-        }
-        else if (statusGlobalPonto === 'Retorno') { 
-            badge.innerHTML = '🟢 Em Expediente (Retorno)'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7';
-            bSaida.style.display = 'block'; 
-        }
+      if (statusGlobalPonto === 'Saída') { badge.innerHTML = '🔴 Fora de Expediente'; badge.style.background = '#450a0a'; badge.style.color = '#fca5a5'; acoesRapidas.style.display = 'none'; if(avisoInterno) avisoInterno.style.display = 'block'; } 
+      else {
+        acoesRapidas.style.display = 'flex'; if(avisoInterno) avisoInterno.style.display = 'none';
+        if (statusGlobalPonto === 'Entrada') { badge.innerHTML = '🟢 Em Expediente'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7'; bPausa.style.display = 'block'; bSaida.style.display = 'block'; }
+        else if (statusGlobalPonto === 'Pausa') { badge.innerHTML = '🟡 Em Pausa (Almoço)'; badge.style.background = '#78350f'; badge.style.color = '#fcd34d'; bRetorno.style.display = 'block'; }
+        else if (statusGlobalPonto === 'Retorno') { badge.innerHTML = '🟢 Em Expediente (Retorno)'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7'; bSaida.style.display = 'block'; }
       }
 
       const mbE = document.getElementById('btnEntradaMan'), mbP = document.getElementById('btnPausaMan'), mbR = document.getElementById('btnRetornoMan'), mbS = document.getElementById('btnSaidaMan');
-      if(mbE) {
-          mbE.disabled = true; mbP.disabled = true; mbR.disabled = true; mbS.disabled = true;
-          if (statusGlobalPonto === 'Saída') mbE.disabled = false;
-          else if (statusGlobalPonto === 'Entrada') { mbP.disabled = false; mbS.disabled = false; }
-          else if (statusGlobalPonto === 'Pausa') mbR.disabled = false;
-          else if (statusGlobalPonto === 'Retorno') mbS.disabled = false;
-      }
+      if(mbE) { mbE.disabled = true; mbP.disabled = true; mbR.disabled = true; mbS.disabled = true; if (statusGlobalPonto === 'Saída') mbE.disabled = false; else if (statusGlobalPonto === 'Entrada') { mbP.disabled = false; mbS.disabled = false; } else if (statusGlobalPonto === 'Pausa') mbR.disabled = false; else if (statusGlobalPonto === 'Retorno') mbS.disabled = false; }
+      
+      const alertaFadiga = document.getElementById('alerta-fadiga');
+      if (statusGlobalPonto === 'Entrada' && tempoInicioExpediente) {
+         let diffHoras = (new Date() - tempoInicioExpediente) / 3600000;
+         alertaFadiga.style.display = (diffHoras > 6) ? 'block' : 'none';
+      } else { alertaFadiga.style.display = 'none'; }
+
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
       if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
     }
@@ -568,16 +487,24 @@
 
     async function baterPontoManual(tipo, isRapido = false) {
       if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
-      let obs = "";
-      if (!isRapido && document.getElementById("obsManual")) obs = document.getElementById("obsManual").value;
+      let obs = ""; if (!isRapido && document.getElementById("obsManual")) obs = document.getElementById("obsManual").value;
       if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
-
-      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false);
-      const loc = await obterLocalizacao();
+      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false); const loc = await obterLocalizacao();
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
-      if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false);
-      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+      if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+    }
+
+    // =====================================
+    // GEOFENCE, CRM E AGENDA
+    // =====================================
+    async function verHistoricoCRM(cliente) {
+      exibirMsg("A aceder à base de dados do cliente...", false);
+      const res = await callAPI('getHistoricoCliente', { cliente: cliente });
+      if(res.erro || !res || res.length === 0) return exibirMsg(`Não existem visitas anteriores registadas para ${cliente}.`, true);
+      let txt = `📖 ÚLTIMAS VISITAS: ${cliente}\n\n`;
+      res.forEach(r => { txt += `Data: ${r.data}\nTéc: ${r.tecnico}\nStatus: ${r.acao}\nObs:${r.obs}\n-------------------\n`; });
+      alert(txt);
     }
 
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
@@ -585,13 +512,10 @@
           if(!confirm("Remover este compromisso da agenda?")) return;
           exibirMsg("Forçando remoção...", false);
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
-          sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
-          carregarItinerario(false);
-          return;
+          sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); return;
       }
 
       exibirMsg(`Capturando GPS e validando localização...`, false);
-      
       let loc = "Sem GPS";
       try {
          const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); });
@@ -599,93 +523,101 @@
          
          if (tipo === 'Cheguei' && enderecoCliente && enderecoCliente.length > 5) {
             const geoRes = await callAPI('verificarGeofence', { lat: posObj.coords.latitude, lon: posObj.coords.longitude, endereco: enderecoCliente });
-            if (!geoRes.ok) {
-               if(!confirm(geoRes.msg + "\n\nDeseja forçar o check-in mesmo assim?")) { exibirMsg("Check-in cancelado.", true); return; }
-            }
+            if (!geoRes.ok) { if(!confirm(geoRes.msg + "\n\nDeseja forçar o check-in mesmo assim?")) { exibirMsg("Check-in cancelado.", true); return; } }
          }
       } catch(e) { if(!confirm("Não conseguimos capturar seu GPS. Continuar sem localização?")) return; }
 
-      if (tipo.includes('Saí') && linhaAgenda) { prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
-
+      if (tipo.includes('Saí') || tipo === 'Cliente Ausente') { prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
       processarVisita(cliente, tipo, linhaAgenda, loc, "");
     }
 
     async function processarVisita(cliente, tipo, linhaAgenda, loc, linksExtra) {
       exibirMsg(`Registrando ação no servidor...`, false);
-      await callAPI('registrarCheckin', { cliente: cliente, acao: tipo, observacao: "Via Agenda " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      let logAcao = tipo; if(tipo === 'Cliente Ausente') logAcao = "Saí (Ausente)";
+      await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       let msgExtra = "";
       if (tipo === 'Cheguei') {
-         if (statusGlobalPonto === 'Saída') {
-             await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início de Expediente: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-             msgExtra = " e Entrada Iniciada";
-         } else if (statusGlobalPonto === 'Pausa') {
-             await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno de Pausa: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-             msgExtra = " e Retorno Registrado";
-         }
+         if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início de Expediente: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
+         else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno de Pausa: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
          if (linhaAgenda) await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       } 
       else if (tipo.includes('Fim de Expediente')) {
-         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim de Expediente: ${cliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-         msgExtra = " e Expediente Encerrado";
+         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim de Expediente: ${cliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
       }
 
-      if (tipo.includes('Saí') && linhaAgenda) {
-          await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
-          msgExtra += " (Concluído)";
+      if ((tipo.includes('Saí') || tipo === 'Cliente Ausente') && linhaAgenda) {
+          let statusFinal = (tipo === 'Cliente Ausente') ? 'Perdida' : 'Concluído';
+          await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: statusFinal }); msgExtra += ` (${statusFinal})`;
       }
       
       exibirMsg(`Registrado com sucesso${msgExtra}!`, false);
-      sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
-      carregarItinerario(false);
-      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+      sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    let assinando = false; let canvas, ctx;
+    // RATING & ASSINATURAS
+    function setRating(v) {
+       currentRating = v; const stars = document.getElementById('starContainer').children;
+       for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); }
+    }
     function initAssinatura() {
        canvas = document.getElementById('canvasAssinatura'); ctx = canvas.getContext('2d');
-       const startPos = (e) => { assinando = true; desenhar(e); };
-       const endPos = () => { assinando = false; ctx.beginPath(); };
+       const startPos = (e) => { assinando = true; desenhar(e); }; const endPos = () => { assinando = false; ctx.beginPath(); };
        const desenhar = (e) => {
-          if(!assinando) return; e.preventDefault(); 
-          const rect = canvas.getBoundingClientRect();
+          if(!assinando) return; e.preventDefault(); const rect = canvas.getBoundingClientRect();
           const x = (e.clientX || e.touches[0].clientX) - rect.left; const y = (e.clientY || e.touches[0].clientY) - rect.top;
-          ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(x, y); ctx.stroke();
-          ctx.beginPath(); ctx.moveTo(x, y);
+          ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y);
        };
        canvas.addEventListener('mousedown', startPos); canvas.addEventListener('mouseup', endPos); canvas.addEventListener('mousemove', desenhar);
        canvas.addEventListener('touchstart', startPos); canvas.addEventListener('touchend', endPos); canvas.addEventListener('touchmove', desenhar);
     }
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-    function prepararModalAgenda(cliente, acao, linha) { pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; abrirModal(); }
+    function prepararModalAgenda(cliente, acao, linha) { 
+       pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; 
+       document.getElementById('box-avaliacao').style.display = (acao.includes('Saí') && acao !== 'Cliente Ausente') ? 'block' : 'none';
+       document.getElementById('box-assinatura').style.display = (acao === 'Cliente Ausente') ? 'none' : 'block';
+       document.getElementById('lblFoto').innerText = (acao === 'Cliente Ausente') ? '📸 Tirar Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)';
+       document.getElementById('modalTitulo').innerText = (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar Atendimento';
+       setRating(0); abrirModal(); 
+    }
     function prepararModalAvulso(acao) {
        const cli = document.getElementById('chkCliente').value.trim();
        if(!cli) return exibirMsg("Informe o nome do local avulso.", true);
-       pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; abrirModal();
+       pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; 
+       document.getElementById('box-avaliacao').style.display = 'block'; document.getElementById('box-assinatura').style.display = 'block'; document.getElementById('lblFoto').innerText = '📸 Tirar Foto (Opcional)';
+       setRating(0); abrirModal();
     }
     function abrirModal() { limparAssinatura(); document.getElementById('fotoVisita').value = ""; document.getElementById('modal-overlay').style.display = 'block'; document.getElementById('modal-box').style.display = 'block'; }
     function fecharModal() { document.getElementById('modal-overlay').style.display = 'none'; document.getElementById('modal-box').style.display = 'none'; }
 
     async function enviarComprovativoEFechar() {
-       const btn = document.getElementById('btnConfirmarModal'); btn.innerText = "A Enviar..."; btn.disabled = true;
+       const btn = document.getElementById('btnConfirmarModal'); const fotoInput = document.getElementById('fotoVisita');
+       
+       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput.files || !fotoInput.files[0])) {
+           exibirMsg("A foto do local é obrigatória para atestar a ausência do cliente.", true); return;
+       }
+
+       btn.innerText = "A Enviar..."; btn.disabled = true;
        let linksExtra = "";
-       const fotoInput = document.getElementById('fotoVisita');
+       if(currentRating > 0) linksExtra += ` [Avaliação: ${currentRating}⭐]`;
+
        if (fotoInput.files && fotoInput.files[0]) {
-           exibirMsg("A enviar foto para o Google Drive...", false);
+           exibirMsg("A enviar foto para a nuvem...", false);
            const reader = new FileReader();
            const fotoResult = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(fotoInput.files[0]); });
            const resF = await callAPI('uploadComprovativo', { base64: fotoResult, nomeArquivo: `Foto_${pendenteCliente}_${Date.now()}.jpg` });
            if(resF.sucesso) linksExtra += ` [Foto: ${resF.url}]`;
        }
+       
        const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
-       if (canvas.toDataURL() !== blank.toDataURL()) {
+       if (canvas.toDataURL() !== blank.toDataURL() && pendenteAcao !== 'Cliente Ausente') {
            exibirMsg("A enviar assinatura...", false);
            const resA = await callAPI('uploadComprovativo', { base64: canvas.toDataURL('image/png'), nomeArquivo: `Assinatura_${pendenteCliente}_${Date.now()}.png` });
            if(resA.sucesso) linksExtra += ` [Assinatura: ${resA.url}]`;
        }
 
-       fecharModal(); btn.innerText = "Concluir Saída"; btn.disabled = false;
+       fecharModal(); btn.innerText = "Concluir"; btn.disabled = false;
        exibirMsg("A concluir localização...", false);
        let loc = "Sem GPS";
        try { const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); }); loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`; } catch(e) {}
@@ -694,7 +626,7 @@
        else {
            await callAPI('registrarCheckin', { cliente: pendenteCliente, acao: pendenteAcao, observacao: "Visita Avulsa" + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
            let msgExtra = "";
-           if (pendenteAcao.includes('Fim de Expediente')) { await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${pendenteCliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado"; }
+           if (pendenteAcao.includes('Fim de Expediente')) { await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${pendenteCliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado"; }
            exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
        }
     }
@@ -724,9 +656,7 @@
 
       dados.sort((a, b) => a.objData - b.objData);
       let html = ""; let pendentesHoje = 0; const hojeStr = agora.toLocaleDateString('pt-BR');
-      let txtChegada = "📍 Cheguei no Local";
-      if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)";
-      if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
+      let txtChegada = "📍 Cheguei no Local"; if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)"; if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
 
       dados.forEach(d => {
         if (d.status === 'Perdida' && perfilAutenticado !== 'Admin') return; 
@@ -734,10 +664,11 @@
         let isConcluido = d.status === 'Concluído'; let isPerdida = d.status === 'Perdida'; let isAndamento = d.status === 'Em Andamento';
         let corClasse = isConcluido ? 'concluido' : (isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente'));
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>` : ``;
+        let btnCRM = `<button class="btn-logout" style="padding:2px 8px; font-size:0.7rem; border-color:var(--primary); color:var(--primary); cursor:pointer;" onclick="verHistoricoCRM('${d.cliente}')">📖 Info</button>`;
         
         let botoesGeo = "";
         if (isConcluido) botoesGeo = `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>`;
-        else if (isPerdida) { botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida</span>`; if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin; }
+        else if (isPerdida) { botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem início até 18h)</span>`; if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin; }
         else if (isAndamento) {
             botoesGeo = `
               <span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Atendimento em Andamento</span>
@@ -746,7 +677,10 @@
                   <button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button>
                   <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 Saí -> Próximo</button>
                 </div>
-                <button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Saí -> Fim Expediente</button>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+                   <button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha})">🚫 Cliente Ausente</button>
+                   <button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Saí -> Fim Expediente</button>
+                </div>
                 ${btnConcluirAdmin}
               </div>`;
         } else {
@@ -765,7 +699,7 @@
           ${infoTecnico}
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <strong style="color:var(--text); font-size:1.15rem; display:block; margin-bottom:4px;">${d.cliente}</strong>
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><strong style="color:var(--text); font-size:1.15rem;">${d.cliente}</strong> ${btnCRM}</div>
               <small style="color:var(--text-muted); font-size:0.9rem;">📍 ${d.endereco}</small><br>${btnMaps}
             </div>
             <small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:4px; border:1px solid var(--border);">🕒 ${d.horario}</small>
@@ -780,15 +714,13 @@
       document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; color:var(--text-muted);">Nenhum compromisso pendente.</div>`;
 
       if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje && Notification.permission === "granted") {
-           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda.` });
-           notificadoHoje = true;
+           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda.` }); notificadoHoje = true;
       }
     }
 
     function toggleRecorrencia() {
        const isRec = document.getElementById("itiRecorrente").checked;
-       document.getElementById("boxDataUnica").style.display = isRec ? "none" : "block";
-       document.getElementById("boxDataRecorrente").style.display = isRec ? "block" : "none";
+       document.getElementById("boxDataUnica").style.display = isRec ? "none" : "block"; document.getElementById("boxDataRecorrente").style.display = isRec ? "block" : "none";
     }
 
     async function salvarNovoItinerario() {
@@ -827,34 +759,9 @@
 
       if(res.erro) exibirMsg(res.erro, true);
       else {
-        exibirMsg(res.sucesso, false);
-        document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
+        exibirMsg(res.sucesso, false); document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
         sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario();
       }
-    }
-
-    async function checkinAvulso(acao) {
-      const cli = document.getElementById('chkCliente').value.trim();
-      if(!cli) return exibirMsg("Informe o nome do local avulso.", true);
-      if(acao.includes('Saí')) { prepararModalAvulso(acao); return; }
-
-      exibirMsg(`Capturando GPS para visita avulsa...`, false);
-      const loc = await obterLocalizacao();
-      await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
-      
-      let msgExtra = "";
-      if (acao === 'Cheguei') {
-        if (statusGlobalPonto === 'Saída') {
-           await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-           msgExtra = " e Entrada Iniciada";
-        } else if (statusGlobalPonto === 'Pausa') {
-           await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
-           msgExtra = " e Retorno Registrado";
-        }
-      }
-      exibirMsg(`Registrado com sucesso${msgExtra}!`, false);
-      document.getElementById('chkCliente').value = "";
-      carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
     function renderTag(tipo) {
@@ -869,30 +776,53 @@
     async function carregarHistoricoEAtualizarBotoes(nome) {
       const tbody = document.getElementById("tblCorpo");
       const cacheLocal = sessionStorage.getItem('cacheHist_' + nome);
-      if(cacheLocal) renderizarHistoricoHTML(JSON.parse(cacheLocal));
+      if(cacheLocal) { renderizarHistoricoHTML(JSON.parse(cacheLocal)); calcularGamificacao(JSON.parse(cacheLocal)); }
       else tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Buscando dados...</td></tr>';
 
       const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
       if (!dados.erro) { 
         sessionStorage.setItem('cacheHist_' + nome, JSON.stringify(dados));
-        renderizarHistoricoHTML(dados);
-        let lastPonto = 'Saída';
-        for (let i = dados.length - 1; i >= 0; i--) { if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { lastPonto = dados[i].tipo; break; } }
+        renderizarHistoricoHTML(dados); calcularGamificacao(dados);
+        
+        let lastPonto = 'Saída'; tempoInicioExpediente = null;
+        for (let i = dados.length - 1; i >= 0; i--) { 
+           if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { 
+               lastPonto = dados[i].tipo; 
+               if(lastPonto === 'Entrada') tempoInicioExpediente = parseDataBR(dados[i].dataHora);
+               break; 
+           } 
+        }
         atualizarRegraBotoes(lastPonto);
       }
       carregarMeusAjustes(nome);
     }
     
+    function calcularGamificacao(dados) {
+      let visitasMes = 0; let minExtra = 0; let minTotal = 0;
+      let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
+      dados.forEach(d => {
+         if(d.dataHora.includes(mesAtual)) {
+            if(d.tipo.includes('Saí') && !d.tipo.includes('Ponto')) visitasMes++;
+            if(d.tipo === 'Saída' && d.extra !== '-') minExtra += horasParaMin(d.extra);
+            if(d.tipo === 'Saída' && d.total !== '-') minTotal += horasParaMin(d.total);
+         }
+      });
+      document.getElementById('lblVisitasMes').innerText = visitasMes;
+      document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal);
+      document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
+    }
+
     function renderizarHistoricoHTML(dados) {
       const tbody = document.getElementById("tblCorpo");
       if(dados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>'; return; }
       let html = "";
       [...dados].reverse().forEach(d => {
         let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
-        let obsFormatada = d.obs;
-        if(obsFormatada.includes('[Foto:')) obsFormatada = obsFormatada.replace(/\[Foto:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none;">📸 Ver Foto</a>`);
-        if(obsFormatada.includes('[Assinatura:')) obsFormatada = obsFormatada.replace(/\[Assinatura:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--accent); font-size:0.8rem; text-decoration:none;">✍️ Ver Assinatura</a>`);
-        html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Ação">${renderTag(d.tipo)}</td><td data-label="Obs">${obsFormatada || '-'}${infoExtra}</td></tr>`;
+        let obsF = d.obs;
+        if(obsF.includes('[Foto:')) obsF = obsF.replace(/\[Foto:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none;">📸 Ver Foto</a>`);
+        if(obsF.includes('[Assinatura:')) obsF = obsF.replace(/\[Assinatura:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--accent); font-size:0.8rem; text-decoration:none;">✍️ Ver Assinatura</a>`);
+        if(obsF.includes('[Avaliação:')) obsF = obsF.replace(/\[Avaliação:\s([^\]]+)\]/g, `<br><span style="color:#fbbf24; font-size:0.8rem;">$1</span>`);
+        html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Ação">${renderTag(d.tipo)}</td><td data-label="Obs">${obsF || '-'}${infoExtra}</td></tr>`;
       });
       tbody.innerHTML = html;
     }
@@ -918,14 +848,10 @@
     }
 
     async function carregarRadar(forcar = false) {
-      const div = document.getElementById("areaRadar");
-      const cacheLocal = sessionStorage.getItem('cacheRadar');
-      if (cacheLocal && !forcar) renderizarRadarHTML(JSON.parse(cacheLocal));
-      else if (!cacheLocal) div.innerHTML = "Buscando posições na base...";
-
+      const div = document.getElementById("areaRadar"); const cacheLocal = sessionStorage.getItem('cacheRadar');
+      if (cacheLocal && !forcar) renderizarRadarHTML(JSON.parse(cacheLocal)); else if (!cacheLocal) div.innerHTML = "Buscando posições na base...";
       const dados = await callAPI('getRadarEquipa');
-      if (!dados.erro && dados.length > 0) { sessionStorage.setItem('cacheRadar', JSON.stringify(dados)); renderizarRadarHTML(dados); } 
-      else if(!dados.erro) div.innerHTML = "Nenhuma localização encontrada.";
+      if (!dados.erro && dados.length > 0) { sessionStorage.setItem('cacheRadar', JSON.stringify(dados)); renderizarRadarHTML(dados); } else if(!dados.erro) div.innerHTML = "Nenhuma localização encontrada.";
     }
     
     function renderizarRadarHTML(dados) {
@@ -934,46 +860,28 @@
         let cor = (d.acao === 'Entrada' || d.acao === 'Retorno' || d.acao === 'Cheguei') ? 'var(--accent)' : (d.acao === 'Pausa' ? 'var(--warning)' : 'var(--danger)');
         let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 No Ponto' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : (d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Fim'));
         let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
-
-        html += `<div class="card-radar" style="border-left-color: ${cor}">
-          <div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">${d.nome}</strong><small style="color:${cor}; font-weight:bold;">${icon}</small></div>
-          <div style="color:var(--primary); margin-top:4px;">${d.cliente}</div>
-          <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;">
-             <small style="color:var(--text-muted);">Última ação: ${d.acao} às ${d.dataHora.split(' ')[1] || d.dataHora}</small>
-             ${linkMapa}
-          </div>
-        </div>`;
+        html += `<div class="card-radar" style="border-left-color: ${cor}"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">${d.nome}</strong><small style="color:${cor}; font-weight:bold;">${icon}</small></div><div style="color:var(--primary); margin-top:4px;">${d.cliente}</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">Última ação: ${d.acao} às ${d.dataHora.split(' ')[1] || d.dataHora}</small>${linkMapa}</div></div>`;
       });
       document.getElementById("areaRadar").innerHTML = html;
     }
 
     async function carregarVisaoGeralPonto() {
-      const tbody = document.getElementById("tblGeral");
-      const cacheLocal = sessionStorage.getItem('cacheGeral');
-      if (cacheLocal) { dadosGeralGlobais = JSON.parse(cacheLocal); preencherSelectGeral(dadosGeralGlobais); filtrarGeralPonto(); } 
-      else tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Buscando...</td></tr>';
-      
+      const tbody = document.getElementById("tblGeral"); const cacheLocal = sessionStorage.getItem('cacheGeral');
+      if (cacheLocal) { dadosGeralGlobais = JSON.parse(cacheLocal); preencherSelectGeral(dadosGeralGlobais); filtrarGeralPonto(); } else tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Buscando...</td></tr>';
       const dados = await callAPI('getTodosHistoricos');
-      if (!dados.erro && dados.length > 0) { sessionStorage.setItem('cacheGeral', JSON.stringify(dados)); dadosGeralGlobais = dados; preencherSelectGeral(dados); filtrarGeralPonto(); } 
-      else if (!dados.erro) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'; 
+      if (!dados.erro && dados.length > 0) { sessionStorage.setItem('cacheGeral', JSON.stringify(dados)); dadosGeralGlobais = dados; preencherSelectGeral(dados); filtrarGeralPonto(); } else if (!dados.erro) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'; 
     }
     
     function preencherSelectGeral(dados) {
-      const select = document.getElementById("filtroGeralColab");
-      const colabs = [...new Set(dados.map(d => d.nome))].sort();
-      let htmlSelect = '<option value="TODOS">Por Colaborador (Todos)</option>';
-      colabs.forEach(c => htmlSelect += `<option value="${c}">${c}</option>`);
-      let valorAtual = select.value; select.innerHTML = htmlSelect;
-      if(colabs.includes(valorAtual)) select.value = valorAtual;
+      const select = document.getElementById("filtroGeralColab"); const colabs = [...new Set(dados.map(d => d.nome))].sort();
+      let htmlSelect = '<option value="TODOS">Por Colaborador (Todos)</option>'; colabs.forEach(c => htmlSelect += `<option value="${c}">${c}</option>`);
+      let valorAtual = select.value; select.innerHTML = htmlSelect; if(colabs.includes(valorAtual)) select.value = valorAtual;
     }
 
     function filtrarGeralPonto() {
-      const filtro = document.getElementById("filtroGeralColab").value;
-      const tbody = document.getElementById("tblGeral");
-      let filtrados = dadosGeralGlobais;
+      const filtro = document.getElementById("filtroGeralColab").value; const tbody = document.getElementById("tblGeral"); let filtrados = dadosGeralGlobais;
       if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
       if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; return; }
-
       let html = "";
       [...filtrados].reverse().forEach(d => {
         let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
@@ -983,100 +891,46 @@
     }
 
     function exportarGeralPDF() {
-      const filtro = document.getElementById("filtroGeralColab").value;
-      const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto - Todos" : `Relatório de Ponto - ${filtro}`;
+      const filtro = document.getElementById("filtroGeralColab").value; const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto - Todos" : `Relatório de Ponto - ${filtro}`;
       let janela = window.open('', '', 'width=900,height=700');
-      janela.document.write(`
-        <html><head><title>${titulo}</title>
-            <style>
-              body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #1e293b; background: #fff;}
-              .cabecalho { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; }
-              .cabecalho h2 { color: #0f172a; margin: 0 0 10px 0; font-size: 24px; }
-              .cabecalho p { color: #64748b; margin: 0; font-size: 14px; }
-              table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; }
-              th { background-color: #f1f5f9; color: #334155; padding: 12px; font-weight: bold; border-bottom: 2px solid #cbd5e1; }
-              td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #475569; }
-              .tag { font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; background: #e2e8f0; color: #475569;}
-              .tag-Entrada { background: #d1fae5; color: #065f46; }
-              .tag-Pausa { background: #fef3c7; color: #92400e; }
-              .tag-Retorno { background: #e0e7ff; color: #3730a3; }
-              .tag-Saída { background: #fee2e2; color: #991b1b; }
-            </style>
-          </head><body><div class="cabecalho"><h2>${titulo}</h2>
-              <p><strong>Portal Services & Solutions</strong> - Documento gerado em: ${new Date().toLocaleString('pt-BR')}</p>
-            </div><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Tipo de Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>
-      `);
-
-      let filtrados = dadosGeralGlobais;
-      if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
-      [...filtrados].reverse().forEach(d => {
-        let tagClass = `tag-${d.tipo}`;
-        let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><span style="color:#059669; font-weight:bold;">Total do dia: ${d.total}h</span>` : '';
-        janela.document.write(`<tr><td><strong>${d.dataHora}</strong></td><td>${d.nome}</td><td><span class="tag ${tagClass}">${d.tipo}</span></td><td>${d.obs || '-'}${infoExtra}</td></tr>`);
-      });
-      janela.document.write(`</tbody></table><script>window.onload = function() { setTimeout(function(){ window.print(); window.close(); }, 500); }<\/script></body></html>`);
-      janela.document.close();
+      janela.document.write(`<html><head><title>${titulo}</title><style>body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #1e293b; background: #fff;} .cabecalho { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; } .cabecalho h2 { color: #0f172a; margin: 0 0 10px 0; font-size: 24px; } .cabecalho p { color: #64748b; margin: 0; font-size: 14px; } table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; } th { background-color: #f1f5f9; color: #334155; padding: 12px; font-weight: bold; border-bottom: 2px solid #cbd5e1; } td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #475569; } .tag { font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; background: #e2e8f0; color: #475569;} .tag-Entrada { background: #d1fae5; color: #065f46; } .tag-Pausa { background: #fef3c7; color: #92400e; } .tag-Retorno { background: #e0e7ff; color: #3730a3; } .tag-Saída { background: #fee2e2; color: #991b1b; } </style></head><body><div class="cabecalho"><h2>${titulo}</h2><p><strong>Portal Services & Solutions</strong> - Documento gerado em: ${new Date().toLocaleString('pt-BR')}</p></div><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Tipo de Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>`);
+      let filtrados = dadosGeralGlobais; if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
+      [...filtrados].reverse().forEach(d => { let tagClass = `tag-${d.tipo}`; let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><span style="color:#059669; font-weight:bold;">Total do dia: ${d.total}h</span>` : ''; janela.document.write(`<tr><td><strong>${d.dataHora}</strong></td><td>${d.nome}</td><td><span class="tag ${tagClass}">${d.tipo}</span></td><td>${d.obs || '-'}${infoExtra}</td></tr>`); });
+      janela.document.write(`</tbody></table><script>window.onload = function() { setTimeout(function(){ window.print(); window.close(); }, 500); }<\/script></body></html>`); janela.document.close();
     }
 
     async function carregarBancoHoras() {
-      const mesAno = document.getElementById('mesFiltro').value.trim();
-      if(!mesAno || mesAno.length !== 7) return exibirMsg("Utilize o formato MM/YYYY (ex: 09/2026)", true);
-      const tbody = document.getElementById("tblBanco");
-      tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Consolidando...</td></tr>';
+      const mesAno = document.getElementById('mesFiltro').value.trim(); if(!mesAno || mesAno.length !== 7) return exibirMsg("Utilize o formato MM/YYYY (ex: 09/2026)", true);
+      const tbody = document.getElementById("tblBanco"); tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Consolidando...</td></tr>';
       const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
       if(dados.erro || !dados || dados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Sem registros.</td></tr>'; return; }
-      let html = "";
-      dados.forEach(d => { html += `<tr><td data-label="Nome"><strong>${d.nome}</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">${d.total}h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">${d.extra}h</td></tr>`; });
-      tbody.innerHTML = html;
+      let html = ""; dados.forEach(d => { html += `<tr><td data-label="Nome"><strong>${d.nome}</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">${d.total}h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">${d.extra}h</td></tr>`; }); tbody.innerHTML = html;
     }
 
     async function carregarAprovacoes() {
-      const div = document.getElementById("listaAprovacoes");
-      div.innerHTML = "Buscando...";
+      const div = document.getElementById("listaAprovacoes"); div.innerHTML = "Buscando...";
       const dados = await callAPI('getSolicitacoesPendentes');
       if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Nenhuma pendência."; return; }
       let html = "";
-      dados.forEach(d => {
-        html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left;">
-          <strong style="color:var(--primary);">${d.nome}</strong> pediu <strong>${d.tipo}</strong><br>
-          <small style="color:var(--text-muted)">Data: ${d.dataCorreta}</small><br>
-          <small style="color:var(--text-muted)">Motivo: ${d.motivo}</small><br>
-          <div style="margin-top:10px;">
-            <button class="btn-acao" style="background:var(--accent);" onclick="julgar(${d.linha}, 'Aprovado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">✅ Aprovar</button>
-            <button class="btn-acao" style="background:var(--danger);" onclick="julgar(${d.linha}, 'Recusado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">❌ Recusar</button>
-          </div>
-        </div>`;
-      });
+      dados.forEach(d => { html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left;"><strong style="color:var(--primary);">${d.nome}</strong> pediu <strong>${d.tipo}</strong><br><small style="color:var(--text-muted)">Data: ${d.dataCorreta}</small><br><small style="color:var(--text-muted)">Motivo: ${d.motivo}</small><br><div style="margin-top:10px;"><button class="btn-acao" style="background:var(--accent);" onclick="julgar(${d.linha}, 'Aprovado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">✅ Aprovar</button><button class="btn-acao" style="background:var(--danger);" onclick="julgar(${d.linha}, 'Recusado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">❌ Recusar</button></div></div>`; });
       div.innerHTML = html;
     }
 
     async function julgar(linha, acao, nome, tipo, dataCorreta, motivo) {
-      exibirMsg("Processando...", false);
-      const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo });
+      exibirMsg("Processando...", false); const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo });
       if (res.erro) exibirMsg(res.erro, true); else { exibirMsg(res.sucesso, false); carregarAprovacoes(); }
     }
 
     const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
     const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-    function preencherDia() {
-      const v = document.getElementById("rotaData").value; if (!v) return;
-      const [a, m, d] = v.split("-").map(Number);
-      document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()];
-    }
+    function preencherDia() { const v = document.getElementById("rotaData").value; if (!v) return; const [a, m, d] = v.split("-").map(Number); document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()]; }
 
     async function autoCalcularKM() {
-       const origem = document.getElementById("rotaOrigem").value.trim();
-       const destino = document.getElementById("rotaDestino").value.trim();
+       const origem = document.getElementById("rotaOrigem").value.trim(); const destino = document.getElementById("rotaDestino").value.trim();
        if(!origem || !destino) return exibirMsg("Preencha Origem e Destino primeiro.", true);
-       
        exibirMsg("A calcular distância via Google Maps...", false);
        const res = await callAPI('calcularRotaFrota', { origem: origem, destino: destino });
-       if(res.sucesso) {
-          document.getElementById("rotaKm").value = res.km;
-          exibirMsg(`Distância encontrada: ${res.km} km`, false);
-       } else {
-          exibirMsg(res.erro, true);
-       }
+       if(res.sucesso) { document.getElementById("rotaKm").value = res.km; exibirMsg(`Distância encontrada: ${res.km} km`, false); } else { exibirMsg(res.erro, true); }
     }
 
     async function carregarRotasServidor() {
@@ -1084,67 +938,41 @@
       if (cacheLocal) { todasRotas = JSON.parse(cacheLocal).lancamentos; preencherFiltroMeses(JSON.parse(cacheLocal).mesesDisponiveis); filtrarRotas(); }
       const res = await callAPI('getDadosIniciaisRotas');
       if(res.erro) return exibirMsg(res.erro, true);
-      sessionStorage.setItem('cacheRotas', JSON.stringify(res));
-      todasRotas = res.lancamentos || []; preencherFiltroMeses(res.mesesDisponiveis); filtrarRotas();
+      sessionStorage.setItem('cacheRotas', JSON.stringify(res)); todasRotas = res.lancamentos || []; preencherFiltroMeses(res.mesesDisponiveis); filtrarRotas();
     }
     
     function preencherFiltroMeses(mesesDisponiveis) {
-      const selMes = document.getElementById("filtroMes");
-      let valorAtual = selMes.value;
-      let htmlSelect = '<option value="TODOS">Todos</option>';
-      mesesDisponiveis.forEach(m => htmlSelect += `<option value="${m}">${m}</option>`);
+      const selMes = document.getElementById("filtroMes"); let valorAtual = selMes.value;
+      let htmlSelect = '<option value="TODOS">Todos</option>'; mesesDisponiveis.forEach(m => htmlSelect += `<option value="${m}">${m}</option>`);
       selMes.innerHTML = htmlSelect;
-      if(mesesDisponiveis.includes(valorAtual) || valorAtual === 'TODOS') selMes.value = valorAtual;
-      else if(mesesDisponiveis.length > 0) selMes.value = mesesDisponiveis[mesesDisponiveis.length - 1];
+      if(mesesDisponiveis.includes(valorAtual) || valorAtual === 'TODOS') selMes.value = valorAtual; else if(mesesDisponiveis.length > 0) selMes.value = mesesDisponiveis[mesesDisponiveis.length - 1];
     }
 
     function filtrarRotas() {
-      const tec = document.getElementById("filtroTecnico").value;
-      const mes = document.getElementById("filtroMes").value;
+      const tec = document.getElementById("filtroTecnico").value; const mes = document.getElementById("filtroMes").value;
       const filtrados = todasRotas.filter(d => (tec === "TODOS" || d.tecnico === tec) && (mes === "TODOS" || d.mes === mes));
       let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0;
       filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
-      const litros = totalKm / 9.4; const combustivel = litros * 4.5;
-      const reembolso = combustivel + totalEstac + totalPedagio - totalDesc;
+      const litros = totalKm / 9.4; const combustivel = litros * 4.5; const reembolso = combustivel + totalEstac + totalPedagio - totalDesc;
       
-      document.getElementById("mKm").innerText = totalKm.toFixed(1) + " km";
-      document.getElementById("mCombustivel").innerText = brl(combustivel);
-      document.getElementById("mReembolso").innerText = brl(reembolso);
-
-      const tbody = document.getElementById("tblRotas");
-      if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>'; return; }
+      document.getElementById("mKm").innerText = totalKm.toFixed(1) + " km"; document.getElementById("mCombustivel").innerText = brl(combustivel); document.getElementById("mReembolso").innerText = brl(reembolso);
+      const tbody = document.getElementById("tblRotas"); if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>'; return; }
       
       let html = "";
       filtrados.reverse().forEach(d => {
-        let txtCusto = "";
-        if(d.estacionamento > 0) txtCusto += `Est: ${brl(d.estacionamento)}<br>`;
-        if(d.pedagio > 0) txtCusto += `Ped: ${brl(d.pedagio)}<br>`;
-        if(d.desconto > 0) txtCusto += `Desc: <span style="color:var(--danger)">-${brl(d.desconto)}</span>`;
+        let txtCusto = ""; if(d.estacionamento > 0) txtCusto += `Est: ${brl(d.estacionamento)}<br>`; if(d.pedagio > 0) txtCusto += `Ped: ${brl(d.pedagio)}<br>`; if(d.desconto > 0) txtCusto += `Desc: <span style="color:var(--danger)">-${brl(d.desconto)}</span>`;
         html += `<tr><td data-label="Data"><strong>${d.data}</strong><br><small style="color:var(--text-muted)">${d.dia}</small></td><td data-label="Trajeto">${d.origem} &rarr; ${d.destino}<br><small style="color:var(--accent);">${d.km.toFixed(1)} km</small></td><td data-label="Custos">${txtCusto||'-'}</td></tr>`;
       });
       tbody.innerHTML = html;
     }
 
     async function salvarRota(e) {
-      e.preventDefault();
-      const btn = document.getElementById("btnSalvarRota");
-      btn.disabled = true; btn.innerText = "Gravando...";
-      const payload = {
-        tecnico: document.getElementById("rotaTecnico").value, mes: document.getElementById("rotaMes").value,
-        data: document.getElementById("rotaData").value, dia: document.getElementById("rotaDia").value,
-        origem: document.getElementById("rotaOrigem").value, destino: document.getElementById("rotaDestino").value,
-        km: document.getElementById("rotaKm").value, estacionamento: document.getElementById("rotaEstac").value,
-        pedagio: document.getElementById("rotaPedagio").value, desconto: document.getElementById("rotaDesconto").value,
-        obs: document.getElementById("rotaObs").value
-      };
-      
+      e.preventDefault(); const btn = document.getElementById("btnSalvarRota"); btn.disabled = true; btn.innerText = "Gravando...";
+      const payload = { tecnico: document.getElementById("rotaTecnico").value, mes: document.getElementById("rotaMes").value, data: document.getElementById("rotaData").value, dia: document.getElementById("rotaDia").value, origem: document.getElementById("rotaOrigem").value, destino: document.getElementById("rotaDestino").value, km: document.getElementById("rotaKm").value, estacionamento: document.getElementById("rotaEstac").value, pedagio: document.getElementById("rotaPedagio").value, desconto: document.getElementById("rotaDesconto").value, obs: document.getElementById("rotaObs").value };
       const res = await callAPI('salvarLancamentoRota', { dadosRota: payload });
       btn.disabled = false; btn.innerText = "Salvar Rota";
       if (res.erro) exibirMsg(res.erro, true); 
-      else { 
-        exibirMsg("Rota registrada!", false); document.getElementById("fRota").reset(); 
-        sessionStorage.removeItem('cacheRotas'); carregarRotasServidor(); 
-      }
+      else { exibirMsg("Rota registrada!", false); document.getElementById("fRota").reset(); sessionStorage.removeItem('cacheRotas'); carregarRotasServidor(); }
     }
   </script>
 </body>
