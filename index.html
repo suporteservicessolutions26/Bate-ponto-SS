@@ -124,10 +124,36 @@
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
+          
+          <div style="margin-bottom:12px; background:#1e293b; padding:10px; border-radius:6px; border:1px solid var(--border);">
+            <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;">
+               <input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:auto; margin:0; width:18px; height:18px;"> Agendamento Recorrente
+            </label>
+          </div>
+
           <div class="form-row">
             <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
-            <div><label>Data</label><input type="date" id="itiData" /></div>
+            
+            <div id="boxDataUnica"><label>Data</label><input type="date" id="itiData" /></div>
           </div>
+
+          <div id="boxDataRecorrente" style="display:none; background:#0f172a; padding:12px; border-radius:6px; border:1px dashed var(--warning); margin-bottom:14px;">
+             <div class="form-row" style="margin-bottom:10px;">
+                <div><label>Data Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div>
+                <div><label>Data Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div>
+             </div>
+             <label style="color:var(--warning);">Repetir nos seguintes dias:</label>
+             <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:0.9rem; margin-top:8px;">
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:auto;margin:0;">Seg</label>
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:auto;margin:0;">Ter</label>
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:auto;margin:0;">Qua</label>
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:auto;margin:0;">Qui</label>
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:auto;margin:0;">Sex</label>
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:auto;margin:0;">Sáb</label>
+                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="0" class="chk-dia" style="width:auto;margin:0;">Dom</label>
+             </div>
+          </div>
+
           <label>Cliente ou Local</label><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" />
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
@@ -143,7 +169,7 @@
         </div>
       </div>
 
-      <!-- ================= ABA 2: AVULSOS E CORREÇÕES ================= -->
+      <!-- ================= ABA 2: AVULSOS E PONTO MANUAL ================= -->
       <div id="tab-form" class="tab-content">
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--primary);">Ponto Manual / Trabalho Interno</h3>
@@ -258,7 +284,7 @@
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #a855f7;">Gestão de Frota e Reembolsos</h3>
           <div class="form-row" style="margin-bottom: 16px;">
-            <div><label>Filtrar Técnico:</label><select id="filtroTecnico" onchange="filtrarRotas()"><option value="TODOS">Todos os Técnicos</option><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
+            <div><label>Filtrar Técnico:</label><select id="filtroTecnico" onchange="filtrarRotas()"><option value="TODOS">Todos os Técnicos</option><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
             <div><label>Filtrar Mês:</label><select id="filtroMes" onchange="filtrarRotas()"><option value="TODOS">Todos os Meses</option></select></div>
           </div>
           <div class="metrics">
@@ -272,7 +298,7 @@
           <h4 style="margin-bottom: 12px; color: var(--text-muted);">Lançar Novo Deslocamento</h4>
           <form id="fRota" onsubmit="salvarRota(event)">
             <div class="form-row">
-              <div><label>Técnico</label><select id="rotaTecnico" required><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
+              <div><label>Técnico</label><select id="rotaTecnico" required><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
               <div><label>Mês (Ex: Setembro/2026)</label><input type="text" id="rotaMes" required /></div>
             </div>
             <div class="form-row">
@@ -331,10 +357,10 @@
     function exibirMsg(msg, isErro) {
       const b = document.getElementById("msgStatus");
       b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("sucesso") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso")) b.style.color = "#000"; else b.style.color = "#fff";
+      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("agendado") ? "#fcd34d" : "var(--accent)");
+      if(msg.includes("Itinerário") || msg.includes("BLOQUEADO") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("agendado")) b.style.color = "#000"; else b.style.color = "#fff";
       window.scrollTo({ top: 0, behavior: 'smooth' });
-      setTimeout(() => b.style.display = "none", 4000);
+      setTimeout(() => b.style.display = "none", 5000);
     }
 
     async function obterLocalizacao() {
@@ -392,7 +418,7 @@
       
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda'));
       carregarHistoricoEAtualizarBotoes(nome);
-      carregarItinerario(); 
+      carregarItinerario(true); 
     }
 
     function logout() {
@@ -640,18 +666,62 @@
       }
     }
 
+    // NOVA LÓGICA DE AGENDAMENTO (ÚNICO OU RECORRENTE)
+    function toggleRecorrencia() {
+       const isRec = document.getElementById("itiRecorrente").checked;
+       document.getElementById("boxDataUnica").style.display = isRec ? "none" : "block";
+       document.getElementById("boxDataRecorrente").style.display = isRec ? "block" : "none";
+    }
+
     async function salvarNovoItinerario() {
       const tec = document.getElementById("itiTecnico").value;
-      const data = document.getElementById("itiData").value;
-      const cli = document.getElementById("itiCliente").value;
-      const end = document.getElementById("itiEndereco").value;
+      const cli = document.getElementById("itiCliente").value.trim();
+      const end = document.getElementById("itiEndereco").value.trim();
       const hor = document.getElementById("itiHorario").value;
+      const isRec = document.getElementById("itiRecorrente").checked;
 
-      if(!data || !cli || !end || !hor) return exibirMsg("Preencha todos os campos obrigatórios da agenda.", true);
+      if(!cli || !end || !hor) return exibirMsg("Preencha o Local, Endereço e Horário.", true);
 
-      exibirMsg("Atribuindo compromisso...", false);
-      const payload = { tecnico: tec, data: data, cliente: cli, endereco: end, horario: hor, coordenadas: "" };
-      const res = await callAPI('addItinerario', { dados: payload });
+      let datasParaGravar = [];
+
+      if (!isRec) {
+        const dataU = document.getElementById("itiData").value;
+        if(!dataU) return exibirMsg("Preencha a data do compromisso.", true);
+        datasParaGravar.push(dataU); 
+      } else {
+        const dIni = document.getElementById("itiDataIni").value;
+        const dFim = document.getElementById("itiDataFim").value;
+        if(!dIni || !dFim) return exibirMsg("Preencha o período (Data Início e Fim).", true);
+        
+        const diasMarcados = Array.from(document.querySelectorAll('.chk-dia:checked')).map(cb => parseInt(cb.value));
+        if(diasMarcados.length === 0) return exibirMsg("Selecione pelo menos um dia da semana para repetir.", true);
+
+        // Define a hora para meio-dia para evitar problemas de fuso horário no cálculo
+        let dataAtual = new Date(dIni + "T12:00:00");
+        let dataFinal = new Date(dFim + "T12:00:00");
+        
+        if(dataAtual > dataFinal) return exibirMsg("A Data de Início deve ser antes da Data Fim.", true);
+
+        while(dataAtual <= dataFinal) {
+           if (diasMarcados.includes(dataAtual.getDay())) {
+               let a = dataAtual.getFullYear();
+               let m = String(dataAtual.getMonth() + 1).padStart(2, '0');
+               let d = String(dataAtual.getDate()).padStart(2, '0');
+               datasParaGravar.push(`${a}-${m}-${d}`);
+           }
+           dataAtual.setDate(dataAtual.getDate() + 1);
+        }
+        if (datasParaGravar.length === 0) return exibirMsg("Nenhuma data encontrada nesse período para os dias selecionados.", true);
+      }
+
+      exibirMsg(`A gravar ${datasParaGravar.length} compromisso(s)...`, false);
+      document.getElementById("btnSair").focus(); // Tira o foco do botão para evitar duplos cliques
+      
+      const payloads = datasParaGravar.map(dt => ({
+         tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: ""
+      }));
+
+      const res = await callAPI('addItinerarioMulti', { dadosArray: payloads });
 
       if(res.erro) exibirMsg(res.erro, true);
       else {
@@ -685,7 +755,7 @@
          msgExtra = " e Expediente Encerrado";
       }
       
-      exibirMsg(`Registrado com sucesso${msgExtra}!`, false);
+      exibirMsg(`Status '${acao}' registrado com sucesso${msgExtra}!`, false);
       document.getElementById('chkCliente').value = "";
       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
@@ -829,7 +899,6 @@
       let htmlSelect = '<option value="TODOS">Por Colaborador (Todos)</option>';
       colabs.forEach(c => htmlSelect += `<option value="${c}">${c}</option>`);
       
-      // Mantém o filtro atual ao recarregar a lista
       let valorAtual = select.value;
       select.innerHTML = htmlSelect;
       if(colabs.includes(valorAtual)) select.value = valorAtual;
