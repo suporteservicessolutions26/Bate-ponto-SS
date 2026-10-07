@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=4">
+  <link rel="manifest" href="manifest.json?v=5">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=4">
-  <link rel="icon" href="./LogoSS.png?v=4" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=5">
+  <link rel="icon" href="./LogoSS.png?v=5" type="image/png">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
@@ -22,7 +22,6 @@
     [data-theme="light"] .card-itinerario, [data-theme="light"] .card-radar { background: #ffffff; border-color: #e2e8f0; }
     [data-theme="light"] .status-badge { background: #e2e8f0; color: #0f172a; }
 
-    /* FLUIDEZ IOS E PREVENÇÃO DE BOUNCE */
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; -webkit-font-smoothing: antialiased; }
     body { background: var(--bg); color: var(--text); padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
     .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-top: 20px; }
@@ -79,10 +78,9 @@
     .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
     .card-itinerario.pendente { border-left-color: var(--primary); }
     .card-itinerario.andamento { border-left-color: var(--warning); border-width: 4px; box-shadow: 0 0 16px rgba(245, 158, 11, 0.15); }
-    .card-itinerario.concluido { display: none; } /* REGRAS DE LIMPEZA: ESCONDE CONCLUÍDOS */
+    .card-itinerario.concluido { display: none; } 
     .card-itinerario.perdida { border-left-color: var(--danger); opacity: 0.4; background: #1e1e24; }
 
-    /* MODAL DE COMPROVATIVOS */
     #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15, 23, 42, 0.85); z-index:9998; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
     #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:24px; border-radius:16px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
     #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:8px; width:100%; height:140px; touch-action: none; margin-bottom:10px; }
@@ -94,13 +92,11 @@
     .logo-container { text-align: center; margin-bottom: 24px; }
     .logo-img { max-width: 160px; height: auto; border-radius: 8px; }
 
-    /* ANIMATIONS */
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes zoomIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
 
-    /* RESPONSIVO MOBILE */
     @media (max-width: 640px) {
       .grid-botoes, .form-row { grid-template-columns: 1fr; }
       table, thead, tbody, tr, td { display: block; width: 100%; }
@@ -115,7 +111,6 @@
 </head>
 <body>
   
-  <!-- MODAL DE AUDITORIA E AVALIAÇÃO -->
   <div id="modal-overlay"></div>
   <div id="modal-box">
      <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.3rem; font-weight:800;" id="modalTitulo">Finalizar e Comprovar</h3>
@@ -157,7 +152,6 @@
       </div>
     </header>
 
-    <!-- ALERTA DE FADIGA -->
     <div id="alerta-fadiga" class="aviso-interno" style="display:none; background:#7f1d1d; color:#fca5a5; border-color:#991b1b; border-radius:12px; margin-bottom:16px;">
       ⚠️ <strong>ALERTA DE FADIGA:</strong> Encontra-se a trabalhar há mais de 6 horas sem registo de pausa.
     </div>
@@ -166,7 +160,7 @@
 
     <div id="tela-login" class="box">
       <div class="logo-container">
-        <img src="./LogoSS.png?v=4" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
+        <img src="./LogoSS.png?v=5" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
       </div>
       <h3 style="margin-bottom: 20px; text-align: center; font-weight:700;">Acesso ao Sistema</h3>
       <label>Usuário</label>
@@ -177,13 +171,11 @@
     </div>
 
     <div id="tela-app" style="display: none;">
-      <!-- ABAS COMUNS -->
       <div class="tabs">
         <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this); hapticFeedback()" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
         <button class="tab-btn" onclick="abrirAba('tab-form', this); hapticFeedback()">Avulsos / Manual</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">Meu Histórico</button>
       </div>
-      <!-- ABAS ADMIN -->
       <div class="tabs" id="abasAdmin" style="display:none; border-top: none; padding-top: 0; margin-top: 0;">
         <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()" style="color: #38bdf8;">Radar GPS</button>
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()" style="color: var(--accent);">Geral</button>
@@ -339,7 +331,7 @@
       <div id="tab-aprovacoes" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Pendentes de Aprovação</h3>
-          <div id="listaAprovacoes" style="color: var(--text-muted); text-align: center;">A procurar...</div>
+          <div id="listaAprovacoes" style="color: var(--text-muted); text-align: center;">Carregando...</div>
         </div>
       </div>
 
@@ -391,7 +383,6 @@
 
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
 
-    // HAPTIC FEEDBACK (Para simular app nativa)
     function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
 
     function toggleTema() {
@@ -467,7 +458,18 @@
     }, 1000);
 
     function parseDataBR(str) { if(!str) return new Date(); let p = str.split(" "), d = p[0].split("/"), h = p[1].split(":"); return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]); }
-    function horasParaMin(hStr) { if(!hStr || hStr==='-' || hStr==='Erro') return 0; let p=hStr.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
+    
+    // FUNÇÃO CORRIGIDA PARA LIMPAR O FORMATO ANTIGO (O BUG DO GOOGLE SHEETS)
+    function horasParaMin(hStr) { 
+       if(!hStr || hStr==='-' || hStr==='Erro') return 0; 
+       let s = String(hStr);
+       // Proteção extrema contra cache antigo formato "1899-12-30T15:42"
+       if (s.includes('T')) {
+          try { let d = new Date(s.replace('h','').trim()); return d.getUTCHours()*60 + d.getUTCMinutes(); } catch(e){}
+       }
+       let p = s.replace(/'/g, '').split(':'); 
+       return parseInt(p[0]||0)*60 + parseInt(p[1]||0); 
+    }
     function minParaHoras(min) { if(min<=0) return "00:00"; let h=Math.floor(min/60), m=min%60; return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m); }
 
     function atualizarRegraBotoes(ultimoStatus) {
@@ -503,7 +505,7 @@
       if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
       let obs = ""; if (!isRapido && document.getElementById("obsManual")) obs = document.getElementById("obsManual").value;
       if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
-      exibirMsg(`A obter GPS e a registar ${tipo}...`, false); const loc = await obterLocalizacao();
+      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false); const loc = await obterLocalizacao();
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
       if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
@@ -634,12 +636,10 @@
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
-      // STALE-WHILE-REVALIDATE (Abre o cache logo, atualiza invisível)
       if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
       else div.innerHTML = "A carregar agenda...";
 
       const parametroBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
-      // Faz fetch sempre para não perder atualizações novas do Admin
       const dados = await callAPI('getItinerario', { nome: parametroBusca });
       if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Sua agenda está livre."; sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); return; }
       
@@ -648,88 +648,44 @@
     }
 
     function renderizarAgendaHTML(dados, verificarAlerta) {
-      const agora = new Date();
-      const hojeStr = agora.toLocaleDateString('pt-BR');
-
+      const agora = new Date(); const hojeStr = agora.toLocaleDateString('pt-BR');
       dados.forEach(d => {
         const [dia, mes, ano] = d.data.split('/'); const [hora, min] = d.horario.split(':');
         d.objData = new Date(ano, mes - 1, dia, hora, min);
         const limiteVisita = new Date(ano, mes - 1, dia, 18, 0); 
         if (d.status === 'Pendente' && agora > limiteVisita) { d.status = 'Perdida'; callAPI('atualizarStatusItinerario', { linha: d.linha, status: 'Perdida' }); }
       });
-
       dados.sort((a, b) => a.objData - b.objData);
       
       let html = ""; let pendentesHoje = 0; 
       let txtChegada = "📍 Cheguei no Local"; if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)"; if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
 
       dados.forEach(d => {
-        // AUTO-CLEAN: Oculta Concluídas e Perdidas (se não for admin)
         if (d.status === 'Concluído') return;
         if (d.status === 'Perdida' && perfilAutenticado !== 'Admin') return; 
 
-        let isPerdida = d.status === 'Perdida'; let isAndamento = d.status === 'Em Andamento';
-        let isHoje = d.data === hojeStr;
+        let isPerdida = d.status === 'Perdida'; let isAndamento = d.status === 'Em Andamento'; let isHoje = d.data === hojeStr;
         let corClasse = isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente');
-        
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>` : ``;
         let btnCRM = `<button class="btn-logout" style="padding:4px 10px; font-size:0.75rem; border-color:var(--primary); color:var(--primary); cursor:pointer;" onclick="verHistoricoCRM('${d.cliente}')">📖 Histórico</button>`;
         
         let botoesGeo = "";
-        
         if (isPerdida) { botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem início até 18h)</span>`; if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin; }
         else if (isAndamento) {
-            botoesGeo = `
-              <span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Atendimento em Andamento</span>
-              <div style="display:flex; flex-direction:column; gap:10px;">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                  <button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button>
-                  <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 Saí -> Próximo</button>
-                </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
-                   <button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha})">🚫 Ausente</button>
-                   <button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Fim Expediente</button>
-                </div>
-                ${btnConcluirAdmin}
-              </div>`;
+            botoesGeo = `<span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Atendimento em Andamento</span><div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 Saí -> Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha})">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Fim Expediente</button></div>${btnConcluirAdmin}</div>`;
         } else {
-            // REGRA: SÓ PODE INICIAR SE FOR HOJE!
-            if (!isHoje && perfilAutenticado !== 'Admin') {
-                botoesGeo = `<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Disponível para início apenas no dia ${d.data}</span>`;
-            } else {
-                botoesGeo = `
-                  <div style="display:flex; flex-direction:column; gap:8px;">
-                    <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '${d.endereco}')">${txtChegada}</button>
-                    ${btnConcluirAdmin}
-                  </div>`;
-            }
+            if (!isHoje && perfilAutenticado !== 'Admin') { botoesGeo = `<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Disponível para início apenas no dia ${d.data}</span>`; } 
+            else { botoesGeo = `<div style="display:flex; flex-direction:column; gap:8px;"><button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '${d.endereco}')">${txtChegada}</button>${btnConcluirAdmin}</div>`; }
         }
         
         let btnMaps = d.endereco ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endereco)}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.85rem; background:transparent; border: 1px solid var(--primary); color:var(--primary); padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:bold;">🗺 Abrir Rota</a>` : '';
         if ((d.status === 'Pendente' || d.status === 'Em Andamento') && isHoje && d.tecnico === usuarioAutenticado) pendentesHoje++;
         let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem; margin-bottom:8px; display:block;">👤 Técnico: ${d.tecnico}</span>` : '';
 
-        html += `<div class="card-itinerario ${corClasse}">
-          ${infoTecnico}
-          <div style="display:flex; justify-content:space-between; align-items:flex-start;">
-            <div>
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><strong style="color:var(--text); font-size:1.2rem;">${d.cliente}</strong> ${btnCRM}</div>
-              <small style="color:var(--text-muted); font-size:0.95rem;">📍 ${d.endereco}</small><br>${btnMaps}
-            </div>
-            <small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border);">🕒 ${d.horario}</small>
-          </div>
-          <div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;">
-             <small style="color:var(--text-muted);">Data: ${d.data} - <span style="font-weight:bold; color:var(--text);">${d.status}</span></small>
-             ${botoesGeo}
-          </div>
-        </div>`;
+        html += `<div class="card-itinerario ${corClasse}">${infoTecnico}<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><strong style="color:var(--text); font-size:1.2rem;">${d.cliente}</strong> ${btnCRM}</div><small style="color:var(--text-muted); font-size:0.95rem;">📍 ${d.endereco}</small><br>${btnMaps}</div><small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border);">🕒 ${d.horario}</small></div><div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;"><small style="color:var(--text-muted);">Data: ${d.data} - <span style="font-weight:bold; color:var(--text);">${d.status}</span></small>${botoesGeo}</div></div>`;
       });
-      
       document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight:500;">✨ A sua agenda está livre.</div>`;
-
-      if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje && Notification.permission === "granted") {
-           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda de hoje.` }); notificadoHoje = true;
-      }
+      if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje && Notification.permission === "granted") { new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda de hoje.` }); notificadoHoje = true; }
     }
 
     function toggleRecorrencia() {
@@ -827,8 +783,8 @@
       dados.forEach(d => {
          if(d.dataHora.includes(mesAtual)) {
             if(d.tipo.includes('Saí') && !d.tipo.includes('Ponto')) visitasMes++;
-            if(d.tipo === 'Saída' && d.extra !== '-') minExtra += horasParaMin(d.extra);
-            if(d.tipo === 'Saída' && d.total !== '-') minTotal += horasParaMin(d.total);
+            if(d.tipo === 'Saída' && d.extra && d.extra !== '-') minExtra += horasParaMin(d.extra);
+            if(d.tipo === 'Saída' && d.total && d.total !== '-') minTotal += horasParaMin(d.total);
          }
       });
       document.getElementById('lblVisitasMes').innerText = visitasMes; document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal); document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
@@ -900,7 +856,10 @@
       if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
       if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; return; }
       let html = "";
-      [...filtrados].reverse().forEach(d => { let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : ''; html += `<tr><td data-label="Data">${d.dataHora}</td><td data-label="Colaborador"><strong>${d.nome}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Resumo">${d.obs||'-'}${infoExtra}</td></tr>`; });
+      [...filtrados].reverse().forEach(d => {
+        let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
+        html += `<tr><td data-label="Data">${d.dataHora}</td><td data-label="Colaborador"><strong>${d.nome}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Resumo">${d.obs||'-'}${infoExtra}</td></tr>`;
+      });
       tbody.innerHTML = html;
     }
 
