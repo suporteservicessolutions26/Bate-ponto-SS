@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=5">
+  <link rel="manifest" href="manifest.json?v=6">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=5">
-  <link rel="icon" href="./LogoSS.png?v=5" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=6">
+  <link rel="icon" href="./LogoSS.png?v=6" type="image/png">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
@@ -38,7 +38,6 @@
     .btn-login { background: var(--primary); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
     .btn:active:not(:disabled) { transform: scale(0.96); opacity: 0.9; }
-    
     .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
     .btn-logout:active { transform: scale(0.92); }
 
@@ -73,13 +72,22 @@
     .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 12px; text-align: center; }
     .card-metric .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
     .card-metric .val { font-size: 1.5rem; font-weight: 800; margin-top: 6px; }
-    .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
-    .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
+    .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); position:relative;}
     .card-itinerario.pendente { border-left-color: var(--primary); }
     .card-itinerario.andamento { border-left-color: var(--warning); border-width: 4px; box-shadow: 0 0 16px rgba(245, 158, 11, 0.15); }
     .card-itinerario.concluido { display: none; } 
     .card-itinerario.perdida { border-left-color: var(--danger); opacity: 0.4; background: #1e1e24; }
+
+    /* ESTILOS DE PRIORIDADE E SLA */
+    .prioridade-badge { position: absolute; top: 12px; right: 12px; font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
+    .p-critica { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; animation: pulseRed 2s infinite; }
+    .p-alta { background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
+    .p-normal { background: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; }
+    .p-baixa { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
+    
+    .card-itinerario.critica { border-left-color: #ef4444; border-left-width: 5px; }
+    .card-itinerario.alta { border-left-color: #f97316; }
 
     #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15, 23, 42, 0.85); z-index:9998; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
     #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:24px; border-radius:16px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
@@ -96,9 +104,10 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes zoomIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
     @media (max-width: 640px) {
-      .grid-botoes, .form-row { grid-template-columns: 1fr; }
+      .form-row { grid-template-columns: 1fr; }
       table, thead, tbody, tr, td { display: block; width: 100%; }
       thead { display: none; }
       tbody tr { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
@@ -160,7 +169,7 @@
 
     <div id="tela-login" class="box">
       <div class="logo-container">
-        <img src="./LogoSS.png?v=5" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
+        <img src="./LogoSS.png?v=6" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
       </div>
       <h3 style="margin-bottom: 20px; text-align: center; font-weight:700;">Acesso ao Sistema</h3>
       <label>Usuário</label>
@@ -206,9 +215,22 @@
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
-          <div style="margin-bottom:14px; background:var(--card-bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
-            <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:20px; height:20px; margin:0;"> Agendamento Recorrente</label>
+          
+          <div class="form-row" style="margin-bottom:12px;">
+             <div style="background:var(--card-bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
+               <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:20px; height:20px; margin:0;"> Recorrente</label>
+             </div>
+             <div>
+                <label>SLA / Prioridade</label>
+                <select id="itiPrioridade" style="margin-bottom:0; border-color:var(--primary);">
+                   <option value="Baixa">Baixa (P4)</option>
+                   <option value="Normal" selected>Normal (P3)</option>
+                   <option value="Alta">Alta (P2)</option>
+                   <option value="Crítica">Crítica (P1)</option>
+                </select>
+             </div>
           </div>
+
           <div class="form-row">
             <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
             <div id="boxDataUnica"><label>Data</label><input type="date" id="itiData" /></div>
@@ -459,16 +481,11 @@
 
     function parseDataBR(str) { if(!str) return new Date(); let p = str.split(" "), d = p[0].split("/"), h = p[1].split(":"); return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]); }
     
-    // FUNÇÃO CORRIGIDA PARA LIMPAR O FORMATO ANTIGO (O BUG DO GOOGLE SHEETS)
     function horasParaMin(hStr) { 
        if(!hStr || hStr==='-' || hStr==='Erro') return 0; 
        let s = String(hStr);
-       // Proteção extrema contra cache antigo formato "1899-12-30T15:42"
-       if (s.includes('T')) {
-          try { let d = new Date(s.replace('h','').trim()); return d.getUTCHours()*60 + d.getUTCMinutes(); } catch(e){}
-       }
-       let p = s.replace(/'/g, '').split(':'); 
-       return parseInt(p[0]||0)*60 + parseInt(p[1]||0); 
+       if (s.includes('T')) { try { let d = new Date(s.replace('h','').trim()); return d.getUTCHours()*60 + d.getUTCMinutes(); } catch(e){} }
+       let p = s.replace(/'/g, '').split(':'); return parseInt(p[0]||0)*60 + parseInt(p[1]||0); 
     }
     function minParaHoras(min) { if(min<=0) return "00:00"; let h=Math.floor(min/60), m=min%60; return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m); }
 
@@ -490,13 +507,8 @@
       if(mbE) { mbE.disabled = true; mbP.disabled = true; mbR.disabled = true; mbS.disabled = true; if (statusGlobalPonto === 'Saída') mbE.disabled = false; else if (statusGlobalPonto === 'Entrada') { mbP.disabled = false; mbS.disabled = false; } else if (statusGlobalPonto === 'Pausa') mbR.disabled = false; else if (statusGlobalPonto === 'Retorno') mbS.disabled = false; }
       
       const alertaFadiga = document.getElementById('alerta-fadiga');
-      if (statusGlobalPonto === 'Entrada' && tempoInicioExpediente) {
-         let diffHoras = (new Date() - tempoInicioExpediente) / 3600000;
-         alertaFadiga.style.display = (diffHoras > 6) ? 'block' : 'none';
-      } else { alertaFadiga.style.display = 'none'; }
-
-      const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
-      if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
+      if (statusGlobalPonto === 'Entrada' && tempoInicioExpediente) { let diffHoras = (new Date() - tempoInicioExpediente) / 3600000; alertaFadiga.style.display = (diffHoras > 6) ? 'block' : 'none'; } else { alertaFadiga.style.display = 'none'; }
+      const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado); if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
     }
 
     async function baterPontoRapido(tipo) { hapticFeedback(); baterPontoManual(tipo, true); }
@@ -515,9 +527,7 @@
       hapticFeedback(); exibirMsg("A procurar histórico deste cliente...", false);
       const res = await callAPI('getHistoricoCliente', { cliente: cliente });
       if(res.erro || !res || res.length === 0) return exibirMsg(`Não existem visitas anteriores para ${cliente}.`, true);
-      let txt = `📖 ÚLTIMAS VISITAS: ${cliente}\n\n`;
-      res.forEach(r => { txt += `Data: ${r.data}\nTéc: ${r.tecnico}\nAção: ${r.acao}\nObs:${r.obs}\n-------------------\n`; });
-      alert(txt);
+      let txt = `📖 ÚLTIMAS VISITAS: ${cliente}\n\n`; res.forEach(r => { txt += `Data: ${r.data}\nTéc: ${r.tecnico}\nAção: ${r.acao}\nObs:${r.obs}\n-------------------\n`; }); alert(txt);
     }
 
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
@@ -529,12 +539,10 @@
           sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); return;
       }
 
-      exibirMsg(`A validar localização para ${tipo}...`, false);
-      let loc = "Sem GPS";
+      exibirMsg(`A validar localização para ${tipo}...`, false); let loc = "Sem GPS";
       try {
          const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); });
          loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`;
-         
          if (tipo === 'Cheguei' && enderecoCliente && enderecoCliente.length > 5) {
             const geoRes = await callAPI('verificarGeofence', { lat: posObj.coords.latitude, lon: posObj.coords.longitude, endereco: enderecoCliente });
             if (!geoRes.ok) { if(!confirm(geoRes.msg + "\n\nDeseja forçar o check-in mesmo assim?")) { exibirMsg("Check-in cancelado.", true); return; } }
@@ -564,9 +572,7 @@
           let statusFinal = (tipo === 'Cliente Ausente') ? 'Perdida' : 'Concluído';
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: statusFinal }); msgExtra += ` (${statusFinal})`;
       }
-      
-      exibirMsg(`Gravado com sucesso${msgExtra}!`, false);
-      sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+      exibirMsg(`Gravado com sucesso${msgExtra}!`, false); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
     function setRating(v) { currentRating = v; const stars = document.getElementById('starContainer').children; for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); } }
@@ -634,11 +640,9 @@
     }
 
     async function carregarItinerario(verificarAlerta = false) {
-      const div = document.getElementById("listaItinerario");
-      const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
-      if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
-      else div.innerHTML = "A carregar agenda...";
-
+      const div = document.getElementById("listaItinerario"); const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
+      if (cacheLocal && !verificarAlerta) renderizarAgendaHTML(JSON.parse(cacheLocal), false); else if (!cacheLocal && !verificarAlerta) div.innerHTML = "A carregar agenda...";
+      
       const parametroBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
       const dados = await callAPI('getItinerario', { nome: parametroBusca });
       if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Sua agenda está livre."; sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); return; }
@@ -649,13 +653,25 @@
 
     function renderizarAgendaHTML(dados, verificarAlerta) {
       const agora = new Date(); const hojeStr = agora.toLocaleDateString('pt-BR');
+
+      // 1. Processar Perdas
       dados.forEach(d => {
         const [dia, mes, ano] = d.data.split('/'); const [hora, min] = d.horario.split(':');
         d.objData = new Date(ano, mes - 1, dia, hora, min);
         const limiteVisita = new Date(ano, mes - 1, dia, 18, 0); 
         if (d.status === 'Pendente' && agora > limiteVisita) { d.status = 'Perdida'; callAPI('atualizarStatusItinerario', { linha: d.linha, status: 'Perdida' }); }
+        
+        // Peso da Prioridade para ordenação
+        let peso = 3; 
+        if(d.prioridade === 'Crítica') peso = 0; else if(d.prioridade === 'Alta') peso = 1; else if(d.prioridade === 'Baixa') peso = 4;
+        d.pesoPrioridade = peso;
       });
-      dados.sort((a, b) => a.objData - b.objData);
+
+      // 2. Ordenar (Prioridade Alta primeiro, depois Horário)
+      dados.sort((a, b) => {
+         if(a.pesoPrioridade !== b.pesoPrioridade) return a.pesoPrioridade - b.pesoPrioridade;
+         return a.objData - b.objData;
+      });
       
       let html = ""; let pendentesHoje = 0; 
       let txtChegada = "📍 Cheguei no Local"; if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)"; if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
@@ -666,6 +682,17 @@
 
         let isPerdida = d.status === 'Perdida'; let isAndamento = d.status === 'Em Andamento'; let isHoje = d.data === hojeStr;
         let corClasse = isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente');
+        
+        // CSS CLASSES DE PRIORIDADE
+        let prioridadeHtml = "";
+        if (d.prioridade && d.prioridade !== 'Normal') {
+           let classP = 'p-normal';
+           if(d.prioridade === 'Crítica') { classP = 'p-critica'; corClasse += ' critica'; }
+           else if(d.prioridade === 'Alta') { classP = 'p-alta'; corClasse += ' alta'; }
+           else if(d.prioridade === 'Baixa') { classP = 'p-baixa'; }
+           prioridadeHtml = `<span class="prioridade-badge ${classP}">${d.prioridade}</span>`;
+        }
+        
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>` : ``;
         let btnCRM = `<button class="btn-logout" style="padding:4px 10px; font-size:0.75rem; border-color:var(--primary); color:var(--primary); cursor:pointer;" onclick="verHistoricoCRM('${d.cliente}')">📖 Histórico</button>`;
         
@@ -682,9 +709,11 @@
         if ((d.status === 'Pendente' || d.status === 'Em Andamento') && isHoje && d.tecnico === usuarioAutenticado) pendentesHoje++;
         let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem; margin-bottom:8px; display:block;">👤 Técnico: ${d.tecnico}</span>` : '';
 
-        html += `<div class="card-itinerario ${corClasse}">${infoTecnico}<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><strong style="color:var(--text); font-size:1.2rem;">${d.cliente}</strong> ${btnCRM}</div><small style="color:var(--text-muted); font-size:0.95rem;">📍 ${d.endereco}</small><br>${btnMaps}</div><small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border);">🕒 ${d.horario}</small></div><div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;"><small style="color:var(--text-muted);">Data: ${d.data} - <span style="font-weight:bold; color:var(--text);">${d.status}</span></small>${botoesGeo}</div></div>`;
+        html += `<div class="card-itinerario ${corClasse}">${prioridadeHtml}${infoTecnico}<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><strong style="color:var(--text); font-size:1.2rem;">${d.cliente}</strong> ${btnCRM}</div><small style="color:var(--text-muted); font-size:0.95rem;">📍 ${d.endereco}</small><br>${btnMaps}</div><small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border); margin-top: 25px;">🕒 ${d.horario}</small></div><div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;"><small style="color:var(--text-muted);">Data: ${d.data} - <span style="font-weight:bold; color:var(--text);">${d.status}</span></small>${botoesGeo}</div></div>`;
       });
+      
       document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight:500;">✨ A sua agenda está livre.</div>`;
+
       if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje && Notification.permission === "granted") { new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda de hoje.` }); notificadoHoje = true; }
     }
 
@@ -697,6 +726,7 @@
       const tec = document.getElementById("itiTecnico").value; const cli = document.getElementById("itiCliente").value.trim();
       const end = document.getElementById("itiEndereco").value.trim(); const hor = document.getElementById("itiHorario").value;
       const isRec = document.getElementById("itiRecorrente").checked;
+      const prioridade = document.getElementById("itiPrioridade").value;
 
       if(!cli || !end || !hor) return exibirMsg("Preencha o Local, Endereço e Horário.", true);
       let datasParaGravar = [];
@@ -724,13 +754,12 @@
       }
 
       exibirMsg(`A verificar e agendar ${datasParaGravar.length} compromisso(s)...`, false);
-      const payloads = datasParaGravar.map(dt => ({ tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: "" }));
+      const payloads = datasParaGravar.map(dt => ({ tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: "", prioridade: prioridade }));
       const res = await callAPI('addItinerarioMulti', { dadosArray: payloads });
 
       if(res.erro) exibirMsg(res.erro, true);
       else {
-        exibirMsg(res.sucesso, false);
-        document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
+        exibirMsg(res.sucesso, false); document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
         sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario();
       }
     }
