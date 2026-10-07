@@ -2,93 +2,113 @@
 <html lang="pt-BR">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
-  <link rel="manifest" href="manifest.json?v=3">
+  
+  <link rel="manifest" href="manifest.json?v=4">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=3">
-  <link rel="icon" href="./LogoSS.png?v=3" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=4">
+  <link rel="icon" href="./LogoSS.png?v=4" type="image/png">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
     [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
     [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
-    [data-theme="light"] .box { box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+    [data-theme="light"] .box { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
     [data-theme="light"] .usuario-logado, [data-theme="light"] .card-metric, [data-theme="light"] .aviso-interno { background: #f1f5f9; }
     [data-theme="light"] th { background: #e2e8f0; color: #1e293b; }
-    [data-theme="light"] .card-itinerario, [data-theme="light"] .card-radar { background: #f8fafc; }
+    [data-theme="light"] .card-itinerario, [data-theme="light"] .card-radar { background: #ffffff; border-color: #e2e8f0; }
     [data-theme="light"] .status-badge { background: #e2e8f0; color: #0f172a; }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, sans-serif; transition: background-color 0.3s, color 0.3s; }
-    body { background: var(--bg); color: var(--text); padding: 20px 16px; -webkit-tap-highlight-color: transparent; }
-    .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; }
-    header { display: flex; justify-content: space-between; align-items: center; }
-    header h2 { font-size: 1.3rem; line-height: 1.2; }
-    .box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 10px; margin-bottom: 16px; }
-    input, select { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 12px; border-radius: 6px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; }
-    input:focus, select:focus { border-color: var(--primary); }
-    label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; }
-    .btn { color: #fff; border: none; padding: 12px; border-radius: 6px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: 0.2s; }
+    /* FLUIDEZ IOS E PREVENÇÃO DE BOUNCE */
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; -webkit-font-smoothing: antialiased; }
+    body { background: var(--bg); color: var(--text); padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
+    .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-top: 20px; }
+    
+    header { display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s ease; }
+    header h2 { font-size: 1.3rem; line-height: 1.2; font-weight: 700; }
+    .box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 16px; animation: slideUp 0.4s ease; }
+    
+    input, select { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 8px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; appearance: none; }
+    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+    label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 500; }
+    
+    .btn { color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
     .btn-login { background: var(--primary); }
-    .btn:disabled { opacity: 0.25; cursor: not-allowed; }
-    .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; }
+    .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+    .btn:active:not(:disabled) { transform: scale(0.96); opacity: 0.9; }
+    
+    .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
+    .btn-logout:active { transform: scale(0.92); }
+
     .grid-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
     .btn-entrada { background: var(--accent); } .btn-pausa { background: var(--warning); color: #000; } .btn-saida { background: var(--danger); }
-    .btn-acao { padding: 12px; font-size: 0.9rem; font-weight: bold; border-radius: 6px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; transition: 0.2s; }
-    .btn-acao:active { transform: scale(0.98); }
+    .btn-acao { padding: 14px; font-size: 0.95rem; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .btn-acao:active:not(:disabled) { transform: scale(0.96); }
     
-    .header-relogio { background: var(--card-bg); border: 1px solid var(--border); border-bottom: 4px solid var(--primary); border-radius: 10px 10px 0 0; padding: 20px; text-align: center; }
-    #relogio { font-size: 3.5rem; font-weight: 700; color: var(--primary); letter-spacing: -1px; line-height: 1; }
-    #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; margin-top: 5px; margin-bottom: 15px; }
-    .status-badge { display: inline-block; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; font-weight: bold; background: #334155; color: #fff; margin-bottom: 10px; }
-    .aviso-interno { background: #0f172a; padding: 12px; text-align: center; border: 1px solid var(--border); border-top: none; border-radius: 0 0 10px 10px; margin-bottom: 16px; }
+    .header-relogio { background: var(--card-bg); border: 1px solid var(--border); border-bottom: 4px solid var(--primary); border-radius: 12px 12px 0 0; padding: 24px 20px; text-align: center; }
+    #relogio { font-size: 3.8rem; font-weight: 800; color: var(--primary); letter-spacing: -2px; line-height: 1; }
+    #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; margin-top: 8px; margin-bottom: 16px; font-weight: 500; }
+    .status-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; background: #334155; color: #fff; margin-bottom: 10px; }
+    .aviso-interno { background: #0f172a; padding: 14px; text-align: center; border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; margin-bottom: 16px; font-size: 0.9rem; }
     .aviso-interno span { cursor: pointer; } .aviso-interno span:hover { text-decoration: underline; color: var(--primary); }
 
-    .usuario-logado { margin-top: 10px; display: inline-block; background: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); }
-    .tabs { display: flex; border-bottom: 2px solid var(--border); margin-top: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
-    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 10px; font-size: 0.9rem; font-weight: 600; cursor: pointer; flex: 1; border-bottom: 2px solid transparent; margin-bottom: -2px; }
+    .usuario-logado { margin-top: 10px; display: inline-block; background: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); font-weight: 500;}
+    .tabs { display: flex; border-bottom: 2px solid var(--border); margin-top: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .tabs::-webkit-scrollbar { display: none; }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 14px 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; flex: 1; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: 0.3s; }
     .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
-    .tab-content { display: none; } .tab-content.active { display: block; }
+    .tab-content { display: none; animation: fadeIn 0.4s ease; } .tab-content.active { display: block; }
+    
     table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
-    th { background: #131d2e; padding: 12px 10px; color: var(--text-muted); }
-    td { padding: 12px 10px; border-bottom: 1px solid #243044; }
-    .tag-tipo { font-size: 0.75rem; background: #334155; padding: 3px 8px; border-radius: 4px; font-weight: 600; display: inline-block; }
-    #msgStatus { padding: 12px; border-radius: 6px; display: none; font-size: 0.9rem; text-align: center; margin-bottom: 16px; font-weight: bold; position: sticky; top: 10px; z-index: 999;}
-    .card-radar { background: #0f172a; border-left: 4px solid var(--primary); padding: 12px; border-radius: 6px; margin-bottom: 10px; }
+    th { background: #131d2e; padding: 14px 10px; color: var(--text-muted); font-weight: 600;}
+    td { padding: 14px 10px; border-bottom: 1px solid #243044; }
+    .tag-tipo { font-size: 0.75rem; background: #334155; padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; }
     
-    /* DASHBOARD E MÉTRICAS */
+    #msgStatus { padding: 14px; border-radius: 8px; display: none; font-size: 0.95rem; text-align: center; margin-bottom: 16px; font-weight: bold; position: sticky; top: env(safe-area-inset-top, 10px); z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.2); animation: slideDown 0.3s ease; }
+    
+    .card-radar { background: #0f172a; border-left: 4px solid var(--primary); padding: 16px; border-radius: 8px; margin-bottom: 12px; }
     .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 10px; text-align: center; }
-    .card-metric .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 600; }
-    .card-metric .val { font-size: 1.4rem; font-weight: 700; margin-top: 6px; }
-    
+    .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 12px; text-align: center; }
+    .card-metric .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
+    .card-metric .val { font-size: 1.5rem; font-weight: 800; margin-top: 6px; }
     .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
     
-    .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 16px; border-radius: 8px; margin-bottom: 14px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); transition: 0.2s;}
+    .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); }
     .card-itinerario.pendente { border-left-color: var(--primary); }
-    .card-itinerario.andamento { border-left-color: var(--warning); border-width: 4px; box-shadow: 0 0 12px rgba(245, 158, 11, 0.2); }
-    .card-itinerario.concluido { border-left-color: var(--accent); opacity: 0.5; }
+    .card-itinerario.andamento { border-left-color: var(--warning); border-width: 4px; box-shadow: 0 0 16px rgba(245, 158, 11, 0.15); }
+    .card-itinerario.concluido { display: none; } /* REGRAS DE LIMPEZA: ESCONDE CONCLUÍDOS */
     .card-itinerario.perdida { border-left-color: var(--danger); opacity: 0.4; background: #1e1e24; }
 
-    /* MODAL DE COMPROVATIVOS E RATING */
-    #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(0,0,0,0.8); z-index:9998; backdrop-filter: blur(3px); }
-    #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:20px; border-radius:12px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; }
-    #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:6px; width:100%; height:120px; touch-action: none; margin-bottom:10px; }
+    /* MODAL DE COMPROVATIVOS */
+    #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15, 23, 42, 0.85); z-index:9998; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
+    #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:24px; border-radius:16px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:8px; width:100%; height:140px; touch-action: none; margin-bottom:10px; }
     
-    .star-rating { font-size: 2rem; color: #334155; cursor: pointer; display: flex; justify-content: center; gap: 10px; margin-bottom:15px; }
-    .star-rating span { transition: 0.2s; }
-    .star-rating span.ativo { color: #fbbf24; text-shadow: 0 0 10px rgba(251,191,36,0.5); }
+    .star-rating { font-size: 2.2rem; color: #334155; cursor: pointer; display: flex; justify-content: center; gap: 12px; margin-bottom:15px; }
+    .star-rating span { transition: all 0.2s; }
+    .star-rating span.ativo { color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,0.6); transform: scale(1.1); }
 
-    .logo-container { text-align: center; margin-bottom: 20px; }
-    .logo-img { max-width: 180px; height: auto; border-radius: 8px; }
+    .logo-container { text-align: center; margin-bottom: 24px; }
+    .logo-img { max-width: 160px; height: auto; border-radius: 8px; }
 
+    /* ANIMATIONS */
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes zoomIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+
+    /* RESPONSIVO MOBILE */
     @media (max-width: 640px) {
       .grid-botoes, .form-row { grid-template-columns: 1fr; }
       table, thead, tbody, tr, td { display: block; width: 100%; }
       thead { display: none; }
-      tbody tr { background: var(--card-bg); border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-bottom: 10px; }
-      td { display: flex; justify-content: space-between; padding: 6px 0; border-bottom: 1px dashed #243044; text-align: right; }
-      td:last-child { border-bottom: none; }
+      tbody tr { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
+      td { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #334155; text-align: right; align-items: center; }
+      [data-theme="light"] td { border-bottom-color: #cbd5e1; }
+      td:last-child { border-bottom: none; padding-bottom: 0; }
       td::before { content: attr(data-label); color: var(--text-muted); font-weight: 600; text-align: left; }
     }
   </style>
@@ -98,30 +118,30 @@
   <!-- MODAL DE AUDITORIA E AVALIAÇÃO -->
   <div id="modal-overlay"></div>
   <div id="modal-box">
-     <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.2rem;" id="modalTitulo">Finalizar e Comprovar</h3>
+     <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.3rem; font-weight:800;" id="modalTitulo">Finalizar e Comprovar</h3>
      
-     <div id="box-avaliacao" style="text-align:center; margin-bottom:15px; padding-bottom:15px; border-bottom:1px solid var(--border);">
-        <label style="color:var(--text); font-weight:bold;">Avaliação do Cliente</label>
-        <p style="font-size:0.75rem; margin-bottom:10px;">Como avalia o serviço prestado?</p>
+     <div id="box-avaliacao" style="text-align:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid var(--border);">
+        <label style="color:var(--text); font-weight:bold; font-size:1rem;">Avaliação do Cliente</label>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Como avalia o serviço prestado?</p>
         <div class="star-rating" id="starContainer">
-           <span onclick="setRating(1)">★</span><span onclick="setRating(2)">★</span><span onclick="setRating(3)">★</span><span onclick="setRating(4)">★</span><span onclick="setRating(5)">★</span>
+           <span onclick="setRating(1); hapticFeedback()">★</span><span onclick="setRating(2); hapticFeedback()">★</span><span onclick="setRating(3); hapticFeedback()">★</span><span onclick="setRating(4); hapticFeedback()">★</span><span onclick="setRating(5); hapticFeedback()">★</span>
         </div>
      </div>
 
      <label id="lblFoto">📸 Tirar Foto (Opcional)</label>
-     <input type="file" id="fotoVisita" accept="image/*" capture="environment" style="padding:8px;" />
+     <input type="file" id="fotoVisita" accept="image/*" capture="environment" style="padding:10px; background:var(--bg);" />
      
      <div id="box-assinatura">
-       <label>✍️ Assinatura do Cliente (Opcional)</label>
+       <label style="margin-top:10px;">✍️ Assinatura do Cliente (Opcional)</label>
        <canvas id="canvasAssinatura"></canvas>
        <div style="text-align:right;">
-          <button class="btn-logout" style="font-size:0.75rem;" onclick="limparAssinatura()">Limpar Assinatura</button>
+          <button class="btn-logout" style="font-size:0.8rem; border-color:var(--primary); color:var(--primary);" onclick="limparAssinatura(); hapticFeedback()">Limpar Assinatura</button>
        </div>
      </div>
      
-     <div style="display:flex; gap:10px; margin-top:20px;">
+     <div style="display:flex; gap:12px; margin-top:24px;">
         <button class="btn btn-logout" style="flex:1;" onclick="fecharModal()">Cancelar</button>
-        <button class="btn btn-entrada" id="btnConfirmarModal" style="flex:2;" onclick="enviarComprovativoEFechar()">Concluir</button>
+        <button class="btn btn-entrada" id="btnConfirmarModal" style="flex:2;" onclick="enviarComprovativoEFechar(); hapticFeedback()">Concluir</button>
      </div>
   </div>
 
@@ -131,45 +151,45 @@
         <h2>Portal Services & Solutions</h2>
         <p style="color:var(--text-muted); font-size:0.85rem;" id="subHeader">Faça login para continuar</p>
       </div>
-      <div style="display:flex; gap:10px; align-items:center;">
-         <button class="btn-logout" style="font-size:1.2rem; padding:4px 8px; border:none;" onclick="toggleTema()" title="Mudar Tema">🌓</button>
+      <div style="display:flex; gap:12px; align-items:center;">
+         <button class="btn-logout" style="font-size:1.3rem; padding:6px; border:none;" onclick="toggleTema(); hapticFeedback()" title="Mudar Tema">🌓</button>
          <button id="btnSair" class="btn-logout" style="display:none;" onclick="logout()">Sair</button>
       </div>
     </header>
 
     <!-- ALERTA DE FADIGA -->
-    <div id="alerta-fadiga" class="aviso-interno" style="display:none; background:#7f1d1d; color:#fca5a5; border-color:#991b1b; border-radius:10px; margin-bottom:16px;">
-      ⚠️ <strong>ALERTA DE FADIGA:</strong> Encontra-se a trabalhar há mais de 6 horas sem registo de pausa. Por favor, faça o registo de Almoço/Pausa imediatamente.
+    <div id="alerta-fadiga" class="aviso-interno" style="display:none; background:#7f1d1d; color:#fca5a5; border-color:#991b1b; border-radius:12px; margin-bottom:16px;">
+      ⚠️ <strong>ALERTA DE FADIGA:</strong> Encontra-se a trabalhar há mais de 6 horas sem registo de pausa.
     </div>
 
     <div id="msgStatus"></div>
 
     <div id="tela-login" class="box">
       <div class="logo-container">
-        <img src="./LogoSS.png?v=3" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
+        <img src="./LogoSS.png?v=4" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'">
       </div>
-      <h3 style="margin-bottom: 16px; text-align: center;">Acesso ao Sistema</h3>
+      <h3 style="margin-bottom: 20px; text-align: center; font-weight:700;">Acesso ao Sistema</h3>
       <label>Usuário</label>
       <input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label>
       <input type="password" id="loginSenha" placeholder="Sua senha" />
-      <button id="btnFazerLogin" class="btn btn-login" onclick="fazerLogin()">Entrar</button>
+      <button id="btnFazerLogin" class="btn btn-login" style="margin-top:10px;" onclick="fazerLogin(); hapticFeedback()">Entrar</button>
     </div>
 
     <div id="tela-app" style="display: none;">
       <!-- ABAS COMUNS -->
       <div class="tabs">
-        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this)" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
-        <button class="tab-btn" onclick="abrirAba('tab-form', this)">Avulsos / Manual</button>
-        <button class="tab-btn" onclick="abrirAba('tab-hist', this)">Meu Histórico</button>
+        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this); hapticFeedback()" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
+        <button class="tab-btn" onclick="abrirAba('tab-form', this); hapticFeedback()">Avulsos / Manual</button>
+        <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">Meu Histórico</button>
       </div>
       <!-- ABAS ADMIN -->
       <div class="tabs" id="abasAdmin" style="display:none; border-top: none; padding-top: 0; margin-top: 0;">
-        <button class="tab-btn" onclick="abrirAba('tab-radar', this)" style="color: #38bdf8;">Radar GPS</button>
-        <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this)" style="color: var(--accent);">Geral</button>
-        <button class="tab-btn" onclick="abrirAba('tab-banco', this)" style="color: var(--primary);">Horas</button>
-        <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this)" style="color: var(--warning);">Aprovações</button>
-        <button class="tab-btn" onclick="abrirAba('tab-rotas', this)" style="color: #a855f7;">Frota</button>
+        <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()" style="color: #38bdf8;">Radar GPS</button>
+        <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()" style="color: var(--accent);">Geral</button>
+        <button class="tab-btn" onclick="abrirAba('tab-banco', this); hapticFeedback()" style="color: var(--primary);">Horas</button>
+        <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()" style="color: var(--warning);">Aprovações</button>
+        <button class="tab-btn" onclick="abrirAba('tab-rotas', this); hapticFeedback()" style="color: #a855f7;">Frota</button>
       </div>
 
       <!-- ================= ABA 1: AGENDA ================= -->
@@ -180,46 +200,46 @@
           <div id="status-badge" class="status-badge">Buscando status...</div><br>
           <div class="usuario-logado" style="margin-top:0;">👤 <span id="nomeExibicao"></span></div>
           
-          <div id="acoes-rapidas" style="display:none; justify-content: center; gap: 10px; margin-top: 15px; flex-wrap: wrap;">
-             <button id="btnPausaRapida" class="btn-acao" style="background:var(--warning); color:#000; padding: 8px 16px;" onclick="baterPontoRapido('Pausa')">⏸ Pausa Almoço</button>
-             <button id="btnRetornoRapido" class="btn-acao" style="background:var(--accent); color:#fff; padding: 8px 16px;" onclick="baterPontoRapido('Retorno')">▶ Voltar da Pausa</button>
-             <button id="btnSaidaRapida" class="btn-acao" style="background:var(--danger); color:#fff; padding: 8px 16px;" onclick="baterPontoRapido('Saída')">⏹ Encerrar Expediente</button>
+          <div id="acoes-rapidas" style="display:none; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
+             <button id="btnPausaRapida" class="btn-acao" style="background:var(--warning); color:#000; padding: 10px 20px;" onclick="baterPontoRapido('Pausa')">⏸ Pausa Almoço</button>
+             <button id="btnRetornoRapido" class="btn-acao" style="background:var(--accent); color:#fff; padding: 10px 20px;" onclick="baterPontoRapido('Retorno')">▶ Voltar da Pausa</button>
+             <button id="btnSaidaRapida" class="btn-acao" style="background:var(--danger); color:#fff; padding: 10px 20px;" onclick="baterPontoRapido('Saída')">⏹ Encerrar Expediente</button>
           </div>
         </div>
         <div id="aviso-trabalho-interno" class="aviso-interno">
-           <span style="color: var(--text-muted); font-size: 0.9rem;" onclick="abrirAba('tab-form', document.querySelectorAll('.tab-btn')[1])">
-             ⏳ Seu expediente está fechado. Inicie abaixo no <strong>"📍 Cheguei"</strong> ou <u>clique aqui se fará apenas Trabalho Interno na Base hoje.</u>
+           <span style="color: var(--text-muted);" onclick="abrirAba('tab-form', document.querySelectorAll('.tab-btn')[1])">
+             ⏳ Expediente fechado. Inicie num compromisso na agenda ou <u>clique aqui se fará apenas Trabalho Interno hoje.</u>
            </span>
         </div>
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
-          <div style="margin-bottom:12px; background:var(--card-bg); padding:10px; border-radius:6px; border:1px solid var(--border);">
-            <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:auto; margin:0; width:18px; height:18px;"> Agendamento Recorrente</label>
+          <div style="margin-bottom:14px; background:var(--card-bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
+            <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:20px; height:20px; margin:0;"> Agendamento Recorrente</label>
           </div>
           <div class="form-row">
             <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
             <div id="boxDataUnica"><label>Data</label><input type="date" id="itiData" /></div>
           </div>
-          <div id="boxDataRecorrente" style="display:none; background:var(--bg); padding:12px; border-radius:6px; border:1px dashed var(--warning); margin-bottom:14px;">
-             <div class="form-row" style="margin-bottom:10px;"><div><label>Data Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div><div><label>Data Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div></div>
+          <div id="boxDataRecorrente" style="display:none; background:var(--bg); padding:14px; border-radius:8px; border:1px dashed var(--warning); margin-bottom:14px;">
+             <div class="form-row" style="margin-bottom:12px;"><div><label>Data Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div><div><label>Data Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div></div>
              <label style="color:var(--warning);">Repetir nos seguintes dias:</label>
-             <div style="display:flex; gap:12px; flex-wrap:wrap; font-size:0.9rem; margin-top:8px;">
-                <label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:auto;margin:0;">Seg</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:auto;margin:0;">Ter</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:auto;margin:0;">Qua</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:auto;margin:0;">Qui</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:auto;margin:0;">Sex</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:auto;margin:0;">Sáb</label><label style="display:flex; align-items:center; gap:4px; cursor:pointer;"><input type="checkbox" value="0" class="chk-dia" style="width:auto;margin:0;">Dom</label>
+             <div style="display:flex; gap:14px; flex-wrap:wrap; font-size:0.95rem; margin-top:10px;">
+                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:18px;height:18px;margin:0;">Seg</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:18px;height:18px;margin:0;">Ter</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:18px;height:18px;margin:0;">Qua</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:18px;height:18px;margin:0;">Qui</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:18px;height:18px;margin:0;">Sex</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:18px;height:18px;margin:0;">Sáb</label>
              </div>
           </div>
           <label>Cliente ou Local</label><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" />
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
-          <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
+          <button class="btn" style="background: var(--warning); color: #000; margin-top: 14px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
         </div>
 
         <div style="padding: 10px 0; background: transparent; border: none; margin-top:10px;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-             <h3 style="margin: 0; font-size: 1.2rem; color: #fcd34d;">Fila de Visitas e Tarefas</h3>
-             <button style="background:transparent; border:1px solid var(--border); color:var(--text); padding:6px 12px; border-radius:6px; cursor:pointer;" onclick="carregarItinerario(true)">🔄 Atualizar</button>
+             <h3 style="margin: 0; font-size: 1.2rem; color: #fcd34d;">Fila de Visitas</h3>
+             <button style="background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:8px 14px; border-radius:8px; cursor:pointer; font-weight:600; box-shadow:0 2px 4px rgba(0,0,0,0.1);" onclick="carregarItinerario(true); hapticFeedback()">🔄 Atualizar</button>
           </div>
-          <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">Carregando agenda...</div>
+          <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">A carregar agenda...</div>
         </div>
       </div>
 
@@ -227,7 +247,7 @@
       <div id="tab-form" class="tab-content">
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--primary);">Ponto Manual / Trabalho Interno</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Utilize apenas para dias na Base sem visitas externas e agendas.</p>
+          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Utilize apenas para dias na Base sem visitas externas.</p>
           <label for="obsManual">Observação (Opcional)</label>
           <input type="text" id="obsManual" placeholder="Ex: Organização de Estoque..." autocomplete="off" />
           <div class="grid-botoes">
@@ -254,7 +274,7 @@
 
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Solicitar Ajuste de Ponto</h3>
-          <label>Tipo de Batida Faltante ou Errada</label>
+          <label>Tipo de Batida Faltante</label>
           <select id="corrTipo"><option value="Entrada">Entrada</option><option value="Pausa">Pausa</option><option value="Retorno">Retorno</option><option value="Saída">Saída</option></select>
           <label>Data e Hora Exata</label>
           <input type="datetime-local" id="corrDataHora" />
@@ -266,27 +286,20 @@
 
       <!-- ================= HISTÓRICO E DASHBOARD PESSOAL ================= -->
       <div id="tab-hist" class="tab-content">
-        <!-- GAMIFICAÇÃO: DASHBOARD PESSOAL -->
-        <h3 style="margin: 0 0 14px; font-size: 1.1rem; color:var(--primary);">Meu Desempenho (Neste Mês)</h3>
+        <h3 style="margin: 0 0 14px; font-size: 1.2rem; color:var(--primary);">Meu Desempenho (Mês)</h3>
         <div class="metrics">
-            <div class="card-metric"><div class="label">Visitas Concluídas</div><div class="val" id="lblVisitasMes" style="color:var(--accent);">0</div></div>
-            <div class="card-metric"><div class="label">Horas Trabalhadas</div><div class="val" id="lblTotalMes">00:00</div></div>
-            <div class="card-metric"><div class="label">Horas Extras</div><div class="val" id="lblExtraMes" style="color:var(--danger);">00:00</div></div>
+            <div class="card-metric"><div class="label">Visitas Feitas</div><div class="val" id="lblVisitasMes" style="color:var(--accent);">0</div></div>
+            <div class="card-metric"><div class="label">Horas Totais</div><div class="val" id="lblTotalMes">00:00</div></div>
+            <div class="card-metric"><div class="label">Horas Extra</div><div class="val" id="lblExtraMes" style="color:var(--danger);">00:00</div></div>
         </div>
 
-        <div class="box" style="padding: 10px 0; background: transparent; border: none;">
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem;">Meus Últimos Registros</h3>
-          <table>
-            <thead><tr><th>Data/Hora</th><th>Ação</th><th>Observação / Horas</th></tr></thead>
-            <tbody id="tblCorpo"></tbody>
-          </table>
+          <table><thead><tr><th>Data/Hora</th><th>Ação</th><th>Observação / Horas</th></tr></thead><tbody id="tblCorpo"></tbody></table>
         </div>
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Meus Pedidos de Ajuste</h3>
-          <table>
-            <thead><tr><th>Data Solicitada</th><th>Tipo</th><th>Status</th></tr></thead>
-            <tbody id="tblMeusAjustes"><tr><td colspan="3" style="text-align:center;">Carregando...</td></tr></tbody>
-          </table>
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px; box-shadow:none;">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Pedidos de Ajuste</h3>
+          <table><thead><tr><th>Data Solicitada</th><th>Tipo</th><th>Status</th></tr></thead><tbody id="tblMeusAjustes"><tr><td colspan="3" style="text-align:center;">A carregar...</td></tr></tbody></table>
         </div>
       </div>
 
@@ -294,8 +307,8 @@
       <div id="tab-radar" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Radar da Equipe (GPS Ao Vivo)</h3>
-          <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarRadar(true)">🔄 Atualizar Radar</button>
-          <div id="areaRadar">Carregando posições...</div>
+          <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar Radar</button>
+          <div id="areaRadar">A procurar posições...</div>
         </div>
       </div>
 
@@ -326,7 +339,7 @@
       <div id="tab-aprovacoes" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Pendentes de Aprovação</h3>
-          <div id="listaAprovacoes" style="color: var(--text-muted); text-align: center;">Carregando...</div>
+          <div id="listaAprovacoes" style="color: var(--text-muted); text-align: center;">A procurar...</div>
         </div>
       </div>
 
@@ -355,7 +368,7 @@
             <div class="form-row"><div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div><div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div></div>
             <div class="form-row">
               <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
-              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required style="margin-bottom:4px;" /><button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância</button></div>
+              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required style="margin-bottom:4px;" /><button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância Automática</button></div>
             </div>
             <div class="form-row"><div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div><div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div></div>
             <div class="form-row"><div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div><div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div></div>
@@ -363,7 +376,7 @@
             <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7; margin-top: 10px;">Salvar Rota</button>
           </form>
         </div>
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px;"><table><thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead><tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody></table></div>
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px; box-shadow:none;"><table><thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead><tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody></table></div>
       </div>
     </div>
   </div>
@@ -373,12 +386,13 @@
 
     let usuarioAutenticado = ""; let perfilAutenticado = ""; let statusGlobalPonto = "Saída";
     let todasRotas = []; let dadosGeralGlobais = []; let notificadoHoje = false;
-    
-    // Variáveis Modal e Gamificação
     let pendenteCliente = ""; let pendenteAcao = ""; let pendenteLinhaAgenda = null;
     let currentRating = 0; let tempoInicioExpediente = null;
 
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
+
+    // HAPTIC FEEDBACK (Para simular app nativa)
+    function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
 
     function toggleTema() {
       const el = document.documentElement; const tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
@@ -389,21 +403,22 @@
       payload.action = action;
       try {
         const response = await fetch(API_URL, { method: "POST", redirect: "follow", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }});
-        const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { erro: "A API do Google bloqueou a leitura." }; }
-      } catch (err) { return { erro: "Falha de rede ao conectar." }; }
+        const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { erro: "O Google bloqueou a leitura." }; }
+      } catch (err) { return { erro: "Falha de rede. Verifique a internet." }; }
     }
 
     function exibirMsg(msg, isErro) {
+      hapticFeedback();
       const b = document.getElementById("msgStatus"); b.innerText = msg; b.style.display = "block";
       b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("agendado") ? "#fcd34d" : "var(--accent)");
       if(msg.includes("Itinerário") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("agendado") || msg.includes("Alerta")) b.style.color = "#000"; else b.style.color = "#fff";
-      window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => b.style.display = "none", 5000);
+      window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => b.style.display = "none", 4000);
     }
 
     async function obterLocalizacao() {
       return new Promise((resolve) => {
         if (!navigator.geolocation) return resolve("GPS não suportado");
-        navigator.geolocation.getCurrentPosition((pos) => { resolve(`https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`); }, (err) => { resolve("Sem permissão de GPS"); }, { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 });
+        navigator.geolocation.getCurrentPosition((pos) => { resolve(`https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`); }, (err) => { resolve("Sem permissão de GPS"); }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
       });
     }
 
@@ -417,8 +432,8 @@
     async function fazerLogin() {
       const u = document.getElementById('loginUser').value.trim(); const s = document.getElementById('loginSenha').value;
       const btn = document.getElementById('btnFazerLogin');
-      if(!u || !s) return exibirMsg("Preencha usuário e senha.", true);
-      btn.disabled = true; btn.innerText = "Autenticando...";
+      if(!u || !s) return exibirMsg("Preencha utilizador e password.", true);
+      btn.disabled = true; btn.innerText = "A autenticar...";
       if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") await Notification.requestPermission();
       const res = await callAPI('autenticarUsuario', { login: u, senha: s });
       btn.disabled = false; btn.innerText = "Entrar";
@@ -451,7 +466,6 @@
       let horaLogin = localStorage.getItem('ponto_login_time'); if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) logout();
     }, 1000);
 
-    // FUNÇÕES DE TEMPO E FADIGA
     function parseDataBR(str) { if(!str) return new Date(); let p = str.split(" "), d = p[0].split("/"), h = p[1].split(":"); return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]); }
     function horasParaMin(hStr) { if(!hStr || hStr==='-' || hStr==='Erro') return 0; let p=hStr.split(':'); return parseInt(p[0])*60 + parseInt(p[1]); }
     function minParaHoras(min) { if(min<=0) return "00:00"; let h=Math.floor(min/60), m=min%60; return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m); }
@@ -483,39 +497,37 @@
       if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
     }
 
-    async function baterPontoRapido(tipo) { baterPontoManual(tipo, true); }
+    async function baterPontoRapido(tipo) { hapticFeedback(); baterPontoManual(tipo, true); }
 
     async function baterPontoManual(tipo, isRapido = false) {
       if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
       let obs = ""; if (!isRapido && document.getElementById("obsManual")) obs = document.getElementById("obsManual").value;
       if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
-      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false); const loc = await obterLocalizacao();
+      exibirMsg(`A obter GPS e a registar ${tipo}...`, false); const loc = await obterLocalizacao();
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
       if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // =====================================
-    // GEOFENCE, CRM E AGENDA
-    // =====================================
     async function verHistoricoCRM(cliente) {
-      exibirMsg("A aceder à base de dados do cliente...", false);
+      hapticFeedback(); exibirMsg("A procurar histórico deste cliente...", false);
       const res = await callAPI('getHistoricoCliente', { cliente: cliente });
-      if(res.erro || !res || res.length === 0) return exibirMsg(`Não existem visitas anteriores registadas para ${cliente}.`, true);
+      if(res.erro || !res || res.length === 0) return exibirMsg(`Não existem visitas anteriores para ${cliente}.`, true);
       let txt = `📖 ÚLTIMAS VISITAS: ${cliente}\n\n`;
-      res.forEach(r => { txt += `Data: ${r.data}\nTéc: ${r.tecnico}\nStatus: ${r.acao}\nObs:${r.obs}\n-------------------\n`; });
+      res.forEach(r => { txt += `Data: ${r.data}\nTéc: ${r.tecnico}\nAção: ${r.acao}\nObs:${r.obs}\n-------------------\n`; });
       alert(txt);
     }
 
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
+      hapticFeedback();
       if (tipo === 'Forçar Remoção') {
           if(!confirm("Remover este compromisso da agenda?")) return;
-          exibirMsg("Forçando remoção...", false);
+          exibirMsg("A forçar remoção...", false);
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
           sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); return;
       }
 
-      exibirMsg(`Capturando GPS e validando localização...`, false);
+      exibirMsg(`A validar localização para ${tipo}...`, false);
       let loc = "Sem GPS";
       try {
          const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); });
@@ -525,25 +537,25 @@
             const geoRes = await callAPI('verificarGeofence', { lat: posObj.coords.latitude, lon: posObj.coords.longitude, endereco: enderecoCliente });
             if (!geoRes.ok) { if(!confirm(geoRes.msg + "\n\nDeseja forçar o check-in mesmo assim?")) { exibirMsg("Check-in cancelado.", true); return; } }
          }
-      } catch(e) { if(!confirm("Não conseguimos capturar seu GPS. Continuar sem localização?")) return; }
+      } catch(e) { if(!confirm("Não foi possível obter o seu GPS. Continuar sem localização?")) return; }
 
       if (tipo.includes('Saí') || tipo === 'Cliente Ausente') { prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
       processarVisita(cliente, tipo, linhaAgenda, loc, "");
     }
 
     async function processarVisita(cliente, tipo, linhaAgenda, loc, linksExtra) {
-      exibirMsg(`Registrando ação no servidor...`, false);
+      exibirMsg(`A gravar no servidor...`, false);
       let logAcao = tipo; if(tipo === 'Cliente Ausente') logAcao = "Saí (Ausente)";
       await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       let msgExtra = "";
       if (tipo === 'Cheguei') {
-         if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início de Expediente: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
-         else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno de Pausa: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
+         if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
+         else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
          if (linhaAgenda) await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       } 
       else if (tipo.includes('Fim de Expediente')) {
-         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim de Expediente: ${cliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
+         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim: ${cliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
       }
 
       if ((tipo.includes('Saí') || tipo === 'Cliente Ausente') && linhaAgenda) {
@@ -551,15 +563,11 @@
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: statusFinal }); msgExtra += ` (${statusFinal})`;
       }
       
-      exibirMsg(`Registrado com sucesso${msgExtra}!`, false);
+      exibirMsg(`Gravado com sucesso${msgExtra}!`, false);
       sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // RATING & ASSINATURAS
-    function setRating(v) {
-       currentRating = v; const stars = document.getElementById('starContainer').children;
-       for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); }
-    }
+    function setRating(v) { currentRating = v; const stars = document.getElementById('starContainer').children; for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); } }
     function initAssinatura() {
        canvas = document.getElementById('canvasAssinatura'); ctx = canvas.getContext('2d');
        const startPos = (e) => { assinando = true; desenhar(e); }; const endPos = () => { assinando = false; ctx.beginPath(); };
@@ -582,8 +590,7 @@
        setRating(0); abrirModal(); 
     }
     function prepararModalAvulso(acao) {
-       const cli = document.getElementById('chkCliente').value.trim();
-       if(!cli) return exibirMsg("Informe o nome do local avulso.", true);
+       const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return exibirMsg("Informe o local avulso.", true);
        pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; 
        document.getElementById('box-avaliacao').style.display = 'block'; document.getElementById('box-assinatura').style.display = 'block'; document.getElementById('lblFoto').innerText = '📸 Tirar Foto (Opcional)';
        setRating(0); abrirModal();
@@ -593,18 +600,12 @@
 
     async function enviarComprovativoEFechar() {
        const btn = document.getElementById('btnConfirmarModal'); const fotoInput = document.getElementById('fotoVisita');
-       
-       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput.files || !fotoInput.files[0])) {
-           exibirMsg("A foto do local é obrigatória para atestar a ausência do cliente.", true); return;
-       }
-
-       btn.innerText = "A Enviar..."; btn.disabled = true;
-       let linksExtra = "";
+       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput.files || !fotoInput.files[0])) { exibirMsg("A foto do local é obrigatória para registar a ausência.", true); return; }
+       btn.innerText = "A Enviar..."; btn.disabled = true; let linksExtra = "";
        if(currentRating > 0) linksExtra += ` [Avaliação: ${currentRating}⭐]`;
 
        if (fotoInput.files && fotoInput.files[0]) {
-           exibirMsg("A enviar foto para a nuvem...", false);
-           const reader = new FileReader();
+           exibirMsg("A enviar foto para a nuvem...", false); const reader = new FileReader();
            const fotoResult = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(fotoInput.files[0]); });
            const resF = await callAPI('uploadComprovativo', { base64: fotoResult, nomeArquivo: `Foto_${pendenteCliente}_${Date.now()}.jpg` });
            if(resF.sucesso) linksExtra += ` [Foto: ${resF.url}]`;
@@ -618,8 +619,7 @@
        }
 
        fecharModal(); btn.innerText = "Concluir"; btn.disabled = false;
-       exibirMsg("A concluir localização...", false);
-       let loc = "Sem GPS";
+       exibirMsg("A finalizar a localização...", false); let loc = "Sem GPS";
        try { const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); }); loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`; } catch(e) {}
 
        if (pendenteLinhaAgenda) { processarVisita(pendenteCliente, pendenteAcao, pendenteLinhaAgenda, loc, linksExtra); } 
@@ -634,10 +634,12 @@
     async function carregarItinerario(verificarAlerta = false) {
       const div = document.getElementById("listaItinerario");
       const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
-      if (cacheLocal && !verificarAlerta) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
-      else if (!cacheLocal && !verificarAlerta) div.innerHTML = "Buscando agenda...";
+      // STALE-WHILE-REVALIDATE (Abre o cache logo, atualiza invisível)
+      if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
+      else div.innerHTML = "A carregar agenda...";
 
       const parametroBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
+      // Faz fetch sempre para não perder atualizações novas do Admin
       const dados = await callAPI('getItinerario', { nome: parametroBusca });
       if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Sua agenda está livre."; sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); return; }
       
@@ -647,6 +649,8 @@
 
     function renderizarAgendaHTML(dados, verificarAlerta) {
       const agora = new Date();
+      const hojeStr = agora.toLocaleDateString('pt-BR');
+
       dados.forEach(d => {
         const [dia, mes, ano] = d.data.split('/'); const [hora, min] = d.horario.split(':');
         d.objData = new Date(ano, mes - 1, dia, hora, min);
@@ -655,66 +659,76 @@
       });
 
       dados.sort((a, b) => a.objData - b.objData);
-      let html = ""; let pendentesHoje = 0; const hojeStr = agora.toLocaleDateString('pt-BR');
+      
+      let html = ""; let pendentesHoje = 0; 
       let txtChegada = "📍 Cheguei no Local"; if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)"; if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
 
       dados.forEach(d => {
+        // AUTO-CLEAN: Oculta Concluídas e Perdidas (se não for admin)
+        if (d.status === 'Concluído') return;
         if (d.status === 'Perdida' && perfilAutenticado !== 'Admin') return; 
 
-        let isConcluido = d.status === 'Concluído'; let isPerdida = d.status === 'Perdida'; let isAndamento = d.status === 'Em Andamento';
-        let corClasse = isConcluido ? 'concluido' : (isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente'));
+        let isPerdida = d.status === 'Perdida'; let isAndamento = d.status === 'Em Andamento';
+        let isHoje = d.data === hojeStr;
+        let corClasse = isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente');
+        
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>` : ``;
-        let btnCRM = `<button class="btn-logout" style="padding:2px 8px; font-size:0.7rem; border-color:var(--primary); color:var(--primary); cursor:pointer;" onclick="verHistoricoCRM('${d.cliente}')">📖 Info</button>`;
+        let btnCRM = `<button class="btn-logout" style="padding:4px 10px; font-size:0.75rem; border-color:var(--primary); color:var(--primary); cursor:pointer;" onclick="verHistoricoCRM('${d.cliente}')">📖 Histórico</button>`;
         
         let botoesGeo = "";
-        if (isConcluido) botoesGeo = `<span style="color:var(--accent); font-weight:bold;">✔ Visita Concluída</span>`;
-        else if (isPerdida) { botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem início até 18h)</span>`; if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin; }
+        
+        if (isPerdida) { botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem início até 18h)</span>`; if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin; }
         else if (isAndamento) {
             botoesGeo = `
               <span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Atendimento em Andamento</span>
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
+              <div style="display:flex; flex-direction:column; gap:10px;">
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
                   <button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button>
                   <button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 Saí -> Próximo</button>
                 </div>
-                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:8px;">
-                   <button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha})">🚫 Cliente Ausente</button>
-                   <button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Saí -> Fim Expediente</button>
+                <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;">
+                   <button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha})">🚫 Ausente</button>
+                   <button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Fim Expediente</button>
                 </div>
                 ${btnConcluirAdmin}
               </div>`;
         } else {
-            botoesGeo = `
-              <div style="display:flex; flex-direction:column; gap:8px;">
-                <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '${d.endereco}')">${txtChegada}</button>
-                ${btnConcluirAdmin}
-              </div>`;
+            // REGRA: SÓ PODE INICIAR SE FOR HOJE!
+            if (!isHoje && perfilAutenticado !== 'Admin') {
+                botoesGeo = `<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Disponível para início apenas no dia ${d.data}</span>`;
+            } else {
+                botoesGeo = `
+                  <div style="display:flex; flex-direction:column; gap:8px;">
+                    <button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '${d.endereco}')">${txtChegada}</button>
+                    ${btnConcluirAdmin}
+                  </div>`;
+            }
         }
         
-        let btnMaps = d.endereco ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endereco)}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.8rem; background:transparent; border: 1px solid var(--primary); color:var(--primary); padding:6px 12px; border-radius:6px; text-decoration:none; font-weight:bold;">🗺 Abrir no Maps</a>` : '';
-        if ((d.status === 'Pendente' || d.status === 'Em Andamento') && d.data === hojeStr && d.tecnico === usuarioAutenticado) pendentesHoje++;
+        let btnMaps = d.endereco ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endereco)}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.85rem; background:transparent; border: 1px solid var(--primary); color:var(--primary); padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:bold;">🗺 Abrir Rota</a>` : '';
+        if ((d.status === 'Pendente' || d.status === 'Em Andamento') && isHoje && d.tecnico === usuarioAutenticado) pendentesHoje++;
         let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem; margin-bottom:8px; display:block;">👤 Técnico: ${d.tecnico}</span>` : '';
 
         html += `<div class="card-itinerario ${corClasse}">
           ${infoTecnico}
           <div style="display:flex; justify-content:space-between; align-items:flex-start;">
             <div>
-              <div style="display:flex; align-items:center; gap:8px; margin-bottom:4px;"><strong style="color:var(--text); font-size:1.15rem;">${d.cliente}</strong> ${btnCRM}</div>
-              <small style="color:var(--text-muted); font-size:0.9rem;">📍 ${d.endereco}</small><br>${btnMaps}
+              <div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><strong style="color:var(--text); font-size:1.2rem;">${d.cliente}</strong> ${btnCRM}</div>
+              <small style="color:var(--text-muted); font-size:0.95rem;">📍 ${d.endereco}</small><br>${btnMaps}
             </div>
-            <small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:4px; border:1px solid var(--border);">🕒 ${d.horario}</small>
+            <small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border);">🕒 ${d.horario}</small>
           </div>
-          <div style="margin-top:16px; padding-top:12px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;">
+          <div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;">
              <small style="color:var(--text-muted);">Data: ${d.data} - <span style="font-weight:bold; color:var(--text);">${d.status}</span></small>
              ${botoesGeo}
           </div>
         </div>`;
       });
       
-      document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; color:var(--text-muted);">Nenhum compromisso pendente.</div>`;
+      document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight:500;">✨ A sua agenda está livre.</div>`;
 
       if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje && Notification.permission === "granted") {
-           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda.` }); notificadoHoje = true;
+           new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda de hoje.` }); notificadoHoje = true;
       }
     }
 
@@ -753,15 +767,32 @@
         }
       }
 
-      exibirMsg(`A gravar ${datasParaGravar.length} compromisso(s)...`, false);
+      exibirMsg(`A verificar e agendar ${datasParaGravar.length} compromisso(s)...`, false);
       const payloads = datasParaGravar.map(dt => ({ tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: "" }));
       const res = await callAPI('addItinerarioMulti', { dadosArray: payloads });
 
       if(res.erro) exibirMsg(res.erro, true);
       else {
-        exibirMsg(res.sucesso, false); document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
+        exibirMsg(res.sucesso, false);
+        document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
         sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario();
       }
+    }
+
+    async function checkinAvulso(acao) {
+      hapticFeedback();
+      const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return exibirMsg("Informe o local avulso.", true);
+      if(acao.includes('Saí')) { prepararModalAvulso(acao); return; }
+
+      exibirMsg(`A gravar check-in avulso...`, false); const loc = await obterLocalizacao();
+      await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
+      
+      let msgExtra = "";
+      if (acao === 'Cheguei') {
+        if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
+        else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
+      }
+      exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
     function renderTag(tipo) {
@@ -774,23 +805,17 @@
     }
 
     async function carregarHistoricoEAtualizarBotoes(nome) {
-      const tbody = document.getElementById("tblCorpo");
-      const cacheLocal = sessionStorage.getItem('cacheHist_' + nome);
+      const tbody = document.getElementById("tblCorpo"); const cacheLocal = sessionStorage.getItem('cacheHist_' + nome);
       if(cacheLocal) { renderizarHistoricoHTML(JSON.parse(cacheLocal)); calcularGamificacao(JSON.parse(cacheLocal)); }
-      else tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Buscando dados...</td></tr>';
+      else tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">A procurar histórico...</td></tr>';
 
       const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
       if (!dados.erro) { 
         sessionStorage.setItem('cacheHist_' + nome, JSON.stringify(dados));
         renderizarHistoricoHTML(dados); calcularGamificacao(dados);
-        
         let lastPonto = 'Saída'; tempoInicioExpediente = null;
         for (let i = dados.length - 1; i >= 0; i--) { 
-           if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { 
-               lastPonto = dados[i].tipo; 
-               if(lastPonto === 'Entrada') tempoInicioExpediente = parseDataBR(dados[i].dataHora);
-               break; 
-           } 
+           if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { lastPonto = dados[i].tipo; if(lastPonto === 'Entrada') tempoInicioExpediente = parseDataBR(dados[i].dataHora); break; } 
         }
         atualizarRegraBotoes(lastPonto);
       }
@@ -798,8 +823,7 @@
     }
     
     function calcularGamificacao(dados) {
-      let visitasMes = 0; let minExtra = 0; let minTotal = 0;
-      let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
+      let visitasMes = 0; let minExtra = 0; let minTotal = 0; let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
       dados.forEach(d => {
          if(d.dataHora.includes(mesAtual)) {
             if(d.tipo.includes('Saí') && !d.tipo.includes('Ponto')) visitasMes++;
@@ -807,9 +831,7 @@
             if(d.tipo === 'Saída' && d.total !== '-') minTotal += horasParaMin(d.total);
          }
       });
-      document.getElementById('lblVisitasMes').innerText = visitasMes;
-      document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal);
-      document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
+      document.getElementById('lblVisitasMes').innerText = visitasMes; document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal); document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
     }
 
     function renderizarHistoricoHTML(dados) {
@@ -821,29 +843,24 @@
         let obsF = d.obs;
         if(obsF.includes('[Foto:')) obsF = obsF.replace(/\[Foto:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none;">📸 Ver Foto</a>`);
         if(obsF.includes('[Assinatura:')) obsF = obsF.replace(/\[Assinatura:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--accent); font-size:0.8rem; text-decoration:none;">✍️ Ver Assinatura</a>`);
-        if(obsF.includes('[Avaliação:')) obsF = obsF.replace(/\[Avaliação:\s([^\]]+)\]/g, `<br><span style="color:#fbbf24; font-size:0.8rem;">$1</span>`);
+        if(obsF.includes('[Avaliação:')) obsF = obsF.replace(/\[Avaliação:\s([^\]]+)\]/g, `<br><span style="color:#fbbf24; font-size:0.8rem; font-weight:bold;">$1</span>`);
         html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Ação">${renderTag(d.tipo)}</td><td data-label="Obs">${obsF || '-'}${infoExtra}</td></tr>`;
       });
       tbody.innerHTML = html;
     }
 
     async function carregarMeusAjustes(nome) {
-      const tbody = document.getElementById("tblMeusAjustes");
-      const dados = await callAPI('getMinhasSolicitacoes', { nome: nome });
+      const tbody = document.getElementById("tblMeusAjustes"); const dados = await callAPI('getMinhasSolicitacoes', { nome: nome });
       if (dados.erro || !dados || dados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Sem pedidos.</td></tr>'; return; }
       let html = "";
-      [...dados].reverse().forEach(d => {
-        let corStatus = d.status === 'Aprovado' ? 'var(--accent)' : (d.status === 'Recusado' ? 'var(--danger)' : 'var(--warning)');
-        html += `<tr><td data-label="Data"><strong>${d.dataCorreta}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Status"><span style="color:${corStatus}; font-weight:bold;">${d.status}</span></td></tr>`;
-      });
+      [...dados].reverse().forEach(d => { let corStatus = d.status === 'Aprovado' ? 'var(--accent)' : (d.status === 'Recusado' ? 'var(--danger)' : 'var(--warning)'); html += `<tr><td data-label="Data"><strong>${d.dataCorreta}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Status"><span style="color:${corStatus}; font-weight:bold;">${d.status}</span></td></tr>`; });
       tbody.innerHTML = html;
     }
 
     async function enviarSolicitacao() {
       const tipo = document.getElementById('corrTipo').value; const dataHora = document.getElementById('corrDataHora').value; const motivo = document.getElementById('corrMotivo').value;
       if (!dataHora || !motivo) return exibirMsg("Erro: Preencha a data/hora e o motivo.", true);
-      exibirMsg("Enviando...", false);
-      const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo });
+      exibirMsg("Enviando...", false); const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo });
       if(res.erro) exibirMsg(res.erro, true); else { exibirMsg(res.sucesso, false); document.getElementById('corrMotivo').value = ""; carregarMeusAjustes(usuarioAutenticado); }
     }
 
@@ -883,10 +900,7 @@
       if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
       if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; return; }
       let html = "";
-      [...filtrados].reverse().forEach(d => {
-        let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
-        html += `<tr><td data-label="Data">${d.dataHora}</td><td data-label="Colaborador"><strong>${d.nome}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Resumo">${d.obs||'-'}${infoExtra}</td></tr>`;
-      });
+      [...filtrados].reverse().forEach(d => { let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : ''; html += `<tr><td data-label="Data">${d.dataHora}</td><td data-label="Colaborador"><strong>${d.nome}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Resumo">${d.obs||'-'}${infoExtra}</td></tr>`; });
       tbody.innerHTML = html;
     }
 
@@ -908,12 +922,9 @@
     }
 
     async function carregarAprovacoes() {
-      const div = document.getElementById("listaAprovacoes"); div.innerHTML = "Buscando...";
-      const dados = await callAPI('getSolicitacoesPendentes');
+      const div = document.getElementById("listaAprovacoes"); div.innerHTML = "Buscando..."; const dados = await callAPI('getSolicitacoesPendentes');
       if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Nenhuma pendência."; return; }
-      let html = "";
-      dados.forEach(d => { html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left;"><strong style="color:var(--primary);">${d.nome}</strong> pediu <strong>${d.tipo}</strong><br><small style="color:var(--text-muted)">Data: ${d.dataCorreta}</small><br><small style="color:var(--text-muted)">Motivo: ${d.motivo}</small><br><div style="margin-top:10px;"><button class="btn-acao" style="background:var(--accent);" onclick="julgar(${d.linha}, 'Aprovado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">✅ Aprovar</button><button class="btn-acao" style="background:var(--danger);" onclick="julgar(${d.linha}, 'Recusado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">❌ Recusar</button></div></div>`; });
-      div.innerHTML = html;
+      let html = ""; dados.forEach(d => { html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left;"><strong style="color:var(--primary);">${d.nome}</strong> pediu <strong>${d.tipo}</strong><br><small style="color:var(--text-muted)">Data: ${d.dataCorreta}</small><br><small style="color:var(--text-muted)">Motivo: ${d.motivo}</small><br><div style="margin-top:10px;"><button class="btn-acao" style="background:var(--accent);" onclick="julgar(${d.linha}, 'Aprovado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">✅ Aprovar</button><button class="btn-acao" style="background:var(--danger);" onclick="julgar(${d.linha}, 'Recusado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">❌ Recusar</button></div></div>`; }); div.innerHTML = html;
     }
 
     async function julgar(linha, acao, nome, tipo, dataCorreta, motivo) {
@@ -928,8 +939,7 @@
     async function autoCalcularKM() {
        const origem = document.getElementById("rotaOrigem").value.trim(); const destino = document.getElementById("rotaDestino").value.trim();
        if(!origem || !destino) return exibirMsg("Preencha Origem e Destino primeiro.", true);
-       exibirMsg("A calcular distância via Google Maps...", false);
-       const res = await callAPI('calcularRotaFrota', { origem: origem, destino: destino });
+       exibirMsg("A calcular distância via Google Maps...", false); const res = await callAPI('calcularRotaFrota', { origem: origem, destino: destino });
        if(res.sucesso) { document.getElementById("rotaKm").value = res.km; exibirMsg(`Distância encontrada: ${res.km} km`, false); } else { exibirMsg(res.erro, true); }
     }
 
@@ -944,8 +954,7 @@
     function preencherFiltroMeses(mesesDisponiveis) {
       const selMes = document.getElementById("filtroMes"); let valorAtual = selMes.value;
       let htmlSelect = '<option value="TODOS">Todos</option>'; mesesDisponiveis.forEach(m => htmlSelect += `<option value="${m}">${m}</option>`);
-      selMes.innerHTML = htmlSelect;
-      if(mesesDisponiveis.includes(valorAtual) || valorAtual === 'TODOS') selMes.value = valorAtual; else if(mesesDisponiveis.length > 0) selMes.value = mesesDisponiveis[mesesDisponiveis.length - 1];
+      selMes.innerHTML = htmlSelect; if(mesesDisponiveis.includes(valorAtual) || valorAtual === 'TODOS') selMes.value = valorAtual; else if(mesesDisponiveis.length > 0) selMes.value = mesesDisponiveis[mesesDisponiveis.length - 1];
     }
 
     function filtrarRotas() {
@@ -967,12 +976,12 @@
     }
 
     async function salvarRota(e) {
-      e.preventDefault(); const btn = document.getElementById("btnSalvarRota"); btn.disabled = true; btn.innerText = "Gravando...";
+      e.preventDefault(); const btn = document.getElementById("btnSalvarRota"); btn.disabled = true; btn.innerText = "A gravar...";
       const payload = { tecnico: document.getElementById("rotaTecnico").value, mes: document.getElementById("rotaMes").value, data: document.getElementById("rotaData").value, dia: document.getElementById("rotaDia").value, origem: document.getElementById("rotaOrigem").value, destino: document.getElementById("rotaDestino").value, km: document.getElementById("rotaKm").value, estacionamento: document.getElementById("rotaEstac").value, pedagio: document.getElementById("rotaPedagio").value, desconto: document.getElementById("rotaDesconto").value, obs: document.getElementById("rotaObs").value };
       const res = await callAPI('salvarLancamentoRota', { dadosRota: payload });
       btn.disabled = false; btn.innerText = "Salvar Rota";
       if (res.erro) exibirMsg(res.erro, true); 
-      else { exibirMsg("Rota registrada!", false); document.getElementById("fRota").reset(); sessionStorage.removeItem('cacheRotas'); carregarRotasServidor(); }
+      else { exibirMsg("Rota registada!", false); document.getElementById("fRota").reset(); sessionStorage.removeItem('cacheRotas'); carregarRotasServidor(); }
     }
   </script>
 </body>
