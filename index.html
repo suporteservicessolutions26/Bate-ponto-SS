@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=9">
+  <link rel="manifest" href="manifest.json?v=10">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=9">
-  <link rel="icon" href="./LogoSS.png?v=9" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=10">
+  <link rel="icon" href="./LogoSS.png?v=10" type="image/png">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
@@ -117,6 +117,41 @@
 </head>
 <body>
   
+  <!-- LISTA DE CLIENTES OFICIAL (DATALIST) -->
+  <datalist id="listaClientesAtivos">
+    <option value="ABC-TUR">
+    <option value="Audicone Contadores">
+    <option value="BRJ">
+    <option value="Buscharger Midia e Publicidade">
+    <option value="CargoFlex">
+    <option value="Conficont">
+    <option value="Domínio Soluções">
+    <option value="Dynamic Services">
+    <option value="Eliel Figueiredo">
+    <option value="Engesystems">
+    <option value="Exata Contabilidade">
+    <option value="Fiamma">
+    <option value="ForteMetal">
+    <option value="FVC">
+    <option value="Grupo Mserv">
+    <option value="Healingmed">
+    <option value="INFOB">
+    <option value="Lwart Lubrificantes">
+    <option value="M Ferreira">
+    <option value="MCM TRANSP LOGISTICA LTDA">
+    <option value="MILLENNIHUM">
+    <option value="MP Master">
+    <option value="Nascimento Transportes">
+    <option value="Nova A3">
+    <option value="Philos">
+    <option value="PlayCity">
+    <option value="PROTEC">
+    <option value="QTL">
+    <option value="Reis Principe">
+    <option value="Suporte">
+    <option value="YouData">
+  </datalist>
+
   <div id="modal-overlay"></div>
   <div id="modal-box">
      <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.3rem; font-weight:800;" id="modalTitulo">Finalizar e Comprovar</h3>
@@ -183,7 +218,7 @@
     <div id="msgStatus"></div>
 
     <div id="tela-login" class="box">
-      <div class="logo-container"><img src="./LogoSS.png?v=9" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=10" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 20px; text-align: center; font-weight:700;">Acesso ao Sistema</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -253,7 +288,8 @@
                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:18px;height:18px;margin:0;">Seg</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:18px;height:18px;margin:0;">Ter</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:18px;height:18px;margin:0;">Qua</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:18px;height:18px;margin:0;">Qui</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:18px;height:18px;margin:0;">Sex</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:18px;height:18px;margin:0;">Sáb</label>
              </div>
           </div>
-          <label>Cliente ou Local</label><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" />
+          <!-- CAMPO ATUALIZADO COM DATALIST -->
+          <label>Cliente ou Local</label><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" list="listaClientesAtivos" />
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
           <button class="btn" style="background: var(--warning); color: #000; margin-top: 14px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
@@ -286,7 +322,8 @@
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
           <label>Nome do Cliente / Local</label>
-          <input type="text" id="chkCliente" placeholder="Ex: Loja Extra Y" />
+          <!-- CAMPO ATUALIZADO COM DATALIST -->
+          <input type="text" id="chkCliente" placeholder="Ex: Loja Extra Y" list="listaClientesAtivos" />
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
             <button class="btn" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
@@ -393,7 +430,8 @@
             <div class="form-row"><div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div><div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div></div>
             <div class="form-row">
               <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
-              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required style="margin-bottom:4px;" /><button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância Automática</button></div>
+              <!-- CAMPO ATUALIZADO COM DATALIST -->
+              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required style="margin-bottom:4px;" list="listaClientesAtivos" /><button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância Automática</button></div>
             </div>
             <div class="form-row"><div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div><div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div></div>
             <div class="form-row"><div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div><div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div></div>
@@ -435,7 +473,6 @@
 
     async function callAPI(action, payload = {}) {
       payload.action = action;
-      // Prevenir bug da vírgula
       payload.dataHoraExecucao = new Date().toLocaleString('pt-BR').replace(',', '');
 
       if (!navigator.onLine && isSyncable(action)) {
@@ -533,7 +570,6 @@
       let horaLogin = localStorage.getItem('ponto_login_time'); if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) logout();
     }, 1000);
 
-    // Prevenir Bug da Vírgula aqui também
     function parseDataBR(str) { 
        if(!str) return new Date(); 
        str = str.replace(',', ''); 
