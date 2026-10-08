@@ -7,15 +7,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=8">
+  <link rel="manifest" href="manifest.json?v=9">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=8">
-  <link rel="icon" href="./LogoSS.png?v=8" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=9">
+  <link rel="icon" href="./LogoSS.png?v=9" type="image/png">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
     [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
-    [data-theme="light"] input, [data-theme="light"] select { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
+    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
     [data-theme="light"] .box { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
     [data-theme="light"] .usuario-logado, [data-theme="light"] .card-metric, [data-theme="light"] .aviso-interno { background: #f1f5f9; }
     [data-theme="light"] th { background: #e2e8f0; color: #1e293b; }
@@ -30,8 +30,8 @@
     header h2 { font-size: 1.3rem; line-height: 1.2; font-weight: 700; }
     .box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 16px; animation: slideUp 0.4s ease; }
     
-    input, select { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 8px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; appearance: none; }
-    input:focus, select:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
+    input, select, textarea { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 8px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; appearance: none; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
     label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 500; }
     
     .btn { color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
@@ -85,7 +85,6 @@
     .p-alta { background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
     .p-normal { background: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; }
     .p-baixa { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-    
     .card-itinerario.critica { border-left-color: #ef4444; border-left-width: 5px; }
     .card-itinerario.alta { border-left-color: #f97316; }
 
@@ -96,9 +95,7 @@
     .star-rating { font-size: 2.2rem; color: #334155; cursor: pointer; display: flex; justify-content: center; gap: 12px; margin-bottom:15px; }
     .star-rating span { transition: all 0.2s; }
     .star-rating span.ativo { color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,0.6); transform: scale(1.1); }
-
-    .logo-container { text-align: center; margin-bottom: 24px; }
-    .logo-img { max-width: 160px; height: auto; border-radius: 8px; }
+    .logo-container { text-align: center; margin-bottom: 24px; } .logo-img { max-width: 160px; height: auto; border-radius: 8px; }
 
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
     @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
@@ -124,10 +121,20 @@
   <div id="modal-box">
      <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.3rem; font-weight:800;" id="modalTitulo">Finalizar e Comprovar</h3>
      
-     <!-- FASE 1: CAMPO NOVO PARA INSERIR OBSERVAÇÕES DETALHADAS NA ORDEM DE SERVIÇO -->
      <div id="box-os" style="margin-bottom:15px; text-align:left;">
         <label style="color:var(--text); font-weight:bold; font-size:0.9rem;">Relatório Técnico do Serviço</label>
-        <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados, equipamentos trocados, etc..." style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); resize:vertical; font-family:inherit;"></textarea>
+        <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados, equipamentos trocados, etc..." style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); resize:vertical; font-family:inherit; margin-bottom: 0;"></textarea>
+     </div>
+
+     <!-- MÓDULO DE ESTOQUE (FASE 3) -->
+     <div id="box-materiais" style="margin-bottom:15px; text-align:left; background: var(--bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); display: none;">
+       <label style="color:var(--text); font-weight:bold; font-size:0.9rem;">Materiais Utilizados</label>
+       <div style="display:flex; gap:8px; margin-top:8px;">
+          <select id="selMaterial" style="flex:2; margin-bottom:0; font-size:0.85rem; padding:8px;"><option value="">Carregando...</option></select>
+          <input type="number" id="qtdMaterial" placeholder="Qtd" min="1" value="1" style="flex:1; margin-bottom:0; font-size:0.85rem; padding:8px;" />
+          <button class="btn-acao" style="background:var(--primary); margin:0; padding:8px 12px;" onclick="addMaterialUI(event)">➕</button>
+       </div>
+       <ul id="listaMateriaisUi" style="list-style:none; padding:0; margin-top:10px; font-size:0.85rem; color:var(--text-muted);"></ul>
      </div>
 
      <div id="box-avaliacao" style="text-align:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid var(--border);">
@@ -176,7 +183,7 @@
     <div id="msgStatus"></div>
 
     <div id="tela-login" class="box">
-      <div class="logo-container"><img src="./LogoSS.png?v=8" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=9" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 20px; text-align: center; font-weight:700;">Acesso ao Sistema</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -408,6 +415,8 @@
     let currentRating = 0; let tempoInicioExpediente = null;
     
     let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
+    // VARIÁVEIS DE ESTOQUE (FASE 3)
+    let estoqueGlobal = []; let materiaisUsados = [];
 
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
 
@@ -503,6 +512,10 @@
       usuarioAutenticado = nome; perfilAutenticado = perfil; document.getElementById('nomeExibicao').innerText = nome;
       document.getElementById('tela-login').style.display = "none"; document.getElementById('tela-app').style.display = "block"; document.getElementById('btnSair').style.display = "block";
       if (perfil === 'Admin') { document.getElementById('subHeader').innerText = "Painel Administrativo"; document.getElementById('abasAdmin').style.display = "flex"; document.getElementById('areaAtribuirItinerario').style.display = "block"; }
+      
+      // Carregar inventário no arranque
+      if(navigator.onLine) carregarEstoque();
+
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); carregarHistoricoEAtualizarBotoes(nome); carregarItinerario(true); 
     }
 
@@ -616,6 +629,47 @@
       exibirMsg(`Gravado com sucesso${msgExtra}!`, false); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
+    // --- LÓGICA DO ESTOQUE (FASE 3) ---
+    async function carregarEstoque() {
+       const sel = document.getElementById('selMaterial');
+       sel.innerHTML = '<option value="">Carregando...</option>';
+       const res = await callAPI('getEstoque');
+       if(!res.erro) {
+           estoqueGlobal = res;
+           sel.innerHTML = '<option value="">Selecionar peça...</option>';
+           res.forEach(item => { sel.innerHTML += `<option value="${item.linha}">${item.nome} (Disp:${item.qtd})</option>`; });
+       } else {
+           sel.innerHTML = '<option value="">Erro ao carregar estoque</option>';
+       }
+    }
+
+    function addMaterialUI(e) {
+       e.preventDefault(); hapticFeedback();
+       const sel = document.getElementById('selMaterial');
+       const qtd = parseInt(document.getElementById('qtdMaterial').value);
+       if(!sel.value || isNaN(qtd) || qtd < 1) return;
+       
+       const item = estoqueGlobal.find(i => i.linha == sel.value);
+       if(!item) return;
+
+       if(qtd > item.qtd) { exibirMsg(`Estoque insuficiente! Apenas ${item.qtd} disponíveis.`, true); return; }
+
+       materiaisUsados.push({ linha: item.linha, nome: item.nome, qtdUsada: qtd });
+       atualizarUI_Materiais();
+       
+       sel.value = ""; document.getElementById('qtdMaterial').value = "1";
+    }
+    
+    function atualizarUI_Materiais() {
+       const ul = document.getElementById('listaMateriaisUi');
+       ul.innerHTML = '';
+       materiaisUsados.forEach((m, idx) => {
+          ul.innerHTML += `<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:#1e293b; padding:8px; border-radius:6px;"><span><strong>${m.qtdUsada}x</strong>${m.nome}</span> <span style="color:var(--danger); cursor:pointer; font-weight:bold; font-size:1rem;" onclick="removeMaterial(${idx})">✖</span></li>`;
+       });
+    }
+
+    function removeMaterial(idx) { materiaisUsados.splice(idx, 1); atualizarUI_Materiais(); }
+
     function setRating(v) { currentRating = v; const stars = document.getElementById('starContainer').children; for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); } }
     function initAssinatura() {
        canvas = document.getElementById('canvasAssinatura'); ctx = canvas.getContext('2d');
@@ -633,11 +687,14 @@
     function prepararModalAgenda(cliente, acao, linha) { 
        pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; 
        
-       // LIMPEZA DA ORDEM DE SERVIÇO (FASE 1)
        document.getElementById('txtObservacaoOS').value = "";
-       document.getElementById('box-os').style.display = (acao.includes('Saí') && acao !== 'Cliente Ausente') ? 'block' : 'none';
+       materiaisUsados = []; atualizarUI_Materiais();
 
-       document.getElementById('box-avaliacao').style.display = (acao.includes('Saí') && acao !== 'Cliente Ausente') ? 'block' : 'none';
+       let showOS = (acao.includes('Saí') && acao !== 'Cliente Ausente');
+       document.getElementById('box-os').style.display = showOS ? 'block' : 'none';
+       document.getElementById('box-materiais').style.display = showOS ? 'block' : 'none';
+
+       document.getElementById('box-avaliacao').style.display = showOS ? 'block' : 'none';
        document.getElementById('box-assinatura').style.display = (acao === 'Cliente Ausente') ? 'none' : 'block';
        document.getElementById('lblFoto').innerText = (acao === 'Cliente Ausente') ? '📸 Tirar Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)';
        document.getElementById('modalTitulo').innerText = (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar Atendimento e Gerar OS';
@@ -648,7 +705,10 @@
        pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; 
        
        document.getElementById('txtObservacaoOS').value = "";
+       materiaisUsados = []; atualizarUI_Materiais();
+
        document.getElementById('box-os').style.display = 'block';
+       document.getElementById('box-materiais').style.display = 'block';
 
        document.getElementById('box-avaliacao').style.display = 'block'; document.getElementById('box-assinatura').style.display = 'block'; document.getElementById('lblFoto').innerText = '📸 Tirar Foto (Opcional)';
        setRating(0); abrirModal();
@@ -664,6 +724,7 @@
        
        btn.innerText = "A Enviar..."; btn.disabled = true; let linksExtra = ""; let urlAssinaturaOS = "";
        if(currentRating > 0) linksExtra += ` [Avaliação: ${currentRating}⭐]`;
+       if(materiaisUsados.length > 0) linksExtra += ` [Materiais Usados: ${materiaisUsados.length}]`;
 
        if (fotoInput.files && fotoInput.files[0]) {
            exibirMsg("A enviar foto para a nuvem...", false); const reader = new FileReader();
@@ -699,14 +760,15 @@
            exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
        }
 
-       // --- CHAMADA PARA GERAR O PDF DA OS - FASE 1 ---
+       // --- CHAMADA PARA GERAR O PDF DA OS (FASE 1 e 3) ---
        if (pendenteAcao !== 'Cliente Ausente' && navigator.onLine) {
            exibirMsg("A gerar Ordem de Serviço em PDF...", false);
-           let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: new Date().toLocaleString('pt-BR') });
+           let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: new Date().toLocaleString('pt-BR'), materiais: materiaisUsados });
            if(osRes.sucesso) {
                exibirMsg("OS gerada com sucesso! A redirecionar para o WhatsApp...", false);
                let wppTexto = encodeURIComponent(`Olá! A Services & Solutions agradece a sua preferência. Segue a Ordem de Serviço do atendimento realizado hoje:\n\n📄 Visualizar Relatório: ${osRes.url}`);
                setTimeout(() => window.open(`https://api.whatsapp.com/send?text=${wppTexto}`, '_blank'), 1500);
+               carregarEstoque(); // Atualiza estoque na tela depois de consumir
            }
        }
     }
@@ -727,8 +789,7 @@
       const agora = new Date(); const hojeStr = agora.toLocaleDateString('pt-BR');
 
       dados.forEach(d => {
-        const [dia, mes, ano] = d.data.split('/'); const [hora, min] = d.horario.split(':');
-        d.objData = new Date(ano, mes - 1, dia, hora, min);
+        const [dia, mes, ano] = d.data.split('/'); const [hora, min] = d.horario.split(':'); d.objData = new Date(ano, mes - 1, dia, hora, min);
         const limiteVisita = new Date(ano, mes - 1, dia, 18, 0); 
         if (d.status === 'Pendente' && agora > limiteVisita) { d.status = 'Perdida'; callAPI('atualizarStatusItinerario', { linha: d.linha, status: 'Perdida' }); }
         
@@ -764,7 +825,6 @@
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>` : ``;
         let btnCRM = `<button class="btn-logout" style="padding:4px 10px; font-size:0.75rem; border-color:var(--primary); color:var(--primary); cursor:pointer;" onclick="verHistoricoCRM('${d.cliente}')">📖 Histórico</button>`;
         
-        // FASE 1: BOTÃO WHATSAPP "Avisar Cliente"
         let wppTexto = encodeURIComponent(`Olá! Sou o técnico ${d.tecnico} da Services & Solutions. Acabei de sair em direção ao vosso endereço (${d.endereco}) e chegarei em breve.`);
         let btnWpp = `<a href="https://api.whatsapp.com/send?text=${wppTexto}" target="_blank" class="btn-acao" style="background:#16a34a; margin:0; text-decoration:none; display:flex; justify-content:center;">💬 Avisar Cliente</a>`;
         
