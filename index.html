@@ -126,7 +126,7 @@
         <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados, equipamentos trocados, etc..." style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); resize:vertical; font-family:inherit; margin-bottom: 0;"></textarea>
      </div>
 
-     <!-- MÓDULO DE ESTOQUE (FASE 3) -->
+     <!-- MÓDULO DE ESTOQUE -->
      <div id="box-materiais" style="margin-bottom:15px; text-align:left; background: var(--bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); display: none;">
        <label style="color:var(--text); font-weight:bold; font-size:0.9rem;">Materiais Utilizados</label>
        <div style="display:flex; gap:8px; margin-top:8px;">
@@ -415,7 +415,6 @@
     let currentRating = 0; let tempoInicioExpediente = null;
     
     let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
-    // VARIÁVEIS DE ESTOQUE (FASE 3)
     let estoqueGlobal = []; let materiaisUsados = [];
 
     if ('serviceWorker' in navigator) { window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js'); }); }
@@ -436,7 +435,8 @@
 
     async function callAPI(action, payload = {}) {
       payload.action = action;
-      payload.dataHoraExecucao = new Date().toLocaleString('pt-BR');
+      // Prevenir bug da vírgula
+      payload.dataHoraExecucao = new Date().toLocaleString('pt-BR').replace(',', '');
 
       if (!navigator.onLine && isSyncable(action)) {
          filaOffline.push(payload); localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); atualizarBadgeOffline();
@@ -513,7 +513,6 @@
       document.getElementById('tela-login').style.display = "none"; document.getElementById('tela-app').style.display = "block"; document.getElementById('btnSair').style.display = "block";
       if (perfil === 'Admin') { document.getElementById('subHeader').innerText = "Painel Administrativo"; document.getElementById('abasAdmin').style.display = "flex"; document.getElementById('areaAtribuirItinerario').style.display = "block"; }
       
-      // Carregar inventário no arranque
       if(navigator.onLine) carregarEstoque();
 
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); carregarHistoricoEAtualizarBotoes(nome); carregarItinerario(true); 
@@ -534,7 +533,13 @@
       let horaLogin = localStorage.getItem('ponto_login_time'); if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) logout();
     }, 1000);
 
-    function parseDataBR(str) { if(!str) return new Date(); let p = str.split(" "), d = p[0].split("/"), h = p[1].split(":"); return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]); }
+    // Prevenir Bug da Vírgula aqui também
+    function parseDataBR(str) { 
+       if(!str) return new Date(); 
+       str = str.replace(',', ''); 
+       let p = str.split(" "), d = p[0].split("/"), h = (p[1]||"00:00:00").split(":"); 
+       return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]||0); 
+    }
     
     function horasParaMin(hStr) { 
        if(!hStr || hStr==='-' || hStr==='Erro') return 0; 
@@ -629,7 +634,6 @@
       exibirMsg(`Gravado com sucesso${msgExtra}!`, false); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    // --- LÓGICA DO ESTOQUE (FASE 3) ---
     async function carregarEstoque() {
        const sel = document.getElementById('selMaterial');
        sel.innerHTML = '<option value="">Carregando...</option>';
@@ -760,15 +764,14 @@
            exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
        }
 
-       // --- CHAMADA PARA GERAR O PDF DA OS (FASE 1 e 3) ---
        if (pendenteAcao !== 'Cliente Ausente' && navigator.onLine) {
            exibirMsg("A gerar Ordem de Serviço em PDF...", false);
-           let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: new Date().toLocaleString('pt-BR'), materiais: materiaisUsados });
+           let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: new Date().toLocaleString('pt-BR').replace(',', ''), materiais: materiaisUsados });
            if(osRes.sucesso) {
                exibirMsg("OS gerada com sucesso! A redirecionar para o WhatsApp...", false);
                let wppTexto = encodeURIComponent(`Olá! A Services & Solutions agradece a sua preferência. Segue a Ordem de Serviço do atendimento realizado hoje:\n\n📄 Visualizar Relatório: ${osRes.url}`);
                setTimeout(() => window.open(`https://api.whatsapp.com/send?text=${wppTexto}`, '_blank'), 1500);
-               carregarEstoque(); // Atualiza estoque na tela depois de consumir
+               carregarEstoque(); 
            }
        }
     }
