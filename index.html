@@ -7,15 +7,15 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=11">
+  <link rel="manifest" href="manifest.json?v=12">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=11">
-  <link rel="icon" href="./LogoSS.png?v=11" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=12">
+  <link rel="icon" href="./LogoSS.png?v=12" type="image/png">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
     [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
-    [data-theme="light"] input, [data-theme="lighft"] select, [data-theme="light"] textarea { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
+    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
     [data-theme="light"] .box { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
     [data-theme="light"] .usuario-logado, [data-theme="light"] .card-metric, [data-theme="light"] .aviso-interno { background: #f1f5f9; }
     [data-theme="light"] th { background: #e2e8f0; color: #1e293b; }
@@ -117,7 +117,7 @@
 </head>
 <body>
   
-  <!-- LISTA DE CLIENTES OFICIAL VAZIA (SERÁ PREENCHIDA PELO JS) -->
+  <!-- LISTA DE CLIENTES OFICIAL -->
   <datalist id="listaClientesAtivos"></datalist>
 
   <div id="modal-overlay"></div>
@@ -412,10 +412,6 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // --------------------------------------------------------
-    // DICIONÁRIO DE CLIENTES (Moradas Oficiais)
-    // Preencha as moradas entre as aspas para auto-completar!
-    // --------------------------------------------------------
     const baseClientes = {
       "ABC-TUR": "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013",
       "Audicone Contadores": "Não conseguimos localizar esse endereço, favor entre em contato com a supervisão.",
@@ -453,9 +449,7 @@
       const dl = document.getElementById("listaClientesAtivos");
       if(dl) {
         let html = "";
-        for(let cli in baseClientes) {
-           html += `<option value="${cli}">`;
-        }
+        for(let cli in baseClientes) html += `<option value="${cli}">`;
         dl.innerHTML = html;
       }
     }
@@ -465,6 +459,21 @@
       if(baseClientes[cli] && baseClientes[cli] !== "") {
          document.getElementById("itiEndereco").value = baseClientes[cli];
       }
+    }
+
+    // --- NOVA FUNÇÃO: VERIFICA SE EXISTE ATENDIMENTO PENDENTE NA AGENDA ---
+    function getQtdPendenciasAgenda(ignorarLinha = null) {
+      const cacheStr = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
+      if (!cacheStr) return 0;
+      const agendaDia = JSON.parse(cacheStr);
+      const hojeStr = new Date().toLocaleDateString('pt-BR');
+      return agendaDia.filter(d => 
+          d.data === hojeStr && 
+          d.linha !== ignorarLinha &&
+          (d.status === 'Em Andamento' || d.status === 'Pendente') && 
+          !d.cliente.toLowerCase().includes('base') && 
+          !d.cliente.toLowerCase().includes('interno')
+      ).length;
     }
 
     let usuarioAutenticado = ""; let perfilAutenticado = ""; let statusGlobalPonto = "Saída";
@@ -547,7 +556,7 @@
       const userSalvo = localStorage.getItem('ponto_auth_nome'); const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
       atualizarBadgeOffline();
       
-      injetarClientes(); // Injeta os clientes no datalist
+      injetarClientes();
 
       if (userSalvo && perfilSalvo) entrarNoSistema(userSalvo, perfilSalvo);
       initAssinatura();
@@ -631,27 +640,35 @@
 
     async function baterPontoRapido(tipo) { hapticFeedback(); baterPontoManual(tipo, true); }
 
+    // --- ATUALIZADO: BLOQUEIO AO TENTAR SAIR COM AGENDA PENDENTE ---
     async function baterPontoManual(tipo, isRapido = false) {
-      if (tipo === 'Saída') { if (!confirm("Deseja encerrar o turno de hoje?")) return; }
+      if (tipo === 'Saída') { 
+         let p = getQtdPendenciasAgenda();
+         if (p > 0) return exibirMsg(`Erro: Você tem ${p} atendimento(s) pendente(s) na agenda. Conclua-os antes de encerrar o expediente.`, true);
+         if (!confirm("Deseja encerrar o turno de hoje?")) return; 
+      }
+
       let obs = ""; if (!isRapido && document.getElementById("obsManual")) obs = document.getElementById("obsManual").value;
       if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
-      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false); const loc = await obterLocalizacao();
+      
+      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false); 
+      const loc = await obterLocalizacao();
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      
       if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
       
-      if(res.erro) { 
+      if(res.erro) {
          exibirMsg(res.erro, true); 
-      } else { 
+      } else {
          exibirMsg(res.sucesso, false); 
          carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-         
-         // Se for Saída, atualiza a agenda na tela para remover automaticamente o cartão da "Base"
          if (tipo === 'Saída') {
             sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
             carregarItinerario(false);
          }
       }
     }
+
     async function verHistoricoCRM(cliente) {
       hapticFeedback(); exibirMsg("A procurar histórico deste cliente...", false);
       const res = await callAPI('getHistoricoCliente', { cliente: cliente });
@@ -659,6 +676,7 @@
       let txt = `📖 ÚLTIMAS VISITAS: ${cliente}\n\n`; res.forEach(r => { txt += `Data: ${r.data}\nTéc: ${r.tecnico}\nAção: ${r.acao}\nObs:${r.obs}\n-------------------\n`; }); alert(txt);
     }
 
+    // --- ATUALIZADO: PASSE LIVRE PARA "BASE" E BLOQUEIO DE EXPEDIENTE ---
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
       hapticFeedback();
       if (tipo === 'Forçar Remoção') {
@@ -666,6 +684,10 @@
           exibirMsg("A forçar remoção...", false);
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
           sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); return;
+      }
+
+      if (tipo.includes('Fim de Expediente')) {
+          if (getQtdPendenciasAgenda(linhaAgenda) > 0) return exibirMsg(`Erro: Finalize os outros atendimentos da agenda antes de encerrar o expediente.`, true);
       }
 
       exibirMsg(`A validar localização para ${tipo}...`, false); let loc = "Sem GPS";
@@ -678,13 +700,32 @@
          }
       } catch(e) { if(!navigator.onLine) { loc = "Modo Offline"; } else if(!confirm("Não foi possível obter o seu GPS. Continuar sem localização?")) return; }
 
+      let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
+      
+      // Passe Livre: Se for base, conclui a tarefa diretamente sem pedir assinaturas.
+      if (ehBase) {
+         processarVisita(cliente, tipo, linhaAgenda, loc, "");
+         return;
+      }
+
       if (tipo.includes('Saí') || tipo === 'Cliente Ausente') { prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
+      
       processarVisita(cliente, tipo, linhaAgenda, loc, "");
     }
 
+    // --- ATUALIZADO: LOG DE STATUS INTERNO BASE ---
     async function processarVisita(cliente, tipo, linhaAgenda, loc, linksExtra) {
       exibirMsg(`A gravar no servidor...`, false);
-      let logAcao = tipo; if(tipo === 'Cliente Ausente') logAcao = "Saí (Ausente)";
+      
+      let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
+      let logAcao = tipo; 
+      if(tipo === 'Cliente Ausente') logAcao = "Saí (Ausente)";
+      
+      if(ehBase) {
+         if(tipo === 'Cheguei') logAcao = "Interno Base (Início)";
+         if(tipo.includes('Saí') || tipo.includes('Fim')) logAcao = "Interno Base (Fim)";
+      }
+
       await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       let msgExtra = "";
@@ -774,8 +815,23 @@
        document.getElementById('modalTitulo').innerText = (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar Atendimento e Gerar OS';
        setRating(0); abrirModal(); 
     }
+    
+    // --- ATUALIZADO: PASSE LIVRE PARA "BASE" E BLOQUEIO DE EXPEDIENTE (AVULSOS) ---
     function prepararModalAvulso(acao) {
        const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return exibirMsg("Informe o local avulso.", true);
+       
+       if (acao.includes('Fim de Expediente')) {
+           if (getQtdPendenciasAgenda() > 0) return exibirMsg(`Erro: Finalize os atendimentos da agenda antes de encerrar o expediente.`, true);
+       }
+
+       let ehBase = cli.toLowerCase().includes('base') || cli.toLowerCase().includes('interno');
+       
+       // Passe Livre: Se for base, avança sem pedir assinaturas.
+       if (ehBase) {
+           checkinAvulsoDiretoBase(cli, acao);
+           return;
+       }
+
        pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; 
        
        document.getElementById('txtObservacaoOS').value = "";
@@ -787,6 +843,28 @@
        document.getElementById('box-avaliacao').style.display = 'block'; document.getElementById('box-assinatura').style.display = 'block'; document.getElementById('lblFoto').innerText = '📸 Tirar Foto (Opcional)';
        setRating(0); abrirModal();
     }
+    
+    async function checkinAvulsoDiretoBase(cli, acao) {
+       exibirMsg(`A gravar registo interno...`, false); const loc = await obterLocalizacao();
+       
+       let logAcao = acao;
+       if (acao === 'Cheguei') logAcao = "Interno Base (Início)";
+       if (acao.includes('Saí') || acao.includes('Fim')) logAcao = "Interno Base (Fim)";
+
+       await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Trabalho Interno", nomeColaborador: usuarioAutenticado, localizacao: loc });
+       
+       let msgExtra = "";
+       if (acao === 'Cheguei') {
+         if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
+         else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
+       } else if (acao.includes('Fim de Expediente')) {
+         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
+       }
+       exibirMsg(`Registrado com sucesso${msgExtra}!`, false); 
+       document.getElementById('chkCliente').value = ""; 
+       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+    }
+
     function abrirModal() { limparAssinatura(); document.getElementById('fotoVisita').value = ""; document.getElementById('modal-overlay').style.display = 'block'; document.getElementById('modal-box').style.display = 'block'; }
     function fecharModal() { document.getElementById('modal-overlay').style.display = 'none'; document.getElementById('modal-box').style.display = 'none'; }
 
@@ -972,16 +1050,33 @@
     async function checkinAvulso(acao) {
       hapticFeedback();
       const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return exibirMsg("Informe o local avulso.", true);
-      if(acao.includes('Saí')) { prepararModalAvulso(acao); return; }
+      
+      let ehBase = cli.toLowerCase().includes('base') || cli.toLowerCase().includes('interno');
+
+      if (acao.includes('Fim de Expediente')) {
+          if (getQtdPendenciasAgenda() > 0) return exibirMsg(`Erro: Finalize os atendimentos da agenda antes de encerrar o expediente.`, true);
+      }
+
+      if(acao.includes('Saí') && !ehBase) { prepararModalAvulso(acao); return; }
 
       exibirMsg(`A gravar check-in avulso...`, false); const loc = await obterLocalizacao();
-      await callAPI('registrarCheckin', { cliente: cli, acao: acao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
+      
+      let logAcao = acao;
+      if (ehBase) {
+         if (acao === 'Cheguei') logAcao = "Interno Base (Início)";
+         if (acao.includes('Saí') || acao.includes('Fim')) logAcao = "Interno Base (Fim)";
+      }
+
+      await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       let msgExtra = "";
       if (acao === 'Cheguei') {
         if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
         else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
+      } else if (acao.includes('Fim de Expediente')) {
+        await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
       }
+
       exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
