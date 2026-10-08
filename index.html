@@ -638,9 +638,20 @@
       exibirMsg(`Capturando GPS e registrando ${tipo}...`, false); const loc = await obterLocalizacao();
       const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
       if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
-      if(res.erro) exibirMsg(res.erro, true); else exibirMsg(res.sucesso, false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+      
+      if(res.erro) { 
+         exibirMsg(res.erro, true); 
+      } else { 
+         exibirMsg(res.sucesso, false); 
+         carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+         
+         // Se for Saída, atualiza a agenda na tela para remover automaticamente o cartão da "Base"
+         if (tipo === 'Saída') {
+            sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
+            carregarItinerario(false);
+         }
+      }
     }
-
     async function verHistoricoCRM(cliente) {
       hapticFeedback(); exibirMsg("A procurar histórico deste cliente...", false);
       const res = await callAPI('getHistoricoCliente', { cliente: cliente });
