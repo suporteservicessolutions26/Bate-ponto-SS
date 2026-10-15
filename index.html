@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=13">
+  <link rel="manifest" href="manifest.json?v=14">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=13">
-  <link rel="icon" href="./LogoSS.png?v=13" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=14">
+  <link rel="icon" href="./LogoSS.png?v=14" type="image/png">
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
@@ -34,6 +34,19 @@
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
     label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 500; }
     
+    /* ESTILOS DO MOTOR DE AUTO-COMPLETAR (CRM) */
+    .input-wrapper { position: relative; margin-bottom: 14px; }
+    .input-wrapper input { margin-bottom: 0 !important; }
+    .autocomplete-items { position: absolute; border: 1px solid var(--border); border-top: none; z-index: 9999; top: 100%; left: 0; right: 0; background-color: var(--card-bg); max-height: 220px; overflow-y: auto; border-radius: 0 0 8px 8px; box-shadow: 0 8px 16px rgba(0,0,0,0.5); }
+    [data-theme="light"] .autocomplete-items { background-color: #ffffff; border-color: #cbd5e1; box-shadow: 0 8px 16px rgba(0,0,0,0.1); }
+    .autocomplete-items div { padding: 14px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 0.95rem; color: var(--text); transition: background-color 0.2s; }
+    [data-theme="light"] .autocomplete-items div { border-bottom-color: #e2e8f0; color: #0f172a; }
+    .autocomplete-items div:hover { background-color: var(--primary); color: #fff; }
+    .autocomplete-items div strong { color: var(--primary); }
+    .autocomplete-items div:hover strong { color: #fff; }
+    [data-theme="light"] .autocomplete-items div strong { color: var(--primary); }
+    [data-theme="light"] .autocomplete-items div:hover strong { color: #fff; }
+
     .btn { color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
     .btn-login { background: var(--primary); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
@@ -116,41 +129,6 @@
   </style>
 </head>
 <body>
-  
-  <!-- LISTA DE CLIENTES OFICIAL (FIXA NO HTML PARA GARANTIR FUNCIONAMENTO NO CELULAR) -->
-  <datalist id="listaClientesAtivos">
-    <option value="ABC-TUR"></option>
-    <option value="Audicone Contadores"></option>
-    <option value="BRJ"></option>
-    <option value="Buscharger Midia e Publicidade"></option>
-    <option value="CargoFlex"></option>
-    <option value="Conficont"></option>
-    <option value="Domínio Soluções"></option>
-    <option value="Dynamic Services"></option>
-    <option value="Eliel Figueiredo"></option>
-    <option value="Engesystems"></option>
-    <option value="Exata Contabilidade"></option>
-    <option value="Fiamma"></option>
-    <option value="ForteMetal"></option>
-    <option value="FVC"></option>
-    <option value="Grupo Mserv"></option>
-    <option value="Healingmed"></option>
-    <option value="INFOB"></option>
-    <option value="Lwart Lubrificantes"></option>
-    <option value="M Ferreira"></option>
-    <option value="MCM TRANSP LOGISTICA LTDA"></option>
-    <option value="MILLENNIHUM"></option>
-    <option value="MP Master"></option>
-    <option value="Nascimento Transportes"></option>
-    <option value="Nova A3"></option>
-    <option value="Philos"></option>
-    <option value="PlayCity"></option>
-    <option value="PROTEC"></option>
-    <option value="QTL"></option>
-    <option value="Reis Principe"></option>
-    <option value="Suporte"></option>
-    <option value="YouData"></option>
-  </datalist>
 
   <div id="modal-overlay"></div>
   <div id="modal-box">
@@ -218,7 +196,7 @@
     <div id="msgStatus"></div>
 
     <div id="tela-login" class="box">
-      <div class="logo-container"><img src="./LogoSS.png?v=13" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=14" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 20px; text-align: center; font-weight:700;">Acesso ao Sistema</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -288,8 +266,13 @@
                 <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:18px;height:18px;margin:0;">Seg</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:18px;height:18px;margin:0;">Ter</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:18px;height:18px;margin:0;">Qua</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:18px;height:18px;margin:0;">Qui</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:18px;height:18px;margin:0;">Sex</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:18px;height:18px;margin:0;">Sáb</label>
              </div>
           </div>
-          <!-- CAMPO ATUALIZADO -->
-          <label>Cliente ou Local</label><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" list="listaClientesAtivos" oninput="autoPreencherEndereco()" />
+          
+          <!-- CAMPO COM DROPDOWN JS -->
+          <label>Cliente ou Local</label>
+          <div class="input-wrapper">
+             <input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" oninput="autoPreencherEndereco()" autocomplete="off" />
+          </div>
+
           <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
           <label>Horário Previsto</label><input type="time" id="itiHorario" />
           <button class="btn" style="background: var(--warning); color: #000; margin-top: 14px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
@@ -321,9 +304,13 @@
 
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
+          
           <label>Nome do Cliente / Local</label>
-          <!-- CAMPO ATUALIZADO -->
-          <input type="text" id="chkCliente" placeholder="Ex: Loja Extra Y" list="listaClientesAtivos" />
+          <!-- CAMPO COM DROPDOWN JS -->
+          <div class="input-wrapper">
+             <input type="text" id="chkCliente" placeholder="Ex: Loja Extra Y" autocomplete="off" />
+          </div>
+
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
             <button class="btn" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
@@ -430,8 +417,14 @@
             <div class="form-row"><div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div><div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div></div>
             <div class="form-row">
               <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
-              <!-- CAMPO ATUALIZADO -->
-              <div><label>Destino / Cliente</label><input type="text" id="rotaDestino" required style="margin-bottom:4px;" list="listaClientesAtivos" /><button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância Automática</button></div>
+              <!-- CAMPO COM DROPDOWN JS -->
+              <div>
+                <label>Destino / Cliente</label>
+                <div class="input-wrapper" style="margin-bottom:4px;">
+                   <input type="text" id="rotaDestino" required autocomplete="off" />
+                </div>
+                <button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância Automática</button>
+              </div>
             </div>
             <div class="form-row"><div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div><div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div></div>
             <div class="form-row"><div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div><div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div></div>
@@ -447,7 +440,6 @@
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // Mantido apenas para auto-preenchimento
     const baseClientes = {
       "ABC-TUR": "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013",
       "Audicone Contadores": "Não conseguimos localizar esse endereço, favor entre em contato com a supervisão.",
@@ -481,6 +473,61 @@
       "Suporte": "",
       "YouData": "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904"
     };
+
+    // --- NOVO MOTOR DE AUTO-COMPLETAR JS (Bypassa o bloqueio da Apple/Google) ---
+    function configAutocomplete(inp, arr) {
+      inp.addEventListener("input", function(e) {
+          let val = this.value;
+          closeAllLists();
+          if (!val) return false;
+          let a = document.createElement("DIV");
+          a.setAttribute("id", this.id + "autocomplete-list");
+          a.setAttribute("class", "autocomplete-items");
+          this.parentNode.appendChild(a);
+          
+          for (let i = 0; i < arr.length; i++) {
+            if (arr[i].toUpperCase().includes(val.toUpperCase())) {
+              let b = document.createElement("DIV");
+              let matchIdx = arr[i].toUpperCase().indexOf(val.toUpperCase());
+              b.innerHTML = arr[i].substring(0, matchIdx) + "<strong>" + arr[i].substring(matchIdx, matchIdx + val.length) + "</strong>" + arr[i].substring(matchIdx + val.length);
+              b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+              b.addEventListener("click", function(e) {
+                  inp.value = this.getElementsByTagName("input")[0].value;
+                  closeAllLists();
+                  if(inp.id === 'itiCliente') autoPreencherEndereco();
+              });
+              a.appendChild(b);
+            }
+          }
+      });
+      
+      inp.addEventListener("click", function(e) {
+          if (this.value !== "") return;
+          closeAllLists();
+          let a = document.createElement("DIV");
+          a.setAttribute("id", this.id + "autocomplete-list");
+          a.setAttribute("class", "autocomplete-items");
+          this.parentNode.appendChild(a);
+          for (let i = 0; i < arr.length; i++) {
+              let b = document.createElement("DIV");
+              b.innerHTML = arr[i] + "<input type='hidden' value='" + arr[i] + "'>";
+              b.addEventListener("click", function(e) {
+                  inp.value = this.getElementsByTagName("input")[0].value;
+                  closeAllLists();
+                  if(inp.id === 'itiCliente') autoPreencherEndereco();
+              });
+              a.appendChild(b);
+          }
+      });
+
+      function closeAllLists(elmnt) {
+        let x = document.getElementsByClassName("autocomplete-items");
+        for (let i = 0; i < x.length; i++) {
+          if (elmnt != x[i] && elmnt != inp) { x[i].parentNode.removeChild(x[i]); }
+        }
+      }
+      document.addEventListener("click", function (e) { closeAllLists(e.target); });
+    }
 
     function autoPreencherEndereco() {
       let cli = document.getElementById("itiCliente").value.trim();
@@ -582,6 +629,12 @@
       if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
       const userSalvo = localStorage.getItem('ponto_auth_nome'); const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
       atualizarBadgeOffline();
+      
+      // Ativar Auto-Completar JS
+      const arrClientes = Object.keys(baseClientes);
+      configAutocomplete(document.getElementById("itiCliente"), arrClientes);
+      configAutocomplete(document.getElementById("chkCliente"), arrClientes);
+      configAutocomplete(document.getElementById("rotaDestino"), arrClientes);
 
       if (userSalvo && perfilSalvo) entrarNoSistema(userSalvo, perfilSalvo);
       initAssinatura();
