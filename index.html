@@ -140,6 +140,15 @@
     };
   </script>
 
+  <!-- OBRIGA O BROWSER A LIMPAR A CACHE AGORA MESMO -->
+  <script>
+    if(localStorage.getItem('appVersion') !== '22') {
+      if('caches' in window) { caches.keys().then(names => names.forEach(n => caches.delete(n))); }
+      localStorage.setItem('appVersion', '22');
+      location.reload(true);
+    }
+  </script>
+
   <div id="loaderOverlay"><div class="spinner"></div><div id="loaderMsg" style="color:#fff; font-weight:bold; margin-top:20px;">A sincronizar...</div></div>
 
   <div id="modal-overlay"></div>
@@ -222,7 +231,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
       
-      <!-- ABA EXCLUSIVA DO ADMIN (RESTAURADA) -->
+      <!-- ABA EXCLUSIVA DO ADMIN -->
       <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
         <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Radar</button>
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
@@ -248,7 +257,6 @@
            ⏳ Expediente fechado. Inicie num compromisso na agenda ou <u>clique aqui se fará apenas Trabalho Interno hoje.</u>
         </div>
 
-        <!-- MENU DE CRIAR AGENDA DO ADMIN (RESTAURADO E ATIVO) -->
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
           <div class="form-row" style="margin-bottom:12px; display:flex; gap:12px;">
@@ -478,7 +486,7 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // --- FUNÇÕES RESTAURADAS PARA EVITAR ERRO DE REFERÊNCIA ---
+    // --- FUNÇÕES RESTAURADAS ---
     function hapticFeedback() { 
         if (navigator.vibrate) navigator.vibrate(50); 
     }
@@ -499,7 +507,6 @@
         document.getElementById('loaderOverlay').style.display = 'none'; 
     }
     
-    // Motor anti-falhas
     async function executarComLoader(msg, task) {
        showLoading(msg);
        try { 
@@ -787,9 +794,7 @@
       document.getElementById('btnSair').style.display = "block";
       
       if (perfil === 'Admin') {
-          document.getElementById('subHeader').innerText = "Painel Administrativo";
           document.getElementById('abasAdmin').style.display = "flex";
-          // ABA DO ADMIN RESTAURADA:
           document.getElementById('areaAtribuirItinerario').style.display = "block"; 
       }
       
@@ -1661,6 +1666,27 @@
       
       janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
       janela.document.close();
+    }
+
+    // --- FUNÇÃO RESTAURADA ---
+    async function carregarBancoHoras() {
+      const mesAno = document.getElementById('mesFiltro').value.trim(); 
+      if(!mesAno || mesAno.length !== 7) return alert("Utilize o formato MM/YYYY (ex: 09/2026)");
+      
+      executarComLoader("A consolidar horas...", async () => {
+         const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
+         if(dados.erro || !dados || dados.length === 0) { 
+             document.getElementById("tblBanco").innerHTML = '<tr><td colspan="3" style="text-align:center;">Sem registros.</td></tr>'; 
+             document.getElementById('boxAdminGrafico').style.display = 'none'; 
+             return; 
+         }
+         let html = ""; 
+         dados.forEach(d => { 
+             html += '<tr><td data-label="Nome"><strong>' + d.nome + '</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">' + d.total + 'h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">' + d.extra + 'h</td></tr>'; 
+         }); 
+         document.getElementById("tblBanco").innerHTML = html;
+         desenharAdminGrafico(dados);
+      });
     }
 
     function carregarAprovacoes() {
