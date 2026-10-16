@@ -7,13 +7,12 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=22">
+  <link rel="manifest" href="manifest.json?v=23">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=22">
-  <link rel="icon" href="./LogoSS.png?v=22" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=23">
+  <link rel="icon" href="./LogoSS.png?v=23" type="image/png">
   
-  <!-- MOTOR DE GRÁFICOS (Protegido contra bloqueios) -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados pela rede, prosseguindo sem eles.')"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
@@ -33,7 +32,7 @@
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
     label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
     
-    /* UX: Motor de Auto-Completar Clean */
+    /* Auto-Completar Clean */
     .input-wrapper { position: relative; width: 100%; margin-bottom: 14px; }
     .input-wrapper input { margin-bottom: 0 !important; width: 100%; }
     .autocomplete-items { position: absolute; border: 1px solid var(--border); border-top: none; z-index: 999999; top: 100%; left: 0; right: 0; background-color: var(--card-bg); max-height: 250px; overflow-y: auto; border-radius: 0 0 12px 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
@@ -97,7 +96,6 @@
     .p-normal { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
     .card-itinerario.critica { border-color: rgba(239, 68, 68, 0.3); } .card-itinerario.critica::before { background: #ef4444; width: 8px; }
 
-    /* LOADING SPINNER OVERLAY GLASSMORPHISM */
     #loaderOverlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15,23,42,0.7); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px); animation: fadeIn 0.2s ease; }
     .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
     #loaderMsg { margin-top:20px; color:#fff; font-weight:700; font-size:1.1rem; }
@@ -117,7 +115,6 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes zoomIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
     @media (max-width: 640px) {
       .form-row { grid-template-columns: 1fr; }
@@ -135,16 +132,16 @@
   <!-- DETETOR DE ERROS FATAL -->
   <script>
     window.onerror = function(msg, url, line) {
-        alert("Ocorreu um erro técnico na aplicação.\n\nDetalhe: " + msg + "\nLinha: " + line);
+        alert("Erro técnico (Linha " + line + "): " + msg);
         return false;
     };
   </script>
 
-  <!-- OBRIGA O BROWSER A LIMPAR A CACHE AGORA MESMO -->
+  <!-- LIMPEZA DE CACHE -->
   <script>
-    if(localStorage.getItem('appVersion') !== '22') {
+    if(localStorage.getItem('appVersion') !== '23') {
       if('caches' in window) { caches.keys().then(names => names.forEach(n => caches.delete(n))); }
-      localStorage.setItem('appVersion', '22');
+      localStorage.setItem('appVersion', '23');
       location.reload(true);
     }
   </script>
@@ -216,7 +213,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=22" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=23" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -486,7 +483,7 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // --- FUNÇÕES RESTAURADAS ---
+    // --- FUNÇÕES DE SISTEMA ---
     function hapticFeedback() { 
         if (navigator.vibrate) navigator.vibrate(50); 
     }
@@ -507,6 +504,7 @@
         document.getElementById('loaderOverlay').style.display = 'none'; 
     }
     
+    // Motor anti-falhas
     async function executarComLoader(msg, task) {
        showLoading(msg);
        try { 
@@ -1052,50 +1050,70 @@
         });
     }
 
+    // --- FUNÇÃO CORRIGIDA DO HISTÓRICO PARA NÃO "CONGELAR" O ECRÃ ---
     async function carregarHistoricoEAtualizarBotoes(nome) {
-      const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
-      if (!dados.erro) { 
-        let visitasMes = 0; 
-        let minExtra = 0; 
-        let minTotal = 0; 
-        let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
-        let html = "";
-        
-        [...dados].reverse().forEach(d => {
-           if(d.dataHora.includes(mesAtual)) {
-              if(d.tipo.includes('Saí') && !d.tipo.includes('Ponto')) visitasMes++;
-              if(d.tipo === 'Saída' && d.extra && d.extra !== '-') minExtra += horasParaMin(d.extra);
-              if(d.tipo === 'Saída' && d.total && d.total !== '-') minTotal += horasParaMin(d.total);
-           }
-           
-           let tagHtml = '<span class="tag-tipo" style="background:#334155; color:#fff">' + d.tipo + '</span>';
-           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><small style="color:var(--accent);">Total: ' + d.total + 'h</small>' : '';
-           
-           html += '<tr><td data-label="Data/Hora"><strong>' + d.dataHora + '</strong></td><td data-label="Ação">' + tagHtml + '</td><td data-label="Obs">' + (d.obs || '-') + infoExtra + '</td></tr>';
-        });
-        
-        document.getElementById("tblCorpo").innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>';
-        
-        document.getElementById('lblVisitasMes').innerText = visitasMes; 
-        document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal); 
-        document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
-        desenharMeuGrafico(minTotal, minExtra);
+      try {
+          const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
+          
+          if (dados.erro) {
+              console.error("Erro da API:", dados.erro);
+              atualizarRegraBotoes('Saída'); 
+              document.getElementById('status-badge').innerHTML = '⚠️ Erro de Ligação';
+              document.getElementById("tblCorpo").innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">' + dados.erro + '</td></tr>';
+              return;
+          }
 
-        let lastPonto = 'Saída'; 
-        tempoInicioExpediente = null;
-        
-        for (let i = dados.length - 1; i >= 0; i--) { 
-            if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { 
-                lastPonto = dados[i].tipo; 
-                if(lastPonto === 'Entrada') {
-                    tempoInicioExpediente = parseDataBR(dados[i].dataHora); 
-                }
-                break; 
-            } 
-        }
-        atualizarRegraBotoes(lastPonto);
+          let visitasMes = 0; 
+          let minExtra = 0; 
+          let minTotal = 0; 
+          let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
+          let html = "";
+          
+          if (Array.isArray(dados) && dados.length > 0) {
+              [...dados].reverse().forEach(d => {
+                 if(d.dataHora && d.dataHora.includes(mesAtual)) {
+                    if(d.tipo && d.tipo.includes('Saí') && !d.tipo.includes('Ponto')) visitasMes++;
+                    if(d.tipo === 'Saída' && d.extra && d.extra !== '-') minExtra += horasParaMin(d.extra);
+                    if(d.tipo === 'Saída' && d.total && d.total !== '-') minTotal += horasParaMin(d.total);
+                 }
+                 
+                 let tagHtml = '<span class="tag-tipo" style="background:#334155; color:#fff">' + (d.tipo || '-') + '</span>';
+                 let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><small style="color:var(--accent);">Total: ' + d.total + 'h</small>' : '';
+                 
+                 html += '<tr><td data-label="Data/Hora"><strong>' + (d.dataHora || '-') + '</strong></td><td data-label="Ação">' + tagHtml + '</td><td data-label="Obs">' + (d.obs || '-') + infoExtra + '</td></tr>';
+              });
+          }
+          
+          document.getElementById("tblCorpo").innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>';
+          
+          document.getElementById('lblVisitasMes').innerText = visitasMes; 
+          document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal); 
+          document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
+          desenharMeuGrafico(minTotal, minExtra);
+
+          let lastPonto = 'Saída'; 
+          tempoInicioExpediente = null;
+          
+          if (Array.isArray(dados) && dados.length > 0) {
+              for (let i = dados.length - 1; i >= 0; i--) { 
+                  if (dados[i].tipo && ['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { 
+                      lastPonto = dados[i].tipo; 
+                      if(lastPonto === 'Entrada' && dados[i].dataHora) {
+                          tempoInicioExpediente = parseDataBR(dados[i].dataHora); 
+                      }
+                      break; 
+                  } 
+              }
+          }
+          
+          atualizarRegraBotoes(lastPonto);
+          carregarMeusAjustes(nome);
+
+      } catch (e) {
+          console.error("Erro crítico no carregamento do histórico:", e);
+          atualizarRegraBotoes('Saída');
+          document.getElementById('status-badge').innerHTML = '⚠️ Erro no Sistema';
       }
-      carregarMeusAjustes(nome);
     }
 
     function toggleRecorrencia() {
@@ -1666,27 +1684,6 @@
       
       janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
       janela.document.close();
-    }
-
-    // --- FUNÇÃO RESTAURADA ---
-    async function carregarBancoHoras() {
-      const mesAno = document.getElementById('mesFiltro').value.trim(); 
-      if(!mesAno || mesAno.length !== 7) return alert("Utilize o formato MM/YYYY (ex: 09/2026)");
-      
-      executarComLoader("A consolidar horas...", async () => {
-         const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
-         if(dados.erro || !dados || dados.length === 0) { 
-             document.getElementById("tblBanco").innerHTML = '<tr><td colspan="3" style="text-align:center;">Sem registros.</td></tr>'; 
-             document.getElementById('boxAdminGrafico').style.display = 'none'; 
-             return; 
-         }
-         let html = ""; 
-         dados.forEach(d => { 
-             html += '<tr><td data-label="Nome"><strong>' + d.nome + '</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">' + d.total + 'h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">' + d.extra + 'h</td></tr>'; 
-         }); 
-         document.getElementById("tblBanco").innerHTML = html;
-         desenharAdminGrafico(dados);
-      });
     }
 
     function carregarAprovacoes() {
