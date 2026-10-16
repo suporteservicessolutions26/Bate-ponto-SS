@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=21">
+  <link rel="manifest" href="manifest.json?v=22">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=21">
-  <link rel="icon" href="./LogoSS.png?v=21" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=22">
+  <link rel="icon" href="./LogoSS.png?v=22" type="image/png">
   
   <!-- MOTOR DE GRÁFICOS (Protegido contra bloqueios) -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados pela rede, prosseguindo sem eles.')"></script>
@@ -140,15 +140,6 @@
     };
   </script>
 
-  <!-- OBRIGA O BROWSER A LIMPAR A CACHE AGORA MESMO -->
-  <script>
-    if(localStorage.getItem('appVersion') !== '21') {
-      if('caches' in window) { caches.keys().then(names => names.forEach(n => caches.delete(n))); }
-      localStorage.setItem('appVersion', '21');
-      location.reload(true);
-    }
-  </script>
-
   <div id="loaderOverlay"><div class="spinner"></div><div id="loaderMsg" style="color:#fff; font-weight:bold; margin-top:20px;">A sincronizar...</div></div>
 
   <div id="modal-overlay"></div>
@@ -216,7 +207,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=21" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=22" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -230,6 +221,8 @@
         <button class="tab-btn" onclick="abrirAba('tab-form', this); hapticFeedback()">➕ Avulso</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
+      
+      <!-- ABA EXCLUSIVA DO ADMIN (RESTAURADA) -->
       <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
         <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Radar</button>
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
@@ -255,6 +248,7 @@
            ⏳ Expediente fechado. Inicie num compromisso na agenda ou <u>clique aqui se fará apenas Trabalho Interno hoje.</u>
         </div>
 
+        <!-- MENU DE CRIAR AGENDA DO ADMIN (RESTAURADO E ATIVO) -->
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
           <div class="form-row" style="margin-bottom:12px; display:flex; gap:12px;">
@@ -484,7 +478,7 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // AS DUAS FUNÇÕES QUE TINHAM SIDO ESQUECIDAS NA ÚLTIMA VERSÃO:
+    // --- FUNÇÕES RESTAURADAS PARA EVITAR ERRO DE REFERÊNCIA ---
     function hapticFeedback() { 
         if (navigator.vibrate) navigator.vibrate(50); 
     }
@@ -505,6 +499,7 @@
         document.getElementById('loaderOverlay').style.display = 'none'; 
     }
     
+    // Motor anti-falhas
     async function executarComLoader(msg, task) {
        showLoading(msg);
        try { 
@@ -792,7 +787,10 @@
       document.getElementById('btnSair').style.display = "block";
       
       if (perfil === 'Admin') {
+          document.getElementById('subHeader').innerText = "Painel Administrativo";
           document.getElementById('abasAdmin').style.display = "flex";
+          // ABA DO ADMIN RESTAURADA:
+          document.getElementById('areaAtribuirItinerario').style.display = "block"; 
       }
       
       if(navigator.onLine) carregarEstoque();
