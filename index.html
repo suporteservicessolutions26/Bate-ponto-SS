@@ -7,134 +7,149 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=16">
+  <link rel="manifest" href="manifest.json?v=17">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=16">
-  <link rel="icon" href="./LogoSS.png?v=16" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=17">
+  <link rel="icon" href="./LogoSS.png?v=17" type="image/png">
+  
+  <!-- MOTOR DE GRÁFICOS (CHART.JS) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
-    [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #cbd5e1; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
-    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea { background: #ffffff; color: #0f172a; border-color: #94a3b8; }
-    [data-theme="light"] .box { box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); }
-    [data-theme="light"] .usuario-logado, [data-theme="light"] .card-metric, [data-theme="light"] .aviso-interno { background: #f1f5f9; }
-    [data-theme="light"] th { background: #e2e8f0; color: #1e293b; }
-    [data-theme="light"] .card-itinerario, [data-theme="light"] .card-radar { background: #ffffff; border-color: #e2e8f0; }
-    [data-theme="light"] .status-badge { background: #e2e8f0; color: #0f172a; }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; -webkit-font-smoothing: antialiased; }
+    [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
+    
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease; -webkit-font-smoothing: antialiased; }
     body { background: var(--bg); color: var(--text); padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
-    .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-top: 20px; }
+    .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-top: 10px; }
     
-    header { display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s ease; }
-    header h2 { font-size: 1.3rem; line-height: 1.2; font-weight: 700; }
-    .box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 12px; margin-bottom: 16px; animation: slideUp 0.4s ease; }
+    header { display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s ease; padding: 10px 0; }
+    header h2 { font-size: 1.25rem; line-height: 1.2; font-weight: 800; letter-spacing: -0.5px; }
     
-    input, select, textarea { background: #0f172a; border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 8px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; appearance: none; }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2); }
-    label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 500; }
+    .box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 16px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06); animation: slideUp 0.4s ease; }
+    [data-theme="light"] .box { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025); border: 1px solid #f1f5f9; }
     
-    /* CSS REVISADO: MOTOR DE AUTO-COMPLETAR (BLINDADO) */
+    input, select, textarea { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; appearance: none; transition: border 0.2s; }
+    [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea { background: #f8fafc; border-color: #cbd5e1; }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+    label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+    
+    /* UX: Motor de Auto-Completar Clean */
     .input-wrapper { position: relative; width: 100%; margin-bottom: 14px; }
     .input-wrapper input { margin-bottom: 0 !important; width: 100%; }
-    .autocomplete-items { position: absolute; border: 1px solid var(--border); border-top: none; z-index: 999999; top: 100%; left: 0; right: 0; background-color: var(--card-bg); max-height: 250px; overflow-y: auto; border-radius: 0 0 8px 8px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
-    [data-theme="light"] .autocomplete-items { background-color: #ffffff; border-color: #cbd5e1; box-shadow: 0 10px 30px rgba(0,0,0,0.2); }
-    .autocomplete-items div { padding: 14px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 0.95rem; color: var(--text); transition: background-color 0.2s; }
-    [data-theme="light"] .autocomplete-items div { border-bottom-color: #e2e8f0; color: #0f172a; }
+    .autocomplete-items { position: absolute; border: 1px solid var(--border); border-top: none; z-index: 999999; top: 100%; left: 0; right: 0; background-color: var(--card-bg); max-height: 250px; overflow-y: auto; border-radius: 0 0 12px 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
+    [data-theme="light"] .autocomplete-items { background-color: #ffffff; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
+    .autocomplete-items div { padding: 14px; cursor: pointer; border-bottom: 1px solid var(--border); font-size: 0.95rem; transition: 0.1s; }
+    .autocomplete-items div:last-child { border-bottom: none; }
     .autocomplete-items div:active, .autocomplete-items div:hover { background-color: var(--primary); color: #fff; }
     .autocomplete-items div strong { color: var(--primary); font-weight: 900; }
     .autocomplete-items div:active strong, .autocomplete-items div:hover strong { color: #fff; }
     [data-theme="light"] .autocomplete-items div strong { color: var(--primary); }
-    [data-theme="light"] .autocomplete-items div:active strong, [data-theme="light"] .autocomplete-items div:hover strong { color: #fff; }
 
-    .btn { color: #fff; border: none; padding: 14px; border-radius: 8px; font-weight: 600; font-size: 1rem; cursor: pointer; width: 100%; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    /* BOTÕES MODERNOS */
+    .btn { color: #fff; border: none; padding: 14px; border-radius: 10px; font-weight: 700; font-size: 1rem; cursor: pointer; width: 100%; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); display: flex; align-items: center; justify-content: center; gap: 8px; }
     .btn-login { background: var(--primary); }
     .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
     .btn:active:not(:disabled) { transform: scale(0.96); opacity: 0.9; }
-    .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 6px 12px; border-radius: 6px; font-size: 0.8rem; cursor: pointer; transition: 0.2s; }
-    .btn-logout:active { transform: scale(0.92); }
+    .btn-logout { background: transparent; border: 1px solid var(--border); color: var(--text-muted); padding: 8px 14px; border-radius: 8px; font-size: 0.85rem; font-weight: 600; cursor: pointer; }
+    .btn-logout:active { transform: scale(0.92); background: var(--border); }
 
     .grid-botoes { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px; }
     .btn-entrada { background: var(--accent); } .btn-pausa { background: var(--warning); color: #000; } .btn-saida { background: var(--danger); }
-    .btn-acao { padding: 14px; font-size: 0.95rem; font-weight: bold; border-radius: 8px; border: none; cursor: pointer; color: white; display: flex; align-items: center; justify-content: center; gap: 6px; transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1); }
+    .btn-acao { padding: 14px; font-size: 0.95rem; font-weight: bold; border-radius: 10px; border: none; cursor: pointer; color: white; transition: all 0.2s; }
     .btn-acao:active:not(:disabled) { transform: scale(0.96); }
     
-    .header-relogio { background: var(--card-bg); border: 1px solid var(--border); border-bottom: 4px solid var(--primary); border-radius: 12px 12px 0 0; padding: 24px 20px; text-align: center; }
-    #relogio { font-size: 3.8rem; font-weight: 800; color: var(--primary); letter-spacing: -2px; line-height: 1; }
-    #data-atual { color: var(--text-muted); font-size: 0.95rem; text-transform: capitalize; margin-top: 8px; margin-bottom: 16px; font-weight: 500; }
-    .status-badge { display: inline-block; padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; font-weight: 700; background: #334155; color: #fff; margin-bottom: 10px; }
-    .aviso-interno { background: #0f172a; padding: 14px; text-align: center; border: 1px solid var(--border); border-top: none; border-radius: 0 0 12px 12px; margin-bottom: 16px; font-size: 0.9rem; }
-    .aviso-interno span { cursor: pointer; } .aviso-interno span:hover { text-decoration: underline; color: var(--primary); }
-
-    .usuario-logado { margin-top: 10px; display: inline-block; background: #0f172a; padding: 6px 14px; border-radius: 20px; font-size: 0.85rem; border: 1px solid var(--border); font-weight: 500;}
-    .tabs { display: flex; border-bottom: 2px solid var(--border); margin-top: 10px; overflow-x: auto; white-space: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
+    .header-relogio { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px 20px; text-align: center; box-shadow: inset 0 2px 4px rgba(0,0,0,0.1); margin-bottom: 20px; }
+    [data-theme="light"] .header-relogio { background: #f8fafc; border: 1px solid #e2e8f0; }
+    #relogio { font-size: 4rem; font-weight: 800; color: var(--primary); letter-spacing: -2px; line-height: 1; margin-bottom: 5px; }
+    #data-atual { color: var(--text-muted); font-size: 1rem; text-transform: capitalize; font-weight: 500; margin-bottom: 15px; }
+    
+    .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #334155; color: #fff; margin-bottom: 10px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .aviso-interno { background: rgba(59, 130, 246, 0.1); padding: 16px; text-align: center; border: 1px solid rgba(59, 130, 246, 0.2); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: var(--text); }
+    
+    /* UX NAVEGAÇÃO CLEAN */
+    .tabs { display: flex; background: var(--card-bg); padding: 6px; border-radius: 12px; margin-bottom: 20px; gap: 6px; border: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; -webkit-overflow-scrolling: touch; }
     .tabs::-webkit-scrollbar { display: none; }
-    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 14px 12px; font-size: 0.95rem; font-weight: 600; cursor: pointer; flex: 1; border-bottom: 2px solid transparent; margin-bottom: -2px; transition: 0.3s; }
-    .tab-btn.active { color: var(--primary); border-bottom-color: var(--primary); }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 16px; font-size: 0.9rem; font-weight: 700; cursor: pointer; flex: 1; border-radius: 8px; transition: 0.3s; }
+    .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+    #abasAdmin { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); }
+    #abasAdmin .tab-btn.active { background: var(--warning); color: #000; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
+
     .tab-content { display: none; animation: fadeIn 0.4s ease; } .tab-content.active { display: block; }
     
-    table { width: 100%; border-collapse: collapse; font-size: 0.85rem; text-align: left; }
-    th { background: #131d2e; padding: 14px 10px; color: var(--text-muted); font-weight: 600;}
-    td { padding: 14px 10px; border-bottom: 1px solid #243044; }
-    .tag-tipo { font-size: 0.75rem; background: #334155; padding: 4px 10px; border-radius: 6px; font-weight: 700; display: inline-block; }
+    table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; text-align: left; }
+    th { background: rgba(15, 23, 42, 0.5); padding: 14px 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; }
+    [data-theme="light"] th { background: #f1f5f9; color: #475569; }
+    td { padding: 16px 12px; border-bottom: 1px solid var(--border); }
+    .tag-tipo { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 800; display: inline-block; text-transform: uppercase; }
     
-    #msgStatus { padding: 14px; border-radius: 8px; display: none; font-size: 0.95rem; text-align: center; margin-bottom: 16px; font-weight: bold; position: sticky; top: env(safe-area-inset-top, 10px); z-index: 999; box-shadow: 0 4px 12px rgba(0,0,0,0.2); animation: slideDown 0.3s ease; }
-    #badgeOffline { display:none; background:var(--warning); color:#000; text-align:center; padding:10px; border-radius:8px; font-weight:bold; font-size:0.9rem; margin-bottom:16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); animation: slideDown 0.3s ease; }
+    #badgeOffline { display:none; background:var(--warning); color:#000; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:0.9rem; margin-bottom:16px; box-shadow: 0 4px 12px rgba(245, 158, 11, 0.2); animation: slideDown 0.3s ease; }
 
-    .card-radar { background: #0f172a; border-left: 4px solid var(--primary); padding: 16px; border-radius: 8px; margin-bottom: 12px; }
-    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .card-metric { background: #0f172a; border: 1px solid var(--border); padding: 16px; border-radius: 12px; text-align: center; }
-    .card-metric .label { font-size: 0.75rem; color: var(--text-muted); text-transform: uppercase; font-weight: 700; }
-    .card-metric .val { font-size: 1.5rem; font-weight: 800; margin-top: 6px; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .card-metric { background: var(--bg); border: 1px solid var(--border); padding: 18px; border-radius: 16px; text-align: center; }
+    .card-metric .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; letter-spacing: 0.5px; }
+    .card-metric .val { font-size: 1.8rem; font-weight: 900; margin-top: 8px; line-height: 1; }
     
-    .card-itinerario { background: #1e293b; border-left: 4px solid var(--border); padding: 18px; border-radius: 10px; margin-bottom: 14px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); position:relative;}
-    .card-itinerario.pendente { border-left-color: var(--primary); }
-    .card-itinerario.andamento { border-left-color: var(--warning); border-width: 4px; box-shadow: 0 0 16px rgba(245, 158, 11, 0.15); }
+    .card-itinerario { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 16px; position:relative; overflow: hidden; }
+    .card-itinerario::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--border); }
+    .card-itinerario.pendente::before { background: var(--primary); }
+    .card-itinerario.andamento::before { background: var(--warning); }
     .card-itinerario.concluido { display: none; } 
-    .card-itinerario.perdida { border-left-color: var(--danger); opacity: 0.4; background: #1e1e24; }
+    .card-itinerario.perdida { opacity: 0.5; } .card-itinerario.perdida::before { background: var(--danger); }
 
-    .prioridade-badge { position: absolute; top: 12px; right: 12px; font-size: 0.7rem; font-weight: 800; padding: 4px 8px; border-radius: 6px; text-transform: uppercase; }
-    .p-critica { background: #fee2e2; color: #991b1b; border: 1px solid #f87171; animation: pulseRed 2s infinite; }
-    .p-alta { background: #ffedd5; color: #9a3412; border: 1px solid #fdba74; }
-    .p-normal { background: #e0e7ff; color: #3730a3; border: 1px solid #a5b4fc; }
-    .p-baixa { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
-    .card-itinerario.critica { border-left-color: #ef4444; border-left-width: 5px; }
-    .card-itinerario.alta { border-left-color: #f97316; }
+    .prioridade-badge { position: absolute; top: 16px; right: 16px; font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.5px; }
+    .p-critica { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); animation: pulseRed 2s infinite; }
+    .p-alta { background: rgba(249, 115, 22, 0.1); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.2); }
+    .p-normal { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+    .card-itinerario.critica { border-color: rgba(239, 68, 68, 0.3); } .card-itinerario.critica::before { background: #ef4444; width: 8px; }
 
-    #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15, 23, 42, 0.85); z-index:9998; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
-    #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:90%; max-width:400px; background:var(--card-bg); z-index:9999; padding:24px; border-radius:16px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; box-shadow: 0 10px 25px rgba(0,0,0,0.5); animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
-    #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:8px; width:100%; height:140px; touch-action: none; margin-bottom:10px; }
+    /* LOADING SPINNER OVERLAY GLASSMORPHISM */
+    #loaderOverlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15,23,42,0.7); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px); -webkit-backdrop-filter:blur(5px); animation: fadeIn 0.2s ease; }
+    .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
+    #loaderMsg { margin-top:20px; color:#fff; font-weight:700; font-size:1.1rem; letter-spacing:0.5px; }
+
+    #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15, 23, 42, 0.85); z-index:9998; backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
+    #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:420px; background:var(--card-bg); z-index:9999; padding:24px; border-radius:20px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; box-shadow: 0 20px 40px rgba(0,0,0,0.4); animation: zoomIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
+    #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:12px; width:100%; height:160px; touch-action: none; margin-bottom:10px; }
     
-    .star-rating { font-size: 2.2rem; color: #334155; cursor: pointer; display: flex; justify-content: center; gap: 12px; margin-bottom:15px; }
+    .star-rating { font-size: 2.5rem; color: #334155; cursor: pointer; display: flex; justify-content: center; gap: 12px; margin-bottom:15px; }
     .star-rating span { transition: all 0.2s; }
-    .star-rating span.ativo { color: #fbbf24; text-shadow: 0 0 12px rgba(251,191,36,0.6); transform: scale(1.1); }
-    .logo-container { text-align: center; margin-bottom: 24px; } .logo-img { max-width: 160px; height: auto; border-radius: 8px; }
+    .star-rating span.ativo { color: #fbbf24; text-shadow: 0 0 16px rgba(251,191,36,0.5); transform: scale(1.15); }
+    .logo-container { text-align: center; margin-bottom: 30px; } .logo-img { max-width: 150px; height: auto; border-radius: 12px; box-shadow: 0 8px 16px rgba(0,0,0,0.2); }
 
+    /* GRÁFICOS CONTAINER */
+    .chart-container { position: relative; height: 200px; width: 100%; margin-top: 10px; }
+
+    @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes slideUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes slideDown { from { opacity: 0; transform: translateY(-15px); } to { opacity: 1; transform: translateY(0); } }
-    @keyframes zoomIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.9); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
-    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); } 70% { box-shadow: 0 0 0 6px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
+    @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
+    @keyframes zoomIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
     @media (max-width: 640px) {
       .form-row { grid-template-columns: 1fr; }
       table, thead, tbody, tr, td { display: block; width: 100%; }
       thead { display: none; }
-      tbody tr { background: var(--card-bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 2px 4px rgba(0,0,0,0.05);}
-      td { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px dashed #334155; text-align: right; align-items: center; }
-      [data-theme="light"] td { border-bottom-color: #cbd5e1; }
+      tbody tr { background: var(--card-bg); border: 1px solid var(--border); border-radius: 16px; padding: 16px; margin-bottom: 12px; }
+      td { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed var(--border); text-align: right; align-items: center; }
       td:last-child { border-bottom: none; padding-bottom: 0; }
-      td::before { content: attr(data-label); color: var(--text-muted); font-weight: 600; text-align: left; }
+      td::before { content: attr(data-label); color: var(--text-muted); font-weight: 700; font-size: 0.75rem; text-transform: uppercase; text-align: left; }
     }
   </style>
 </head>
 <body>
 
-  <!-- OBRIGAR O BROWSER A LIMPAR A CACHE AGORA MESMO -->
+  <!-- LOADER OVERLAY (UX) -->
+  <div id="loaderOverlay">
+    <div class="spinner"></div>
+    <div id="loaderMsg">A sincronizar...</div>
+  </div>
+
   <script>
-    if(localStorage.getItem('appVersion') !== '16') {
+    if(localStorage.getItem('appVersion') !== '17') {
       if('caches' in window) { caches.keys().then(names => names.forEach(n => caches.delete(n))); }
-      localStorage.setItem('appVersion', '16');
+      localStorage.setItem('appVersion', '17');
       location.reload(true);
     }
   </script>
@@ -144,43 +159,42 @@
      <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.3rem; font-weight:800;" id="modalTitulo">Finalizar e Comprovar</h3>
      
      <div id="box-os" style="margin-bottom:15px; text-align:left;">
-        <label style="color:var(--text); font-weight:bold; font-size:0.9rem;">Relatório Técnico do Serviço</label>
-        <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados, equipamentos trocados, etc..." style="width:100%; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--bg); color:var(--text); resize:vertical; font-family:inherit; margin-bottom: 0;"></textarea>
+        <label>Relatório Técnico do Serviço</label>
+        <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados, equipamentos trocados, etc..." style="margin-bottom: 0;"></textarea>
      </div>
 
-     <!-- MÓDULO DE ESTOQUE -->
-     <div id="box-materiais" style="margin-bottom:15px; text-align:left; background: var(--bg); padding: 10px; border-radius: 8px; border: 1px solid var(--border); display: none;">
-       <label style="color:var(--text); font-weight:bold; font-size:0.9rem;">Materiais Utilizados</label>
+     <div id="box-materiais" style="margin-bottom:15px; text-align:left; background: var(--bg); padding: 14px; border-radius: 12px; border: 1px solid var(--border); display: none;">
+       <label>Materiais Utilizados</label>
        <div style="display:flex; gap:8px; margin-top:8px;">
-          <select id="selMaterial" style="flex:2; margin-bottom:0; font-size:0.85rem; padding:8px;"><option value="">Carregando...</option></select>
-          <input type="number" id="qtdMaterial" placeholder="Qtd" min="1" value="1" style="flex:1; margin-bottom:0; font-size:0.85rem; padding:8px;" />
-          <button class="btn-acao" style="background:var(--primary); margin:0; padding:8px 12px;" onclick="addMaterialUI(event)">➕</button>
+          <select id="selMaterial" style="flex:2; margin-bottom:0; padding:10px;"><option value="">Carregando...</option></select>
+          <input type="number" id="qtdMaterial" placeholder="Qtd" min="1" value="1" style="flex:1; margin-bottom:0; padding:10px; text-align:center;" />
+          <button class="btn-acao" style="background:var(--primary); margin:0; padding:10px 16px;" onclick="addMaterialUI(event)">➕</button>
        </div>
-       <ul id="listaMateriaisUi" style="list-style:none; padding:0; margin-top:10px; font-size:0.85rem; color:var(--text-muted);"></ul>
+       <ul id="listaMateriaisUi" style="list-style:none; padding:0; margin-top:12px; font-size:0.9rem;"></ul>
      </div>
 
-     <div id="box-avaliacao" style="text-align:center; margin-bottom:20px; padding-bottom:15px; border-bottom:1px solid var(--border);">
-        <label style="color:var(--text); font-weight:bold; font-size:1rem;">Avaliação do Cliente</label>
-        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Como avalia o serviço prestado?</p>
+     <div id="box-avaliacao" style="text-align:center; margin-bottom:20px; padding-bottom:20px; border-bottom:1px solid var(--border);">
+        <label style="text-align:center;">Avaliação do Cliente</label>
+        <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:16px;">Como avalia o serviço prestado?</p>
         <div class="star-rating" id="starContainer">
            <span onclick="setRating(1); hapticFeedback()">★</span><span onclick="setRating(2); hapticFeedback()">★</span><span onclick="setRating(3); hapticFeedback()">★</span><span onclick="setRating(4); hapticFeedback()">★</span><span onclick="setRating(5); hapticFeedback()">★</span>
         </div>
      </div>
 
      <label id="lblFoto">📸 Tirar Foto (Opcional)</label>
-     <input type="file" id="fotoVisita" accept="image/*" capture="environment" style="padding:10px; background:var(--bg);" />
+     <input type="file" id="fotoVisita" accept="image/*" capture="environment" />
      
      <div id="box-assinatura">
        <label style="margin-top:10px;">✍️ Assinatura do Cliente (Opcional)</label>
        <canvas id="canvasAssinatura"></canvas>
        <div style="text-align:right;">
-          <button class="btn-logout" style="font-size:0.8rem; border-color:var(--primary); color:var(--primary);" onclick="limparAssinatura(); hapticFeedback()">Limpar Assinatura</button>
+          <button class="btn-logout" style="border-color:var(--primary); color:var(--primary);" onclick="limparAssinatura(); hapticFeedback()">Limpar Assinatura</button>
        </div>
      </div>
      
      <div style="display:flex; gap:12px; margin-top:24px;">
-        <button class="btn btn-logout" style="flex:1;" onclick="fecharModal()">Cancelar</button>
-        <button class="btn btn-entrada" id="btnConfirmarModal" style="flex:2;" onclick="enviarComprovativoEFechar(); hapticFeedback()">Gerar OS e Concluir</button>
+        <button class="btn btn-logout" style="flex:1; border:none;" onclick="fecharModal()">Cancelar</button>
+        <button class="btn btn-entrada" id="btnConfirmarModal" style="flex:2; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);" onclick="enviarComprovativoEFechar(); hapticFeedback()">Gerar OS e Concluir</button>
      </div>
   </div>
 
@@ -191,39 +205,38 @@
         <p style="color:var(--text-muted); font-size:0.85rem;" id="subHeader">Faça login para continuar</p>
       </div>
       <div style="display:flex; gap:12px; align-items:center;">
-         <button class="btn-logout" style="font-size:1.3rem; padding:6px; border:none;" onclick="toggleTema(); hapticFeedback()" title="Mudar Tema">🌓</button>
+         <button class="btn-logout" style="font-size:1.3rem; padding:6px 10px; border:none;" onclick="toggleTema(); hapticFeedback()" title="Mudar Tema">🌓</button>
          <button id="btnSair" class="btn-logout" style="display:none;" onclick="logout()">Sair</button>
       </div>
     </header>
 
-    <div id="badgeOffline">☁️ Modo Offline Ativo: <span id="qtdOffline">0</span> registo(s) pendente(s) na memória</div>
+    <div id="badgeOffline">☁️ Modo Offline Ativo: <span id="qtdOffline">0</span> pendente(s)</div>
 
-    <div id="alerta-fadiga" class="aviso-interno" style="display:none; background:#7f1d1d; color:#fca5a5; border-color:#991b1b; border-radius:12px; margin-bottom:16px;">
-      ⚠️ <strong>ALERTA DE FADIGA:</strong> Encontra-se a trabalhar há mais de 6 horas sem registo de pausa.
+    <div id="alerta-fadiga" class="aviso-interno" style="display:none; background:rgba(239, 68, 68, 0.1); border-color:rgba(239, 68, 68, 0.3); color:#fca5a5;">
+      ⚠️ <strong>ALERTA DE FADIGA:</strong> Mais de 6 horas sem registo de pausa.
     </div>
 
-    <div id="msgStatus"></div>
-
-    <div id="tela-login" class="box">
-      <div class="logo-container"><img src="./LogoSS.png?v=16" alt="Logo Services & Solutions" class="logo-img" onerror="this.style.display='none'"></div>
-      <h3 style="margin-bottom: 20px; text-align: center; font-weight:700;">Acesso ao Sistema</h3>
+    <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
+      <div class="logo-container"><img src="./LogoSS.png?v=17" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
-      <button id="btnFazerLogin" class="btn btn-login" style="margin-top:10px;" onclick="fazerLogin(); hapticFeedback()">Entrar</button>
+      <button id="btnFazerLogin" class="btn btn-login" style="margin-top:20px;" onclick="fazerLogin(); hapticFeedback()">Entrar no Sistema</button>
     </div>
 
     <div id="tela-app" style="display: none;">
+      <!-- NAVEGAÇÃO CLEAN TIPO PILL -->
       <div class="tabs">
-        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this); hapticFeedback()" style="color: #fcd34d; border-bottom-color: #fcd34d;">Minha Agenda</button>
-        <button class="tab-btn" onclick="abrirAba('tab-form', this); hapticFeedback()">Avulsos / Manual</button>
-        <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">Meu Histórico</button>
+        <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this); hapticFeedback()">📅 Agenda</button>
+        <button class="tab-btn" onclick="abrirAba('tab-form', this); hapticFeedback()">➕ Avulso</button>
+        <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
-      <div class="tabs" id="abasAdmin" style="display:none; border-top: none; padding-top: 0; margin-top: 0;">
-        <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()" style="color: #38bdf8;">Radar GPS</button>
-        <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()" style="color: var(--accent);">Geral</button>
-        <button class="tab-btn" onclick="abrirAba('tab-banco', this); hapticFeedback()" style="color: var(--primary);">Horas</button>
-        <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()" style="color: var(--warning);">Aprovações</button>
-        <button class="tab-btn" onclick="abrirAba('tab-rotas', this); hapticFeedback()" style="color: #a855f7;">Frota</button>
+      
+      <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
+        <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Radar</button>
+        <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
+        <button class="tab-btn" onclick="abrirAba('tab-banco', this); hapticFeedback()">📈 Banco</button>
+        <button class="tab-btn" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
       </div>
 
       <!-- ABA 1: AGENDA -->
@@ -234,62 +247,60 @@
           <div id="status-badge" class="status-badge">Buscando status...</div><br>
           <div class="usuario-logado" style="margin-top:0;">👤 <span id="nomeExibicao"></span></div>
           
-          <div id="acoes-rapidas" style="display:none; justify-content: center; gap: 12px; margin-top: 20px; flex-wrap: wrap;">
-             <button id="btnPausaRapida" class="btn-acao" style="background:var(--warning); color:#000; padding: 10px 20px;" onclick="baterPontoRapido('Pausa')">⏸ Pausa Almoço</button>
-             <button id="btnRetornoRapido" class="btn-acao" style="background:var(--accent); color:#fff; padding: 10px 20px;" onclick="baterPontoRapido('Retorno')">▶ Voltar da Pausa</button>
-             <button id="btnSaidaRapida" class="btn-acao" style="background:var(--danger); color:#fff; padding: 10px 20px;" onclick="baterPontoRapido('Saída')">⏹ Encerrar Expediente</button>
+          <div id="acoes-rapidas" style="display:none; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
+             <button id="btnPausaRapida" class="btn-acao" style="background:var(--warning); color:#000;" onclick="baterPontoRapido('Pausa')">⏸ Pausa Almoço</button>
+             <button id="btnRetornoRapido" class="btn-acao" style="background:var(--accent); color:#fff;" onclick="baterPontoRapido('Retorno')">▶ Voltar da Pausa</button>
+             <button id="btnSaidaRapida" class="btn-acao" style="background:var(--danger); color:#fff; width:100%; max-width:300px;" onclick="baterPontoRapido('Saída')">⏹ Encerrar Expediente</button>
           </div>
         </div>
-        <div id="aviso-trabalho-interno" class="aviso-interno">
-           <span style="color: var(--text-muted);" onclick="abrirAba('tab-form', document.querySelectorAll('.tab-btn')[1])">
+        <div id="aviso-trabalho-interno" class="aviso-interno" style="background: transparent; border: 1px dashed var(--primary);">
+           <span style="color: var(--primary);" onclick="abrirAba('tab-form', document.querySelectorAll('.tab-btn')[1])">
              ⏳ Expediente fechado. Inicie num compromisso na agenda ou <u>clique aqui se fará apenas Trabalho Interno hoje.</u>
            </span>
         </div>
 
-        <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning); margin-top:16px;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
+        <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
+          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
           
-          <div class="form-row" style="margin-bottom:12px;">
-             <div style="background:var(--card-bg); padding:12px; border-radius:8px; border:1px solid var(--border);">
-               <label style="display:flex; align-items:center; gap:8px; color:var(--text); font-weight:bold; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:20px; height:20px; margin:0;"> Recorrente</label>
+          <div class="form-row" style="margin-bottom:12px; display:flex; gap:12px;">
+             <div style="flex:1; background:var(--bg); padding:14px; border-radius:10px; border:1px solid var(--border);">
+               <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:20px; height:20px; margin:0;"> Recorrente</label>
              </div>
-             <div>
-                <label>SLA / Prioridade</label>
-                <select id="itiPrioridade" style="margin-bottom:0; border-color:var(--primary);">
-                   <option value="Baixa">Baixa (P4)</option>
-                   <option value="Normal" selected>Normal (P3)</option>
-                   <option value="Alta">Alta (P2)</option>
-                   <option value="Crítica">Crítica (P1)</option>
+             <div style="flex:2;">
+                <select id="itiPrioridade" style="margin-bottom:0; border-color:var(--primary); height:100%;">
+                   <option value="Baixa">Baixa (P4)</option><option value="Normal" selected>Normal (P3)</option><option value="Alta">Alta (P2)</option><option value="Crítica">Crítica (P1)</option>
                 </select>
              </div>
           </div>
 
-          <div class="form-row">
-            <div><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
-            <div id="boxDataUnica"><label>Data</label><input type="date" id="itiData" /></div>
+          <div class="form-row" style="display:flex; gap:12px;">
+            <div style="flex:1;"><label>Técnico</label><select id="itiTecnico"><option value="Northon Duarte">Northon Duarte</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
+            <div id="boxDataUnica" style="flex:1;"><label>Data</label><input type="date" id="itiData" /></div>
           </div>
-          <div id="boxDataRecorrente" style="display:none; background:var(--bg); padding:14px; border-radius:8px; border:1px dashed var(--warning); margin-bottom:14px;">
-             <div class="form-row" style="margin-bottom:12px;"><div><label>Data Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div><div><label>Data Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div></div>
-             <label style="color:var(--warning);">Repetir nos seguintes dias:</label>
-             <div style="display:flex; gap:14px; flex-wrap:wrap; font-size:0.95rem; margin-top:10px;">
-                <label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="1" class="chk-dia" style="width:18px;height:18px;margin:0;">Seg</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="2" class="chk-dia" style="width:18px;height:18px;margin:0;">Ter</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="3" class="chk-dia" style="width:18px;height:18px;margin:0;">Qua</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="4" class="chk-dia" style="width:18px;height:18px;margin:0;">Qui</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="5" class="chk-dia" style="width:18px;height:18px;margin:0;">Sex</label><label style="display:flex; align-items:center; gap:6px; cursor:pointer;"><input type="checkbox" value="6" class="chk-dia" style="width:18px;height:18px;margin:0;">Sáb</label>
+          
+          <div id="boxDataRecorrente" style="display:none; background:var(--bg); padding:16px; border-radius:12px; border:1px dashed var(--warning); margin-bottom:16px;">
+             <div class="form-row" style="margin-bottom:12px; display:flex; gap:12px;">
+                <div style="flex:1;"><label>Início</label><input type="date" id="itiDataIni" style="margin-bottom:0;" /></div>
+                <div style="flex:1;"><label>Fim</label><input type="date" id="itiDataFim" style="margin-bottom:0;" /></div>
+             </div>
+             <label style="color:var(--warning);">Dias da semana:</label>
+             <div style="display:flex; gap:10px; flex-wrap:wrap; margin-top:8px;">
+                <label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" value="1" class="chk-dia" style="width:16px;height:16px;margin:0;">Seg</label><label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" value="2" class="chk-dia" style="width:16px;height:16px;margin:0;">Ter</label><label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" value="3" class="chk-dia" style="width:16px;height:16px;margin:0;">Qua</label><label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" value="4" class="chk-dia" style="width:16px;height:16px;margin:0;">Qui</label><label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" value="5" class="chk-dia" style="width:16px;height:16px;margin:0;">Sex</label><label style="display:flex; align-items:center; gap:4px;"><input type="checkbox" value="6" class="chk-dia" style="width:16px;height:16px;margin:0;">Sáb</label>
              </div>
           </div>
           
           <label>Cliente ou Local</label>
-          <div class="input-wrapper">
-             <input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente ou 'Base'" autocomplete="off" />
-          </div>
+          <div class="input-wrapper"><input type="text" id="itiCliente" placeholder="Ex: Nome do Cliente" autocomplete="off" /></div>
 
-          <label>Endereço Completo</label><input type="text" id="itiEndereco" placeholder="Rua, Número, Bairro" />
-          <label>Horário Previsto</label><input type="time" id="itiHorario" />
-          <button class="btn" style="background: var(--warning); color: #000; margin-top: 14px;" onclick="salvarNovoItinerario()">Gravar na Agenda</button>
+          <label>Endereço</label><input type="text" id="itiEndereco" placeholder="Rua, Número..." />
+          <label>Horário</label><input type="time" id="itiHorario" />
+          <button class="btn" style="background: var(--warning); color: #000; margin-top: 10px;" onclick="salvarNovoItinerario()">Agendar Visita</button>
         </div>
 
-        <div style="padding: 10px 0; background: transparent; border: none; margin-top:10px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+        <div style="margin-top:20px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
              <h3 style="margin: 0; font-size: 1.2rem; color: #fcd34d;">Fila de Visitas</h3>
-             <button style="background:var(--card-bg); border:1px solid var(--border); color:var(--text); padding:8px 14px; border-radius:8px; cursor:pointer; font-weight:600; box-shadow:0 2px 4px rgba(0,0,0,0.1);" onclick="carregarItinerario(true); hapticFeedback()">🔄 Atualizar</button>
+             <button class="btn-logout" style="background:var(--card-bg); font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,0.1);" onclick="carregarItinerario(true); hapticFeedback()">🔄 Atualizar</button>
           </div>
           <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">A carregar agenda...</div>
         </div>
@@ -298,8 +309,7 @@
       <!-- ABA 2: AVULSOS E PONTO MANUAL -->
       <div id="tab-form" class="tab-content">
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--primary);">Ponto Manual / Trabalho Interno</h3>
-          <p style="font-size:0.85rem; color:var(--text-muted); margin-bottom:14px;">Utilize apenas para dias na Base sem visitas externas.</p>
+          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--primary);">Ponto Manual / Interno</h3>
           <label for="obsManual">Observação (Opcional)</label>
           <input type="text" id="obsManual" placeholder="Ex: Organização de Estoque..." autocomplete="off" />
           <div class="grid-botoes">
@@ -311,140 +321,124 @@
         </div>
 
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
-          
+          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
           <label>Nome do Cliente / Local</label>
-          <div class="input-wrapper">
-             <input type="text" id="chkCliente" placeholder="Ex: Loja Extra Y" autocomplete="off" />
-          </div>
+          <div class="input-wrapper"><input type="text" id="chkCliente" placeholder="Pesquisar cliente..." autocomplete="off" /></div>
 
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
-            <button class="btn" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
+            <button class="btn btn-acao" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
-               <button class="btn" style="background:var(--warning); color:#000;" onclick="prepararModalAvulso('Saí -> Base')">🏢 Saí p/ Base</button>
-               <button class="btn" style="background:var(--danger);" onclick="prepararModalAvulso('Saí -> Próx Cliente')">🚶 Saí p/ Próximo</button>
+               <button class="btn btn-acao" style="background:var(--warning); color:#000;" onclick="prepararModalAvulso('Saí -> Base')">🏢 P/ Base</button>
+               <button class="btn btn-acao" style="background:var(--danger);" onclick="prepararModalAvulso('Saí -> Próx Cliente')">🚶 P/ Próximo</button>
             </div>
-            <button class="btn" style="background:#475569;" onclick="prepararModalAvulso('Saí (Fim de Expediente)')">🏠 Saí -> Fim de Expediente</button>
+            <button class="btn btn-acao" style="background:#475569;" onclick="prepararModalAvulso('Saí (Fim de Expediente)')">🏠 Fim de Expediente</button>
           </div>
         </div>
-
-        <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Solicitar Ajuste de Ponto</h3>
-          <label>Tipo de Batida Faltante</label>
-          <select id="corrTipo"><option value="Entrada">Entrada</option><option value="Pausa">Pausa</option><option value="Retorno">Retorno</option><option value="Saída">Saída</option></select>
-          <label>Data e Hora Exata</label>
-          <input type="datetime-local" id="corrDataHora" />
-          <label>Motivo do Ajuste</label>
-          <input type="text" id="corrMotivo" placeholder="Ex: Esqueci de bater a pausa" />
-          <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar para Aprovação</button>
+        
+        <div class="box" style="border-color: rgba(245, 158, 11, 0.3);">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Pedir Ajuste de Ponto</h3>
+          <div style="display:flex; gap:12px; margin-bottom:14px;">
+            <select id="corrTipo" style="flex:1; margin-bottom:0;"><option value="Entrada">Entrada</option><option value="Pausa">Pausa</option><option value="Retorno">Retorno</option><option value="Saída">Saída</option></select>
+            <input type="datetime-local" id="corrDataHora" style="flex:2; margin-bottom:0;" />
+          </div>
+          <input type="text" id="corrMotivo" placeholder="Motivo. Ex: Esqueci de bater a pausa" />
+          <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar Pedido</button>
         </div>
       </div>
 
-      <!-- HISTÓRICO E DASHBOARD PESSOAL -->
+      <!-- ABA 3: HISTÓRICO (AGORA COM GRÁFICOS) -->
       <div id="tab-hist" class="tab-content">
-        <h3 style="margin: 0 0 14px; font-size: 1.2rem; color:var(--primary);">Meu Desempenho (Mês)</h3>
-        <div class="metrics">
-            <div class="card-metric"><div class="label">Visitas Feitas</div><div class="val" id="lblVisitasMes" style="color:var(--accent);">0</div></div>
-            <div class="card-metric"><div class="label">Horas Totais</div><div class="val" id="lblTotalMes">00:00</div></div>
-            <div class="card-metric"><div class="label">Horas Extra</div><div class="val" id="lblExtraMes" style="color:var(--danger);">00:00</div></div>
+        <div class="box" style="border:none; padding:10px 0; background:transparent; box-shadow:none;">
+            <h3 style="margin: 0 0 16px; font-size: 1.2rem; color:var(--primary);">Meu Dashboard (Mês)</h3>
+            <div class="metrics">
+                <div class="card-metric"><div class="label">Visitas</div><div class="val" id="lblVisitasMes" style="color:var(--primary);">0</div></div>
+                <div class="card-metric"><div class="label">Horas</div><div class="val" id="lblTotalMes" style="color:var(--accent);">00:00</div></div>
+            </div>
+            <!-- NOVO: GRÁFICO DO UTILIZADOR -->
+            <div class="box" style="padding:15px; margin-bottom: 24px;">
+                <h4 style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-bottom:10px; text-transform:uppercase;">Distribuição de Horas</h4>
+                <div class="chart-container" style="height: 180px;">
+                    <canvas id="meuGrafico"></canvas>
+                </div>
+            </div>
         </div>
 
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem;">Meus Últimos Registros</h3>
-          <table><thead><tr><th>Data/Hora</th><th>Ação</th><th>Observação / Horas</th></tr></thead><tbody id="tblCorpo"></tbody></table>
-        </div>
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px; box-shadow:none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Pedidos de Ajuste</h3>
-          <table><thead><tr><th>Data Solicitada</th><th>Tipo</th><th>Status</th></tr></thead><tbody id="tblMeusAjustes"><tr><td colspan="3" style="text-align:center;">A carregar...</td></tr></tbody></table>
-        </div>
-      </div>
-
-      <!-- ADMIN: RADAR -->
-      <div id="tab-radar" class="tab-content">
-        <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Radar da Equipe (GPS Ao Vivo)</h3>
-          <button class="btn" style="background: #1e293b; border: 1px solid var(--border); margin-bottom:14px;" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar Radar</button>
-          <div id="areaRadar">A procurar posições...</div>
+        <div class="box" style="padding: 20px; margin-top: 16px;">
+          <h3 style="margin: 0 0 16px; font-size: 1.1rem;">Últimos Registos de Ponto</h3>
+          <table><thead><tr><th>Data/Hora</th><th>Ação</th><th>Observação</th></tr></thead><tbody id="tblCorpo"></tbody></table>
         </div>
       </div>
 
       <!-- ADMIN: GERAL -->
       <div id="tab-admin-ponto" class="tab-content">
-        <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap: wrap; gap: 10px;">
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral da Operação</h3>
             <div style="display:flex; gap:10px; align-items:center;">
-               <select id="filtroGeralColab" style="margin:0; padding:8px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()"><option value="TODOS">Por Colaborador (Todos)</option></select>
-               <button class="btn-acao" style="background:#dc2626; margin:0;" onclick="exportarGeralPDF()">📄 Exportar Histórico (PDF)</button>
+               <select id="filtroGeralColab" style="margin:0; padding:8px 12px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()"><option value="TODOS">Todos os Colaboradores</option></select>
+               <button class="btn-acao" style="background:#dc2626; margin:0; padding:8px 16px;" onclick="exportarGeralPDF()">📄 PDF</button>
             </div>
           </div>
-          <table><thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Ação</th><th>Resumo</th></tr></thead><tbody id="tblGeral"></tbody></table>
+          <div class="box" style="padding:0; overflow:hidden;">
+            <table><thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Ação</th><th>Resumo</th></tr></thead><tbody id="tblGeral"></tbody></table>
+          </div>
         </div>
       </div>
 
-      <!-- ADMIN: BANCO HORAS -->
+      <!-- ADMIN: BANCO HORAS (AGORA COM GRÁFICO) -->
       <div id="tab-banco" class="tab-content">
-        <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--primary);">Fechamento Mensal de Horas</h3>
-          <div style="display:flex; gap:10px; margin-bottom: 14px;"><input type="text" id="mesFiltro" placeholder="MM/YYYY" maxlength="7" /><button class="btn" style="width: auto; padding: 0 20px; background: var(--primary);" onclick="carregarBancoHoras()">Buscar</button></div>
-          <table><thead><tr><th>Colaborador</th><th>Total Mensal</th><th>Horas Extras</th></tr></thead><tbody id="tblBanco"><tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Insira o mês e clique em Buscar.</td></tr></tbody></table>
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
+          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--primary);">Fechamento Mensal e Gráficos</h3>
+          <div style="display:flex; gap:12px; margin-bottom: 20px;">
+             <input type="text" id="mesFiltro" placeholder="MM/YYYY" maxlength="7" style="margin:0; flex:2;" />
+             <button class="btn" style="flex:1; margin:0; background: var(--primary);" onclick="carregarBancoHoras()">Consolidar</button>
+          </div>
+          
+          <!-- NOVO: GRÁFICO ADMIN -->
+          <div class="box" style="padding:15px; margin-bottom:20px; display:none;" id="boxAdminGrafico">
+             <h4 style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-bottom:10px; text-transform:uppercase;">Horas Totais vs Extras</h4>
+             <div class="chart-container" style="height: 220px;"><canvas id="adminGrafico"></canvas></div>
+          </div>
+
+          <div class="box" style="padding:0; overflow:hidden;">
+            <table><thead><tr><th>Colaborador</th><th>Total Mensal</th><th>Horas Extras</th></tr></thead><tbody id="tblBanco"><tr><td colspan="3" style="text-align:center; color:var(--text-muted); padding:20px;">Insira o mês e clique em Consolidar.</td></tr></tbody></table>
+          </div>
         </div>
       </div>
-
-      <!-- ADMIN: APROVAÇÕES -->
-      <div id="tab-aprovacoes" class="tab-content">
-        <div class="box" style="padding: 10px 0; background: transparent; border: none;">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Pendentes de Aprovação</h3>
-          <div id="listaAprovacoes" style="color: var(--text-muted); text-align: center;">Carregando...</div>
-        </div>
-      </div>
-
-      <!-- ADMIN: ROTAS E FROTA -->
+      
+      <!-- ADMIN: RADAR E APROVAÇÕES E FROTA... (Mantidos limpos) -->
+      <div id="tab-radar" class="tab-content"><div class="box"><h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Radar GPS da Equipa</h3><button class="btn-logout" style="width:100%; margin-bottom:16px;" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar Radar</button><div id="areaRadar"></div></div></div>
+      <div id="tab-aprovacoes" class="tab-content"><div class="box"><h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Aprovações Pendentes</h3><div id="listaAprovacoes">Carregando...</div></div></div>
       <div id="tab-rotas" class="tab-content">
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #a855f7;">Gestão de Frota e Reembolsos</h3>
-          <div class="form-row" style="margin-bottom: 16px;">
-            <div><label>Filtrar Técnico:</label><select id="filtroTecnico" onchange="filtrarRotas()"><option value="TODOS">Todos os Técnicos</option><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
-            <div><label>Filtrar Mês:</label><select id="filtroMes" onchange="filtrarRotas()"><option value="TODOS">Todos os Meses</option></select></div>
+          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: #a855f7;">Gestão de Frota</h3>
+          <div class="form-row" style="display:flex; gap:12px; margin-bottom: 20px;">
+            <div style="flex:1;"><label>Técnico</label><select id="filtroTecnico" onchange="filtrarRotas()" style="margin:0;"><option value="TODOS">Todos</option><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
+            <div style="flex:1;"><label>Mês</label><select id="filtroMes" onchange="filtrarRotas()" style="margin:0;"><option value="TODOS">Todos</option></select></div>
           </div>
           <div class="metrics">
-            <div class="card-metric"><div class="label">Quilometragem</div><div class="val" id="mKm" style="color:#60a5fa;">0.0 km</div></div>
-            <div class="card-metric"><div class="label">Combustível Est.</div><div class="val" id="mCombustivel">R$ 0,00</div></div>
-            <div class="card-metric"><div class="label">Reembolso Total</div><div class="val" id="mReembolso" style="color:var(--accent);">R$ 0,00</div></div>
+            <div class="card-metric"><div class="label">Km Total</div><div class="val" id="mKm" style="color:#a855f7;">0.0</div></div>
+            <div class="card-metric"><div class="label">Reembolso</div><div class="val" id="mReembolso" style="color:var(--accent);">R$ 0,00</div></div>
           </div>
         </div>
-        
-        <div class="box">
-          <h4 style="margin-bottom: 12px; color: var(--text-muted);">Lançar Novo Deslocamento</h4>
-          <form id="fRota" onsubmit="salvarRota(event)">
-            <div class="form-row">
-              <div><label>Técnico</label><select id="rotaTecnico" required><option value="Northon Duarte">Northon Duarte</option><option value="Yago Oliveira">Yago Oliveira</option><option value="Victor Rodrigues">Victor Rodrigues</option><option value="Alef Silva">Alef Silva</option><option value="Kaio medeiros">kaio Medeiros</option></select></div>
-              <div><label>Mês (Ex: Setembro/2026)</label><input type="text" id="rotaMes" required /></div>
-            </div>
-            <div class="form-row"><div><label>Data</label><input type="date" id="rotaData" onchange="preencherDia()" required /></div><div><label>Dia da Semana</label><select id="rotaDia"><option value="Segunda-feira">Segunda</option><option value="Terça-feira">Terça</option><option value="Quarta-feira">Quarta</option><option value="Quinta-feira">Quinta</option><option value="Sexta-feira">Sexta</option><option value="Sábado">Sábado</option><option value="Domingo">Domingo</option></select></div></div>
-            <div class="form-row">
-              <div><label>Origem</label><input type="text" id="rotaOrigem" required /></div>
-              <div>
-                <label>Destino / Cliente</label>
-                <div class="input-wrapper" style="margin-bottom:4px;">
-                   <input type="text" id="rotaDestino" required autocomplete="off" />
-                </div>
-                <button type="button" class="btn-logout" style="font-size:0.7rem; border-color:var(--primary); color:var(--primary); width:100%; margin-bottom:10px;" onclick="autoCalcularKM()">📍 Calcular Distância Automática</button>
-              </div>
-            </div>
-            <div class="form-row"><div><label>Distância (KM)</label><input type="number" id="rotaKm" step="0.1" required /></div><div><label>Estacionamento (R$)</label><input type="number" id="rotaEstac" step="0.01" value="0.00" /></div></div>
-            <div class="form-row"><div><label>Pedágio (R$)</label><input type="number" id="rotaPedagio" step="0.01" value="0.00" /></div><div><label>Descontos (R$)</label><input type="number" id="rotaDesconto" step="0.01" value="0.00" /></div></div>
-            <label>Observações</label><input type="text" id="rotaObs" />
-            <button type="submit" id="btnSalvarRota" class="btn" style="background:#a855f7; margin-top: 10px;">Salvar Rota</button>
-          </form>
-        </div>
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; margin-top: 16px; box-shadow:none;"><table><thead><tr><th>Data</th><th>Trajeto</th><th>Custos</th></tr></thead><tbody id="tblRotas"><tr><td colspan="3" style="text-align:center;">Vazio.</td></tr></tbody></table></div>
       </div>
+
     </div>
   </div>
 
   <script>
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
+
+    // UX: Sistema de Loading Overlay Moderno
+    function showLoading(msg) {
+        document.getElementById('loaderMsg').innerText = msg || "A carregar...";
+        document.getElementById('loaderOverlay').style.display = 'flex';
+    }
+    function hideLoading() { document.getElementById('loaderOverlay').style.display = 'none'; }
+    
+    // Variáveis Globais de Gráficos
+    let chartMeuDesempenho = null;
+    let chartAdminBanco = null;
 
     const baseClientes = {
       "ABC-TUR": "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013",
@@ -480,14 +474,11 @@
       "YouData": "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904"
     };
 
-    // --- SCRIPT DE AUTO-COMPLETAR BLINDADO CONTRA TOQUES FALSOS ---
     function configAutocomplete(inp, arr) {
       if(!inp) return;
-      
       function renderList(val) {
         closeAllLists();
-        if (!val) return; // Só abre se tiver texto digitado (ou no clique, gerido abaixo)
-        
+        if (!val) return; 
         let a = document.createElement("DIV");
         a.setAttribute("id", inp.id + "autocomplete-list");
         a.setAttribute("class", "autocomplete-items");
@@ -501,26 +492,26 @@
             b.innerHTML = arr[i].substring(0, matchIdx) + "<strong>" + arr[i].substring(matchIdx, matchIdx + val.length) + "</strong>" + arr[i].substring(matchIdx + val.length);
             b.innerHTML += "<input type='hidden' value='" + arr[i].replace(/'/g, "&#39;") + "'>";
             
-            b.addEventListener("click", function(e) {
-                e.preventDefault(); 
-                e.stopPropagation();
+            let selectItem = function(e) {
+                e.preventDefault(); e.stopPropagation();
                 inp.value = this.getElementsByTagName("input")[0].value;
                 closeAllLists();
                 if(inp.id === 'itiCliente') autoPreencherEndereco();
-            });
+            };
+            
+            b.addEventListener("mousedown", selectItem);
+            b.addEventListener("touchstart", selectItem, {passive: false});
             a.appendChild(b);
             count++;
           }
         }
         if(count === 0) closeAllLists();
       }
-
-      // Parar a propagação dos eventos do input para não fechar a lista imediatamente
       inp.addEventListener("input", function(e) { e.stopPropagation(); renderList(this.value); });
       inp.addEventListener("focus", function(e) { e.stopPropagation(); renderList(this.value); });
       inp.addEventListener("click", function(e) { 
          e.stopPropagation(); 
-         if(!this.value) { // Mostra a lista toda se estiver vazio ao clicar
+         if(!this.value) { 
             closeAllLists();
             let a = document.createElement("DIV");
             a.setAttribute("id", inp.id + "autocomplete-list");
@@ -529,37 +520,30 @@
             for (let i = 0; i < arr.length; i++) {
                let b = document.createElement("DIV");
                b.innerHTML = arr[i] + "<input type='hidden' value='" + arr[i].replace(/'/g, "&#39;") + "'>";
-               b.addEventListener("click", function(ev) {
+               let selectItem = function(ev) {
                    ev.preventDefault(); ev.stopPropagation();
                    inp.value = this.getElementsByTagName("input")[0].value;
                    closeAllLists();
                    if(inp.id === 'itiCliente') autoPreencherEndereco();
-               });
+               };
+               b.addEventListener("mousedown", selectItem);
+               b.addEventListener("touchstart", selectItem, {passive: false});
                a.appendChild(b);
             }
-         } else {
-            renderList(this.value);
-         }
+         } else { renderList(this.value); }
       });
 
       function closeAllLists(elmnt) {
         let x = document.getElementsByClassName("autocomplete-items");
-        for (let i = 0; i < x.length; i++) {
-          if (elmnt != x[i] && elmnt != inp) {
-            x[i].parentNode.removeChild(x[i]);
-          }
-        }
+        for (let i = 0; i < x.length; i++) { if (elmnt != x[i] && elmnt != inp) { x[i].parentNode.removeChild(x[i]); } }
       }
-      
-      // Fecha a lista se clicar no resto do documento (mas ignora o próprio input)
       document.addEventListener("click", function (e) { closeAllLists(e.target); });
+      document.addEventListener("touchstart", function (e) { if(e.target !== inp && !e.target.closest('.autocomplete-items')) closeAllLists(e.target); }, {passive: true});
     }
 
     function autoPreencherEndereco() {
       let cli = document.getElementById("itiCliente").value.trim();
-      if(baseClientes[cli] && baseClientes[cli] !== "") {
-         document.getElementById("itiEndereco").value = baseClientes[cli];
-      }
+      if(baseClientes[cli] && baseClientes[cli] !== "") { document.getElementById("itiEndereco").value = baseClientes[cli]; }
     }
 
     function getQtdPendenciasAgenda(ignorarLinha = null) {
@@ -567,131 +551,72 @@
       if (!cacheStr) return 0;
       const agendaDia = JSON.parse(cacheStr);
       const hojeStr = new Date().toLocaleDateString('pt-BR');
-      return agendaDia.filter(d => 
-          d.data === hojeStr && 
-          d.linha !== ignorarLinha &&
-          (d.status === 'Em Andamento' || d.status === 'Pendente') && 
-          !d.cliente.toLowerCase().includes('base') && 
-          !d.cliente.toLowerCase().includes('interno')
-      ).length;
+      return agendaDia.filter(d => d.data === hojeStr && d.linha !== ignorarLinha && (d.status === 'Em Andamento' || d.status === 'Pendente') && !d.cliente.toLowerCase().includes('base') && !d.cliente.toLowerCase().includes('interno')).length;
     }
 
     let usuarioAutenticado = ""; let perfilAutenticado = ""; let statusGlobalPonto = "Saída";
-    let todasRotas = []; let dadosGeralGlobais = []; let notificadoHoje = false;
-    let pendenteCliente = ""; let pendenteAcao = ""; let pendenteLinhaAgenda = null;
-    let currentRating = 0; let tempoInicioExpediente = null;
-    
-    let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
-    let estoqueGlobal = []; let materiaisUsados = [];
-
-    if ('serviceWorker' in navigator) { 
-      window.addEventListener('load', () => { 
-        navigator.serviceWorker.register('sw.js'); 
-      }); 
-    }
-
-    function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
-
-    function toggleTema() {
-      const el = document.documentElement; const tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
-      el.setAttribute('data-theme', tema); localStorage.setItem('ponto_tema', tema);
-    }
-
-    function atualizarBadgeOffline() {
-       const badge = document.getElementById('badgeOffline'); const num = document.getElementById('qtdOffline');
-       if(filaOffline.length > 0) { badge.style.display = 'block'; num.innerText = filaOffline.length; } else { badge.style.display = 'none'; }
-    }
-
-    function isSyncable(action) { return ['registrarPonto', 'registrarCheckin'].includes(action); }
+    let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]'); let estoqueGlobal = []; let materiaisUsados = []; let tempoInicioExpediente = null; let pendenteLinhaAgenda = null; let pendenteCliente = ""; let pendenteAcao = "";
 
     async function callAPI(action, payload = {}) {
       payload.action = action;
       payload.dataHoraExecucao = new Date().toLocaleString('pt-BR').replace(',', '');
 
-      if (!navigator.onLine && isSyncable(action)) {
+      if (!navigator.onLine && ['registrarPonto', 'registrarCheckin'].includes(action)) {
          filaOffline.push(payload); localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); atualizarBadgeOffline();
-         return { sucesso: "Modo Offline: Guardado no telemóvel para envio posterior." };
+         return { sucesso: "Guardado offline. Será enviado quando tiver internet." };
       }
 
       try {
-        const response = await fetch(API_URL, { method: "POST", redirect: "follow", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }});
-        const text = await response.text(); try { return JSON.parse(text); } catch (e) { return { erro: "O Google bloqueou a leitura." }; }
+        const response = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }});
+        return JSON.parse(await response.text());
       } catch (err) { 
-        if (isSyncable(action)) {
+        if (['registrarPonto', 'registrarCheckin'].includes(action)) {
            filaOffline.push(payload); localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); atualizarBadgeOffline();
-           return { sucesso: "Falha de rede momentânea: Guardado no telemóvel para envio posterior." };
+           return { sucesso: "Falha de rede. Guardado no telemóvel para envio posterior." };
         }
         return { erro: "Falha de rede. Verifique a internet." }; 
       }
     }
 
-    async function sincronizarFila() {
-       if (!navigator.onLine || filaOffline.length === 0) return;
-       exibirMsg(`A sincronizar ${filaOffline.length} registos pendentes da memória...`, false);
-       let novaFila = [];
-       for (let i = 0; i < filaOffline.length; i++) {
-          try {
-             let payload = filaOffline[i];
-             const response = await fetch(API_URL, { method: "POST", redirect: "follow", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" }});
-          } catch(e) { novaFila.push(filaOffline[i]); }
-       }
-       filaOffline = novaFila; localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); atualizarBadgeOffline();
-       if(filaOffline.length === 0) { exibirMsg("Sincronização offline concluída com sucesso!", false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado); }
+    // UX: Helper function to replace direct exibirMsg calls with loader
+    async function executarComLoader(msg, task) {
+       showLoading(msg);
+       try { await task(); } catch(e) { console.error(e); exibirMsg("Ocorreu um erro interno.", true); }
+       hideLoading();
     }
 
-    window.addEventListener('online', sincronizarFila); setInterval(sincronizarFila, 60000); 
-
     function exibirMsg(msg, isErro) {
-      hapticFeedback(); const b = document.getElementById("msgStatus"); b.innerText = msg; b.style.display = "block";
-      b.style.background = isErro ? "var(--danger)" : (msg.includes("Rota") || msg.includes("Itinerário") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("agendado") ? "#fcd34d" : "var(--accent)");
-      if(msg.includes("Itinerário") || msg.includes("satélites") || msg.includes("Check-in") || msg.includes("Concluída") || msg.includes("sucesso") || msg.includes("agendado") || msg.includes("Alerta")) b.style.color = "#000"; else b.style.color = "#fff";
-      window.scrollTo({ top: 0, behavior: 'smooth' }); setTimeout(() => b.style.display = "none", 4000);
+      hapticFeedback(); setTimeout(() => alert(msg), 100);
     }
 
     async function obterLocalizacao() {
       return new Promise((resolve) => {
         if (!navigator.geolocation) return resolve("GPS não suportado");
-        navigator.geolocation.getCurrentPosition((pos) => { resolve(`https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`); }, (err) => { resolve("Sem permissão de GPS"); }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
+        navigator.geolocation.getCurrentPosition((pos) => { resolve(`https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`); }, () => { resolve("Sem permissão de GPS"); }, { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 });
       });
     }
 
     window.onload = () => {
       if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
-      const userSalvo = localStorage.getItem('ponto_auth_nome'); const perfilSalvo = localStorage.getItem('ponto_auth_perfil');
-      atualizarBadgeOffline();
-      
-      // Ativa o Auto-Completar customizado
-      const arrClientes = Object.keys(baseClientes);
-      configAutocomplete(document.getElementById("itiCliente"), arrClientes);
-      configAutocomplete(document.getElementById("chkCliente"), arrClientes);
-      configAutocomplete(document.getElementById("rotaDestino"), arrClientes);
-
-      if (userSalvo && perfilSalvo) entrarNoSistema(userSalvo, perfilSalvo);
+      const arrClientes = Object.keys(baseClientes); configAutocomplete(document.getElementById("itiCliente"), arrClientes); configAutocomplete(document.getElementById("chkCliente"), arrClientes);
+      if (localStorage.getItem('ponto_auth_nome')) entrarNoSistema(localStorage.getItem('ponto_auth_nome'), localStorage.getItem('ponto_auth_perfil'));
       initAssinatura();
     };
 
-    async function fazerLogin() {
+    function fazerLogin() {
       const u = document.getElementById('loginUser').value.trim(); const s = document.getElementById('loginSenha').value;
-      const btn = document.getElementById('btnFazerLogin');
-      if(!u || !s) return exibirMsg("Preencha utilizador e password.", true);
-      btn.disabled = true; btn.innerText = "A autenticar...";
-      if ("Notification" in window && Notification.permission !== "granted" && Notification.permission !== "denied") await Notification.requestPermission();
-      const res = await callAPI('autenticarUsuario', { login: u, senha: s });
-      btn.disabled = false; btn.innerText = "Entrar";
-      if (res.erro) exibirMsg(res.erro, true);
-      else {
-        localStorage.setItem('ponto_auth_nome', res.nome); localStorage.setItem('ponto_auth_perfil', res.perfil); localStorage.setItem('ponto_login_time', Date.now()); 
-        entrarNoSistema(res.nome, res.perfil);
-      }
+      if(!u || !s) return alert("Preencha todos os campos.");
+      executarComLoader("A autenticar...", async () => {
+         const res = await callAPI('autenticarUsuario', { login: u, senha: s });
+         if (res.erro) alert(res.erro);
+         else { localStorage.setItem('ponto_auth_nome', res.nome); localStorage.setItem('ponto_auth_perfil', res.perfil); entrarNoSistema(res.nome, res.perfil); }
+      });
     }
 
     function entrarNoSistema(nome, perfil) {
       usuarioAutenticado = nome; perfilAutenticado = perfil; document.getElementById('nomeExibicao').innerText = nome;
       document.getElementById('tela-login').style.display = "none"; document.getElementById('tela-app').style.display = "block"; document.getElementById('btnSair').style.display = "block";
-      if (perfil === 'Admin') { document.getElementById('subHeader').innerText = "Painel Administrativo"; document.getElementById('abasAdmin').style.display = "flex"; document.getElementById('areaAtribuirItinerario').style.display = "block"; }
-      
-      if(navigator.onLine) carregarEstoque();
-
+      if (perfil === 'Admin') document.getElementById('abasAdmin').style.display = "flex";
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); carregarHistoricoEAtualizarBotoes(nome); carregarItinerario(true); 
     }
 
@@ -699,29 +624,16 @@
 
     function abrirAba(id, btn) {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
-      document.querySelectorAll('.tab-btn').forEach(e => { e.classList.remove('active'); if(e.innerText.includes("Agenda")) { e.style.color = "var(--text-muted)"; e.style.borderBottomColor = "transparent"; } });
-      document.getElementById(id).classList.add('active');
-      if(btn) { btn.classList.add('active'); if(id === 'tab-itinerario') { btn.style.color = "#fcd34d"; btn.style.borderBottomColor = "#fcd34d"; } }
-      if(id === 'tab-radar') carregarRadar(); if(id === 'tab-admin-ponto') carregarVisaoGeralPonto(); if(id === 'tab-banco') carregarBancoHoras(); if(id === 'tab-aprovacoes') carregarAprovacoes(); if(id === 'tab-rotas') carregarRotasServidor();
+      document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
+      document.getElementById(id).classList.add('active'); if(btn) btn.classList.add('active');
     }
 
     setInterval(() => {
       const a = new Date(); document.getElementById('relogio').innerText = a.toLocaleTimeString('pt-BR'); document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
-      let horaLogin = localStorage.getItem('ponto_login_time'); if (horaLogin && Date.now() - parseInt(horaLogin) > 12 * 60 * 60 * 1000) logout();
     }, 1000);
 
-    function parseDataBR(str) { 
-       if(!str) return new Date(); 
-       str = str.replace(',', ''); 
-       let p = str.split(" "), d = p[0].split("/"), h = (p[1]||"00:00:00").split(":"); 
-       return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]||0); 
-    }
-    
-    function horasParaMin(hStr) { 
-       if(!hStr || hStr==='-' || hStr==='Erro') return 0; 
-       let s = String(hStr); if (s.includes('T')) { try { let d = new Date(s.replace('h','').trim()); return d.getUTCHours()*60 + d.getUTCMinutes(); } catch(e){} }
-       let p = s.replace(/'/g, '').split(':'); return parseInt(p[0]||0)*60 + parseInt(p[1]||0); 
-    }
+    function parseDataBR(str) { str = str.replace(',', ''); let p = str.split(" "), d = p[0].split("/"), h = (p[1]||"00:00:00").split(":"); return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]||0); }
+    function horasParaMin(hStr) { if(!hStr || hStr==='-' || hStr==='Erro') return 0; let p = String(hStr).replace(/'/g, '').split(':'); return parseInt(p[0]||0)*60 + parseInt(p[1]||0); }
     function minParaHoras(min) { if(min<=0) return "00:00"; let h=Math.floor(min/60), m=min%60; return (h<10?"0"+h:h)+":"+(m<10?"0"+m:m); }
 
     function atualizarRegraBotoes(ultimoStatus) {
@@ -737,159 +649,151 @@
         else if (statusGlobalPonto === 'Pausa') { badge.innerHTML = '🟡 Em Pausa (Almoço)'; badge.style.background = '#78350f'; badge.style.color = '#fcd34d'; bRetorno.style.display = 'block'; }
         else if (statusGlobalPonto === 'Retorno') { badge.innerHTML = '🟢 Em Expediente (Retorno)'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7'; bSaida.style.display = 'block'; }
       }
-
-      const mbE = document.getElementById('btnEntradaMan'), mbP = document.getElementById('btnPausaMan'), mbR = document.getElementById('btnRetornoMan'), mbS = document.getElementById('btnSaidaMan');
-      if(mbE) { mbE.disabled = true; mbP.disabled = true; mbR.disabled = true; mbS.disabled = true; if (statusGlobalPonto === 'Saída') mbE.disabled = false; else if (statusGlobalPonto === 'Entrada') { mbP.disabled = false; mbS.disabled = false; } else if (statusGlobalPonto === 'Pausa') mbR.disabled = false; else if (statusGlobalPonto === 'Retorno') mbS.disabled = false; }
       
       const alertaFadiga = document.getElementById('alerta-fadiga');
       if (statusGlobalPonto === 'Entrada' && tempoInicioExpediente) { let diffHoras = (new Date() - tempoInicioExpediente) / 3600000; alertaFadiga.style.display = (diffHoras > 6) ? 'block' : 'none'; } else { alertaFadiga.style.display = 'none'; }
-      const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado); if (cacheLocal) renderizarAgendaHTML(JSON.parse(cacheLocal), false);
     }
 
-    async function baterPontoRapido(tipo) { hapticFeedback(); baterPontoManual(tipo, true); }
+    function baterPontoRapido(tipo) { hapticFeedback(); baterPontoManual(tipo, true); }
 
-    async function baterPontoManual(tipo, isRapido = false) {
+    function baterPontoManual(tipo, isRapido = false) {
       if (tipo === 'Saída') { 
          let p = getQtdPendenciasAgenda();
-         if (p > 0) return exibirMsg(`Erro: Você tem ${p} atendimento(s) pendente(s) na agenda. Conclua-os antes de encerrar o expediente.`, true);
+         if (p > 0) return alert(`Erro: Tem ${p} atendimento(s) pendente(s). Conclua-os antes de encerrar o expediente.`);
          if (!confirm("Deseja encerrar o turno de hoje?")) return; 
       }
-
       let obs = ""; if (!isRapido && document.getElementById("obsManual")) obs = document.getElementById("obsManual").value;
       if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
       
-      exibirMsg(`Capturando GPS e registrando ${tipo}...`, false); 
-      const loc = await obterLocalizacao();
-      const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
-      
-      if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
-      
-      if(res.erro) {
-         exibirMsg(res.erro, true); 
-      } else {
-         exibirMsg(res.sucesso, false); 
-         carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-         if (tipo === 'Saída') {
-            sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
-            carregarItinerario(false);
-         }
+      executarComLoader(`A registar ${tipo}...`, async () => {
+         const loc = await obterLocalizacao();
+         const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
+         if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
+         if(res.erro) alert(res.erro); else { carregarHistoricoEAtualizarBotoes(usuarioAutenticado); if (tipo === 'Saída') { sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); } }
+      });
+    }
+
+    // --- GRÁFICOS (CHART.JS) ---
+    function desenharMeuGrafico(minNormal, minExtra) {
+        const ctx = document.getElementById('meuGrafico').getContext('2d');
+        if(chartMeuDesempenho) chartMeuDesempenho.destroy();
+        
+        let colorNormal = document.documentElement.getAttribute('data-theme') === 'light' ? '#2563eb' : '#3b82f6';
+        let colorExtra = document.documentElement.getAttribute('data-theme') === 'light' ? '#dc2626' : '#ef4444';
+        
+        chartMeuDesempenho = new Chart(ctx, {
+            type: 'doughnut',
+            data: { labels: ['H. Normais', 'H. Extra'], datasets: [{ data: [minNormal, minExtra], backgroundColor: [colorNormal, colorExtra], borderWidth: 0, hoverOffset: 4 }] },
+            options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: '#94a3b8', font: { size: 11, weight: 'bold' } } } } }
+        });
+    }
+
+    function desenharAdminGrafico(dados) {
+        document.getElementById('boxAdminGrafico').style.display = 'block';
+        const ctx = document.getElementById('adminGrafico').getContext('2d');
+        if(chartAdminBanco) chartAdminBanco.destroy();
+        
+        let labels = dados.map(d => d.nome.split(' ')[0]);
+        let totais = dados.map(d => horasParaMin(d.total) / 60);
+        let extras = dados.map(d => horasParaMin(d.extra) / 60);
+        
+        chartAdminBanco = new Chart(ctx, {
+            type: 'bar',
+            data: { labels: labels, datasets: [ { label: 'Horas Normais', data: totais, backgroundColor: '#3b82f6', borderRadius: 4 }, { label: 'Horas Extras', data: extras, backgroundColor: '#f59e0b', borderRadius: 4 } ] },
+            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { color: '#94a3b8' } }, x: { grid: { display: false }, ticks: { color: '#94a3b8' } } }, plugins: { legend: { labels: { color: '#94a3b8' } } } }
+        });
+    }
+
+    async function carregarHistoricoEAtualizarBotoes(nome) {
+      const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
+      if (!dados.erro) { 
+        let visitasMes = 0; let minExtra = 0; let minTotal = 0; let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
+        let html = "";
+        
+        [...dados].reverse().forEach(d => {
+           if(d.dataHora.includes(mesAtual)) {
+              if(d.tipo.includes('Saí') && !d.tipo.includes('Ponto')) visitasMes++;
+              if(d.tipo === 'Saída' && d.extra && d.extra !== '-') minExtra += horasParaMin(d.extra);
+              if(d.tipo === 'Saída' && d.total && d.total !== '-') minTotal += horasParaMin(d.total);
+           }
+           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
+           html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Ação"><span class="tag-tipo" style="background:#334155; color:#fff">${d.tipo}</span></td><td data-label="Obs">${d.obs \vert{}\vert{} '-'}${infoExtra}</td></tr>`;
+        });
+        document.getElementById("tblCorpo").innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>';
+        
+        document.getElementById('lblVisitasMes').innerText = visitasMes; document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal); document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
+        desenharMeuGrafico(minTotal, minExtra);
+
+        let lastPonto = 'Saída'; tempoInicioExpediente = null;
+        for (let i = dados.length - 1; i >= 0; i--) { if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { lastPonto = dados[i].tipo; if(lastPonto === 'Entrada') tempoInicioExpediente = parseDataBR(dados[i].dataHora); break; } }
+        atualizarRegraBotoes(lastPonto);
       }
     }
 
-    async function verHistoricoCRM(cliente) {
-      hapticFeedback(); exibirMsg("A procurar histórico deste cliente...", false);
-      const res = await callAPI('getHistoricoCliente', { cliente: cliente });
-      if(res.erro || !res || res.length === 0) return exibirMsg(`Não existem visitas anteriores para ${cliente}.`, true);
-      let txt = `📖 ÚLTIMAS VISITAS: ${cliente}\n\n`; res.forEach(r => { txt += `Data: ${r.data}\nTéc: ${r.tecnico}\nAção: ${r.acao}\nObs:${r.obs}\n-------------------\n`; }); alert(txt);
+    async function carregarBancoHoras() {
+      const mesAno = document.getElementById('mesFiltro').value.trim(); if(!mesAno || mesAno.length !== 7) return alert("Utilize o formato MM/YYYY");
+      executarComLoader("A consolidar horas...", async () => {
+         const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
+         if(dados.erro || !dados || dados.length === 0) { document.getElementById("tblBanco").innerHTML = '<tr><td colspan="3" style="text-align:center;">Sem registros.</td></tr>'; document.getElementById('boxAdminGrafico').style.display = 'none'; return; }
+         let html = ""; dados.forEach(d => { html += `<tr><td data-label="Nome"><strong>${d.nome}</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">${d.total}h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">${d.extra}h</td></tr>`; }); 
+         document.getElementById("tblBanco").innerHTML = html;
+         desenharAdminGrafico(dados);
+      });
     }
 
-    async function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
-      hapticFeedback();
-      if (tipo === 'Forçar Remoção') {
-          if(!confirm("Remover este compromisso da agenda?")) return;
-          exibirMsg("A forçar remoção...", false);
-          await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' });
-          sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); return;
-      }
-
-      if (tipo.includes('Fim de Expediente')) {
-          if (getQtdPendenciasAgenda(linhaAgenda) > 0) return exibirMsg(`Erro: Finalize os outros atendimentos da agenda antes de encerrar o expediente.`, true);
-      }
-
-      exibirMsg(`A validar localização para ${tipo}...`, false); let loc = "Sem GPS";
-      try {
-         const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); });
-         loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`;
-         if (tipo === 'Cheguei' && enderecoCliente && enderecoCliente.length > 5) {
-            const geoRes = await callAPI('verificarGeofence', { lat: posObj.coords.latitude, lon: posObj.coords.longitude, endereco: enderecoCliente });
-            if (!geoRes.ok) { if(!confirm(geoRes.msg + "\n\nDeseja forçar o check-in mesmo assim?")) { exibirMsg("Check-in cancelado.", true); return; } }
-         }
-      } catch(e) { if(!navigator.onLine) { loc = "Modo Offline"; } else if(!confirm("Não foi possível obter o seu GPS. Continuar sem localização?")) return; }
-
-      let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
+    // --- MANUTENÇÃO DO FLUXO DO CRM E AVULSO ---
+    function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
+      if (tipo === 'Forçar Remoção') { if(confirm("Remover este compromisso?")) { executarComLoader("A forçar remoção...", async () => { await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' }); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); }); } return; }
+      if (tipo.includes('Fim de Expediente') && getQtdPendenciasAgenda(linhaAgenda) > 0) return alert(`Erro: Finalize os outros atendimentos da agenda antes de encerrar o expediente.`);
       
-      if (ehBase) {
+      executarComLoader(`A validar GPS para ${tipo}...`, async () => {
+         let loc = "Sem GPS";
+         try { const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 8000 })); loc = `https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`; } catch(e) { loc = "Sem permissão"; }
+         
+         let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
+         if (ehBase) { processarVisita(cliente, tipo, linhaAgenda, loc, ""); return; }
+         if (tipo.includes('Saí') || tipo === 'Cliente Ausente') { prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
          processarVisita(cliente, tipo, linhaAgenda, loc, "");
-         return;
-      }
+      });
+    }
 
-      if (tipo.includes('Saí') || tipo === 'Cliente Ausente') { prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
+    function checkinAvulso(acao) {
+      const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return alert("Informe o local avulso.");
+      if (acao.includes('Fim de Expediente') && getQtdPendenciasAgenda() > 0) return alert(`Erro: Finalize os atendimentos da agenda antes de encerrar o expediente.`);
+      let ehBase = cli.toLowerCase().includes('base') || cli.toLowerCase().includes('interno');
       
-      processarVisita(cliente, tipo, linhaAgenda, loc, "");
+      if(acao.includes('Saí') && !ehBase) { prepararModalAvulso(acao); return; }
+      
+      executarComLoader(`A gravar check-in...`, async () => {
+         let loc = await obterLocalizacao();
+         let logAcao = acao; if (ehBase) { logAcao = acao === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)"; }
+         await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
+         if (acao === 'Cheguei' && statusGlobalPonto === 'Saída') await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+         if (acao.includes('Fim de Expediente')) await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+         document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+      });
     }
 
     async function processarVisita(cliente, tipo, linhaAgenda, loc, linksExtra) {
-      exibirMsg(`A gravar no servidor...`, false);
-      
       let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
-      let logAcao = tipo; 
-      if(tipo === 'Cliente Ausente') logAcao = "Saí (Ausente)";
-      
-      if(ehBase) {
-         if(tipo === 'Cheguei') logAcao = "Interno Base (Início)";
-         if(tipo.includes('Saí') || tipo.includes('Fim')) logAcao = "Interno Base (Fim)";
-      }
+      let logAcao = tipo === 'Cliente Ausente' ? "Saí (Ausente)" : tipo;
+      if(ehBase) logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
 
       await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      if (tipo === 'Cheguei' && statusGlobalPonto === 'Saída') await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      if (linhaAgenda && tipo === 'Cheguei') await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
+      if (tipo.includes('Fim de Expediente')) await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim: ${cliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      if ((tipo.includes('Saí') || tipo === 'Cliente Ausente') && linhaAgenda) await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: (tipo === 'Cliente Ausente' ? 'Perdida' : 'Concluído') });
       
-      let msgExtra = "";
-      if (tipo === 'Cheguei') {
-         if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
-         else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno: ${cliente}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
-         if (linhaAgenda) await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
-      } 
-      else if (tipo.includes('Fim de Expediente')) {
-         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim: ${cliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
-      }
-
-      if ((tipo.includes('Saí') || tipo === 'Cliente Ausente') && linhaAgenda) {
-          let statusFinal = (tipo === 'Cliente Ausente') ? 'Perdida' : 'Concluído';
-          await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: statusFinal }); msgExtra += ` (${statusFinal})`;
-      }
-      exibirMsg(`Gravado com sucesso${msgExtra}!`, false); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+      sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
     }
 
-    async function carregarEstoque() {
-       const sel = document.getElementById('selMaterial');
-       sel.innerHTML = '<option value="">Carregando...</option>';
-       const res = await callAPI('getEstoque');
-       if(!res.erro) {
-           estoqueGlobal = res;
-           sel.innerHTML = '<option value="">Selecionar peça...</option>';
-           res.forEach(item => { sel.innerHTML += `<option value="${item.linha}">${item.nome} (Disp:${item.qtd})</option>`; });
-       } else {
-           sel.innerHTML = '<option value="">Erro ao carregar estoque</option>';
-       }
-    }
-
-    function addMaterialUI(e) {
-       e.preventDefault(); hapticFeedback();
-       const sel = document.getElementById('selMaterial');
-       const qtd = parseInt(document.getElementById('qtdMaterial').value);
-       if(!sel.value || isNaN(qtd) || qtd < 1) return;
-       
-       const item = estoqueGlobal.find(i => i.linha == sel.value);
-       if(!item) return;
-
-       if(qtd > item.qtd) { exibirMsg(`Estoque insuficiente! Apenas ${item.qtd} disponíveis.`, true); return; }
-
-       materiaisUsados.push({ linha: item.linha, nome: item.nome, qtdUsada: qtd });
-       atualizarUI_Materiais();
-       
-       sel.value = ""; document.getElementById('qtdMaterial').value = "1";
-    }
-    
-    function atualizarUI_Materiais() {
-       const ul = document.getElementById('listaMateriaisUi');
-       ul.innerHTML = '';
-       materiaisUsados.forEach((m, idx) => {
-          ul.innerHTML += `<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:#1e293b; padding:8px; border-radius:6px;"><span><strong>${m.qtdUsada}x</strong>${m.nome}</span> <span style="color:var(--danger); cursor:pointer; font-weight:bold; font-size:1rem;" onclick="removeMaterial(${idx})">✖</span></li>`;
-       });
-    }
-
-    function removeMaterial(idx) { materiaisUsados.splice(idx, 1); atualizarUI_Materiais(); }
-
+    function prepararModalAgenda(cliente, acao, linha) { pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; document.getElementById('modal-overlay').style.display = 'block'; document.getElementById('modal-box').style.display = 'block'; }
+    function prepararModalAvulso(acao) { const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return alert("Local avulso vazio."); pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; document.getElementById('modal-overlay').style.display = 'block'; document.getElementById('modal-box').style.display = 'block'; }
+    function fecharModal() { document.getElementById('modal-overlay').style.display = 'none'; document.getElementById('modal-box').style.display = 'none'; }
     function setRating(v) { currentRating = v; const stars = document.getElementById('starContainer').children; for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); } }
+    
+    let canvas, ctx, assinando = false;
     function initAssinatura() {
        canvas = document.getElementById('canvasAssinatura'); ctx = canvas.getContext('2d');
        const startPos = (e) => { assinando = true; desenhar(e); }; const endPos = () => { assinando = false; ctx.beginPath(); };
@@ -899,479 +803,72 @@
           ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y);
        };
        canvas.addEventListener('mousedown', startPos); canvas.addEventListener('mouseup', endPos); canvas.addEventListener('mousemove', desenhar);
-       canvas.addEventListener('touchstart', startPos); canvas.addEventListener('touchend', endPos); canvas.addEventListener('touchmove', desenhar);
+       canvas.addEventListener('touchstart', startPos, {passive:false}); canvas.addEventListener('touchend', endPos); canvas.addEventListener('touchmove', desenhar, {passive:false});
     }
     function limparAssinatura() { ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
-    function prepararModalAgenda(cliente, acao, linha) { 
-       pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; 
-       
-       document.getElementById('txtObservacaoOS').value = "";
-       materiaisUsados = []; atualizarUI_Materiais();
-
-       let showOS = (acao.includes('Saí') && acao !== 'Cliente Ausente');
-       document.getElementById('box-os').style.display = showOS ? 'block' : 'none';
-       document.getElementById('box-materiais').style.display = showOS ? 'block' : 'none';
-
-       document.getElementById('box-avaliacao').style.display = showOS ? 'block' : 'none';
-       document.getElementById('box-assinatura').style.display = (acao === 'Cliente Ausente') ? 'none' : 'block';
-       document.getElementById('lblFoto').innerText = (acao === 'Cliente Ausente') ? '📸 Tirar Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)';
-       document.getElementById('modalTitulo').innerText = (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar Atendimento e Gerar OS';
-       setRating(0); abrirModal(); 
-    }
-    
-    function prepararModalAvulso(acao) {
-       const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return exibirMsg("Informe o local avulso.", true);
-       
-       if (acao.includes('Fim de Expediente')) {
-           if (getQtdPendenciasAgenda() > 0) return exibirMsg(`Erro: Finalize os atendimentos da agenda antes de encerrar o expediente.`, true);
-       }
-
-       let ehBase = cli.toLowerCase().includes('base') || cli.toLowerCase().includes('interno');
-       
-       if (ehBase) {
-           checkinAvulsoDiretoBase(cli, acao);
-           return;
-       }
-
-       pendenteCliente = cli; pendenteAcao = acao; pendenteLinhaAgenda = null; 
-       
-       document.getElementById('txtObservacaoOS').value = "";
-       materiaisUsados = []; atualizarUI_Materiais();
-
-       document.getElementById('box-os').style.display = 'block';
-       document.getElementById('box-materiais').style.display = 'block';
-
-       document.getElementById('box-avaliacao').style.display = 'block'; document.getElementById('box-assinatura').style.display = 'block'; document.getElementById('lblFoto').innerText = '📸 Tirar Foto (Opcional)';
-       setRating(0); abrirModal();
-    }
-    
-    async function checkinAvulsoDiretoBase(cli, acao) {
-       exibirMsg(`A gravar registo interno...`, false); const loc = await obterLocalizacao();
-       
-       let logAcao = acao;
-       if (acao === 'Cheguei') logAcao = "Interno Base (Início)";
-       if (acao.includes('Saí') || acao.includes('Fim')) logAcao = "Interno Base (Fim)";
-
-       await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Trabalho Interno", nomeColaborador: usuarioAutenticado, localizacao: loc });
-       
-       let msgExtra = "";
-       if (acao === 'Cheguei') {
-         if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
-         else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
-       } else if (acao.includes('Fim de Expediente')) {
-         await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
-       }
-       exibirMsg(`Registrado com sucesso${msgExtra}!`, false); 
-       document.getElementById('chkCliente').value = ""; 
-       carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-    }
-
-    function abrirModal() { limparAssinatura(); document.getElementById('fotoVisita').value = ""; document.getElementById('modal-overlay').style.display = 'block'; document.getElementById('modal-box').style.display = 'block'; }
-    function fecharModal() { document.getElementById('modal-overlay').style.display = 'none'; document.getElementById('modal-box').style.display = 'none'; }
-
-    async function enviarComprovativoEFechar() {
-       const btn = document.getElementById('btnConfirmarModal'); const fotoInput = document.getElementById('fotoVisita');
+    function enviarComprovativoEFechar() {
        const textoOS = document.getElementById('txtObservacaoOS').value.trim();
-
-       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput.files || !fotoInput.files[0])) { exibirMsg("A foto do local é obrigatória para registar a ausência.", true); return; }
-       
-       btn.innerText = "A Enviar..."; btn.disabled = true; let linksExtra = ""; let urlAssinaturaOS = "";
-       if(currentRating > 0) linksExtra += ` [Avaliação: ${currentRating}⭐]`;
-       if(materiaisUsados.length > 0) linksExtra += ` [Materiais Usados: ${materiaisUsados.length}]`;
-
-       if (fotoInput.files && fotoInput.files[0]) {
-           exibirMsg("A enviar foto para a nuvem...", false); const reader = new FileReader();
-           const fotoResult = await new Promise((resolve) => { reader.onload = (e) => resolve(e.target.result); reader.readAsDataURL(fotoInput.files[0]); });
-           if(!navigator.onLine) { linksExtra += ` [Foto pendente de Sync]`; } 
-           else {
-               const resF = await callAPI('uploadComprovativo', { base64: fotoResult, nomeArquivo: `Foto_${pendenteCliente}_${Date.now()}.jpg` });
-               if(resF.sucesso) linksExtra += ` [Foto: ${resF.url}]`;
-           }
-       }
-       
-       const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
-       if (canvas.toDataURL() !== blank.toDataURL() && pendenteAcao !== 'Cliente Ausente') {
-           exibirMsg("A enviar assinatura...", false);
-           if(!navigator.onLine) { linksExtra += ` [Assinatura pendente de Sync]`; } 
-           else {
+       fecharModal();
+       executarComLoader("A processar e concluir atendimento...", async () => {
+           let linksExtra = ""; let urlAssinaturaOS = "";
+           if(currentRating > 0) linksExtra += ` [Avaliação: ${currentRating}⭐]`;
+           
+           const blank = document.createElement('canvas'); blank.width = canvas.width; blank.height = canvas.height;
+           if (canvas.toDataURL() !== blank.toDataURL()) {
                const resA = await callAPI('uploadComprovativo', { base64: canvas.toDataURL('image/png'), nomeArquivo: `Assinatura_${pendenteCliente}_${Date.now()}.png` });
                if(resA.sucesso) { linksExtra += ` [Assinatura: ${resA.url}]`; urlAssinaturaOS = resA.url; }
            }
-       }
-
-       if(textoOS) linksExtra += ` | OS: ${textoOS}`;
-
-       fecharModal(); btn.innerText = "Gerar OS e Concluir"; btn.disabled = false;
-       exibirMsg("A finalizar a localização...", false); let loc = "Sem GPS";
-       try { const posObj = await new Promise((resolve, reject) => { navigator.geolocation.getCurrentPosition(resolve, reject, { enableHighAccuracy: true, timeout: 8000 }); }); loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`; } catch(e) { if(!navigator.onLine) loc = "Modo Offline"; }
-
-       if (pendenteLinhaAgenda) { await processarVisita(pendenteCliente, pendenteAcao, pendenteLinhaAgenda, loc, linksExtra); } 
-       else {
-           await callAPI('registrarCheckin', { cliente: pendenteCliente, acao: pendenteAcao, observacao: "Visita Avulsa" + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
-           let msgExtra = "";
-           if (pendenteAcao.includes('Fim de Expediente')) { await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${pendenteCliente}${linksExtra}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado"; }
-           exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-       }
-
-       if (pendenteAcao !== 'Cliente Ausente' && navigator.onLine) {
-           exibirMsg("A gerar Ordem de Serviço em PDF...", false);
-           let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: new Date().toLocaleString('pt-BR').replace(',', ''), materiais: materiaisUsados });
-           if(osRes.sucesso) {
-               exibirMsg("OS gerada com sucesso! A redirecionar para o WhatsApp...", false);
-               let wppTexto = encodeURIComponent(`Olá! A Services & Solutions agradece a sua preferência. Segue a Ordem de Serviço do atendimento realizado hoje:\n\n📄 Visualizar Relatório: ${osRes.url}`);
-               setTimeout(() => window.open(`https://api.whatsapp.com/send?text=${wppTexto}`, '_blank'), 1500);
-               carregarEstoque(); 
+           if(textoOS) linksExtra += ` | OS: ${textoOS}`;
+           
+           let loc = "Sem GPS"; try { const posObj = await new Promise((res, rej) => { navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 8000 }); }); loc = `https://www.google.com/maps/search/?api=1&query=${posObj.coords.latitude},${posObj.coords.longitude}`; } catch(e) {}
+           
+           if (pendenteLinhaAgenda) { await processarVisita(pendenteCliente, pendenteAcao, pendenteLinhaAgenda, loc, linksExtra); } 
+           else { await callAPI('registrarCheckin', { cliente: pendenteCliente, acao: pendenteAcao, observacao: "Visita Avulsa" + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc }); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado); }
+           
+           if (pendenteAcao !== 'Cliente Ausente' && navigator.onLine) {
+               let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: new Date().toLocaleString('pt-BR').replace(',', ''), materiais: [] });
+               if(osRes.sucesso) {
+                   setTimeout(() => window.open(`https://api.whatsapp.com/send?text=${encodeURIComponent(`Olá! Segue a Ordem de Serviço:\n\n📄 Visualizar Relatório: ${osRes.url}`)}`, '_blank'), 1500);
+               }
            }
-       }
+       });
     }
 
-    async function carregarItinerario(verificarAlerta = false) {
-      const div = document.getElementById("listaItinerario"); const cacheLocal = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
-      if (cacheLocal && !verificarAlerta) renderizarAgendaHTML(JSON.parse(cacheLocal), false); else if (!cacheLocal && !verificarAlerta) div.innerHTML = "A carregar agenda...";
+    async function carregarItinerario(forcar = false) {
+      const div = document.getElementById("listaItinerario");
+      if(forcar) showLoading("A atualizar agenda...");
+      const dados = await callAPI('getItinerario', { nome: perfilAutenticado === 'Admin' ? 'Admin' : usuarioAutenticado });
+      hideLoading();
+      if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Sua agenda está livre."; return; }
       
-      const parametroBusca = (perfilAutenticado === 'Admin') ? 'Admin' : usuarioAutenticado;
-      const dados = await callAPI('getItinerario', { nome: parametroBusca });
-      if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Sua agenda está livre."; sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); return; }
-      
-      sessionStorage.setItem('cacheAgenda_' + usuarioAutenticado, JSON.stringify(dados));
-      renderizarAgendaHTML(dados, verificarAlerta);
-    }
-
-    function renderizarAgendaHTML(dados, verificarAlerta) {
-      const agora = new Date(); const hojeStr = agora.toLocaleDateString('pt-BR');
-
+      const hojeStr = new Date().toLocaleDateString('pt-BR');
       dados.forEach(d => {
-        const [dia, mes, ano] = d.data.split('/'); const [hora, min] = d.horario.split(':'); d.objData = new Date(ano, mes - 1, dia, hora, min);
-        const limiteVisita = new Date(ano, mes - 1, dia, 18, 0); 
-        if (d.status === 'Pendente' && agora > limiteVisita) { d.status = 'Perdida'; callAPI('atualizarStatusItinerario', { linha: d.linha, status: 'Perdida' }); }
-        
-        let peso = 3; 
-        if(d.prioridade === 'Crítica') peso = 0; else if(d.prioridade === 'Alta') peso = 1; else if(d.prioridade === 'Baixa') peso = 4;
-        d.pesoPrioridade = peso;
+        let peso = 3; if(d.prioridade === 'Crítica') peso = 0; else if(d.prioridade === 'Alta') peso = 1; else if(d.prioridade === 'Baixa') peso = 4; d.pesoPrioridade = peso;
       });
-
-      dados.sort((a, b) => {
-         if(a.pesoPrioridade !== b.pesoPrioridade) return a.pesoPrioridade - b.pesoPrioridade;
-         return a.objData - b.objData;
-      });
+      dados.sort((a, b) => a.pesoPrioridade - b.pesoPrioridade);
       
-      let html = ""; let pendentesHoje = 0; 
-      let txtChegada = "📍 Cheguei no Local"; if(statusGlobalPonto === 'Saída') txtChegada = "📍 Cheguei (Iniciar Expediente)"; if(statusGlobalPonto === 'Pausa') txtChegada = "📍 Cheguei (Retornar da Pausa)";
-
+      let html = "";
       dados.forEach(d => {
         if (d.status === 'Concluído') return;
-        if (d.status === 'Perdida' && perfilAutenticado !== 'Admin') return; 
-
         let isPerdida = d.status === 'Perdida'; let isAndamento = d.status === 'Em Andamento'; let isHoje = d.data === hojeStr;
         let corClasse = isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente');
         
-        let prioridadeHtml = "";
-        if (d.prioridade && d.prioridade !== 'Normal') {
-           let classP = 'p-normal';
-           if(d.prioridade === 'Crítica') { classP = 'p-critica'; corClasse += ' critica'; }
-           else if(d.prioridade === 'Alta') { classP = 'p-alta'; corClasse += ' alta'; }
-           else if(d.prioridade === 'Baixa') { classP = 'p-baixa'; }
-           prioridadeHtml = `<span class="prioridade-badge ${classP}">${d.prioridade}</span>`;
-        }
-        
-        let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-acao" style="background:transparent; border:1px solid var(--border); color:var(--text-muted); width:100%; margin:0; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>` : ``;
-        let btnCRM = `<button class="btn-logout" style="padding:4px 10px; font-size:0.75rem; border-color:var(--primary); color:var(--primary); cursor:pointer;" onclick="verHistoricoCRM('${d.cliente}')">📖 Histórico</button>`;
-        
-        let wppTexto = encodeURIComponent(`Olá! Sou o técnico ${d.tecnico} da Services & Solutions. Acabei de sair em direção ao vosso endereço (${d.endereco}) e chegarei em breve.`);
-        let btnWpp = `<a href="https://api.whatsapp.com/send?text=${wppTexto}" target="_blank" class="btn-acao" style="background:#16a34a; margin:0; text-decoration:none; display:flex; justify-content:center;">💬 Avisar Cliente</a>`;
+        let prioridadeHtml = d.prioridade && d.prioridade !== 'Normal' ? `<span class="prioridade-badge ${d.prioridade === 'Crítica' ? 'p-critica' : (d.prioridade === 'Alta' ? 'p-alta' : 'p-baixa')}">${d.prioridade}</span>` : "";
+        let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="checkinGeolocalizado('${d.cliente}', 'Forçar Remoção', ${d.linha})">✔ Forçar Remoção (Admin)</button>` : ``;
         
         let botoesGeo = "";
-        if (isPerdida) { botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida (Sem início até 18h)</span>`; if (perfilAutenticado === 'Admin') botoesGeo += btnConcluirAdmin; }
+        if (isPerdida) { botoesGeo = `<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida</span>${btnConcluirAdmin}`; }
         else if (isAndamento) {
-            botoesGeo = `<span style="color:var(--primary); font-weight:bold; margin-bottom:8px; display:block;">📍 Atendimento em Andamento</span><div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 Saí -> Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 Saí -> Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha})">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Fim Expediente</button></div>${btnConcluirAdmin}</div>`;
+            botoesGeo = `<div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha})">🏢 P/ Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Próx. Cliente)', ${d.linha})">🚶 P/ Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha})">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha})">🏠 Fim Expediente</button></div>${btnConcluirAdmin}</div>`;
         } else {
-            if (!isHoje && perfilAutenticado !== 'Admin') { botoesGeo = `<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Disponível para início apenas no dia ${d.data}</span>`; } 
-            else { botoesGeo = `<div style="display:flex; flex-direction:column; gap:8px;">${btnWpp}<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '${d.endereco}')">${txtChegada}</button>${btnConcluirAdmin}</div>`; }
+            if (!isHoje && perfilAutenticado !== 'Admin') { botoesGeo = `<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ${d.data}</span>`; } 
+            else { botoesGeo = `<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '${d.endereco}')">📍 Cheguei no Local</button>${btnConcluirAdmin}`; }
         }
         
-        let btnMaps = d.endereco ? `<a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(d.endereco)}" target="_blank" style="display:inline-block; margin-top:8px; font-size:0.85rem; background:transparent; border: 1px solid var(--primary); color:var(--primary); padding:8px 14px; border-radius:8px; text-decoration:none; font-weight:bold;">🗺 Abrir Rota</a>` : '';
-        if ((d.status === 'Pendente' || d.status === 'Em Andamento') && isHoje && d.tecnico === usuarioAutenticado) pendentesHoje++;
-        let infoTecnico = (perfilAutenticado === 'Admin') ? `<span style="color:var(--warning); font-size:0.8rem; margin-bottom:8px; display:block;">👤 Técnico: ${d.tecnico}</span>` : '';
-
-        html += `<div class="card-itinerario ${corClasse}">${prioridadeHtml}${infoTecnico}<div style="display:flex; justify-content:space-between; align-items:flex-start;"><div><div style="display:flex; align-items:center; gap:8px; margin-bottom:6px;"><strong style="color:var(--text); font-size:1.2rem;">${d.cliente}</strong> ${btnCRM}</div><small style="color:var(--text-muted); font-size:0.95rem;">📍 ${d.endereco}</small><br>${btnMaps}</div><small style="color:var(--text-muted); font-weight:bold; background:var(--bg); padding:6px 10px; border-radius:6px; border:1px solid var(--border); margin-top: 25px;">🕒 ${d.horario}</small></div><div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;"><small style="color:var(--text-muted);">Data: ${d.data} - <span style="font-weight:bold; color:var(--text);">${d.status}</span></small>${botoesGeo}</div></div>`;
+        html += `<div class="card-itinerario ${corClasse}">${prioridadeHtml}<strong style="font-size:1.2rem;">${d.cliente}</strong><br><small style="color:var(--text-muted);">📍 ${d.endereco}</small><div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;"><small style="color:var(--text-muted); font-weight:bold;">🕒 ${d.data} às ${d.horario} - <span style="color:var(--text);">${d.status}</span></small>${botoesGeo}</div></div>`;
       });
-      
-      document.getElementById("listaItinerario").innerHTML = html || `<div style="text-align:center; padding: 20px; color:var(--text-muted); font-weight:500;">✨ A sua agenda está livre.</div>`;
-
-      if (verificarAlerta && pendentesHoje > 0 && !notificadoHoje && Notification.permission === "granted") { new Notification("Agenda do Dia", { body: `Você tem ${pendentesHoje} compromisso(s) na agenda de hoje.` }); notificadoHoje = true; }
-    }
-
-    function toggleRecorrencia() {
-       const isRec = document.getElementById("itiRecorrente").checked;
-       document.getElementById("boxDataUnica").style.display = isRec ? "none" : "block"; document.getElementById("boxDataRecorrente").style.display = isRec ? "block" : "none";
-    }
-
-    async function salvarNovoItinerario() {
-      const tec = document.getElementById("itiTecnico").value; const cli = document.getElementById("itiCliente").value.trim();
-      const end = document.getElementById("itiEndereco").value.trim(); const hor = document.getElementById("itiHorario").value;
-      const isRec = document.getElementById("itiRecorrente").checked;
-      const prioridade = document.getElementById("itiPrioridade").value;
-
-      if(!cli || !end || !hor) return exibirMsg("Preencha o Local, Endereço e Horário.", true);
-      let datasParaGravar = [];
-
-      if (!isRec) {
-        const dataU = document.getElementById("itiData").value;
-        if(!dataU) return exibirMsg("Preencha a data do compromisso.", true);
-        datasParaGravar.push(dataU); 
-      } else {
-        const dIni = document.getElementById("itiDataIni").value; const dFim = document.getElementById("itiDataFim").value;
-        if(!dIni || !dFim) return exibirMsg("Preencha o período.", true);
-        const diasMarcados = Array.from(document.querySelectorAll('.chk-dia:checked')).map(cb => parseInt(cb.value));
-        if(diasMarcados.length === 0) return exibirMsg("Selecione os dias da semana.", true);
-
-        let dataAtual = new Date(dIni + "T12:00:00"); let dataFinal = new Date(dFim + "T12:00:00");
-        if(dataAtual > dataFinal) return exibirMsg("Data Início maior que Data Fim.", true);
-
-        while(dataAtual <= dataFinal) {
-           if (diasMarcados.includes(dataAtual.getDay())) {
-               let a = dataAtual.getFullYear(); let m = String(dataAtual.getMonth() + 1).padStart(2, '0'); let d = String(dataAtual.getDate()).padStart(2, '0');
-               datasParaGravar.push(`${a}-${m}-${d}`);
-           }
-           dataAtual.setDate(dataAtual.getDate() + 1);
-        }
-      }
-
-      exibirMsg(`A verificar e agendar ${datasParaGravar.length} compromisso(s)...`, false);
-      const payloads = datasParaGravar.map(dt => ({ tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: "", prioridade: prioridade }));
-      const res = await callAPI('addItinerarioMulti', { dadosArray: payloads });
-
-      if(res.erro) exibirMsg(res.erro, true);
-      else {
-        exibirMsg(res.sucesso, false); document.getElementById("itiCliente").value = ""; document.getElementById("itiEndereco").value = "";
-        sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario();
-      }
-    }
-
-    async function checkinAvulso(acao) {
-      hapticFeedback();
-      const cli = document.getElementById('chkCliente').value.trim(); if(!cli) return exibirMsg("Informe o local avulso.", true);
-      
-      let ehBase = cli.toLowerCase().includes('base') || cli.toLowerCase().includes('interno');
-
-      if (acao.includes('Fim de Expediente')) {
-          if (getQtdPendenciasAgenda() > 0) return exibirMsg(`Erro: Finalize os atendimentos da agenda antes de encerrar o expediente.`, true);
-      }
-
-      if(acao.includes('Saí') && !ehBase) { prepararModalAvulso(acao); return; }
-
-      exibirMsg(`A gravar check-in avulso...`, false); const loc = await obterLocalizacao();
-      
-      let logAcao = acao;
-      if (ehBase) {
-         if (acao === 'Cheguei') logAcao = "Interno Base (Início)";
-         if (acao.includes('Saí') || acao.includes('Fim')) logAcao = "Interno Base (Fim)";
-      }
-
-      await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
-      
-      let msgExtra = "";
-      if (acao === 'Cheguei') {
-        if (statusGlobalPonto === 'Saída') { await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: `Início (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Entrada Iniciada"; } 
-        else if (statusGlobalPonto === 'Pausa') { await callAPI('registrarPonto', { tipoRegistro: 'Retorno', observacao: `Retorno (Avulso): ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Retorno Registrado"; }
-      } else if (acao.includes('Fim de Expediente')) {
-        await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: `Fim Avulso: ${cli}`, nomeColaborador: usuarioAutenticado, localizacao: loc }); msgExtra = " e Expediente Encerrado";
-      }
-
-      exibirMsg(`Registrado com sucesso${msgExtra}!`, false); document.getElementById('chkCliente').value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
-    }
-
-    function renderTag(tipo) {
-      if (tipo === 'Entrada' || tipo === 'Retorno') return `<span class="tag-tipo" style="background:var(--accent); color:#fff">${tipo}</span>`;
-      if (tipo === 'Saída') return `<span class="tag-tipo" style="background:var(--danger); color:#fff">${tipo}</span>`;
-      if (tipo === 'Pausa') return `<span class="tag-tipo" style="background:var(--warning); color:#000">${tipo}</span>`;
-      if (tipo === 'Cheguei') return `<span class="tag-tipo" style="background:#bae6fd; color:#0369a1">Chegada</span>`;
-      if (tipo.includes('Saí')) return `<span class="tag-tipo" style="background:#475569; color:#fff">${tipo}</span>`;
-      return `<span class="tag-tipo" style="background:#334155; color:#fff">${tipo}</span>`;
-    }
-
-    async function carregarHistoricoEAtualizarBotoes(nome) {
-      const tbody = document.getElementById("tblCorpo"); const cacheLocal = sessionStorage.getItem('cacheHist_' + nome);
-      if(cacheLocal) { renderizarHistoricoHTML(JSON.parse(cacheLocal)); calcularGamificacao(JSON.parse(cacheLocal)); }
-      else tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">A procurar histórico...</td></tr>';
-
-      const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
-      if (!dados.erro) { 
-        sessionStorage.setItem('cacheHist_' + nome, JSON.stringify(dados));
-        renderizarHistoricoHTML(dados); calcularGamificacao(dados);
-        let lastPonto = 'Saída'; tempoInicioExpediente = null;
-        for (let i = dados.length - 1; i >= 0; i--) { 
-           if (['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { lastPonto = dados[i].tipo; if(lastPonto === 'Entrada') tempoInicioExpediente = parseDataBR(dados[i].dataHora); break; } 
-        }
-        atualizarRegraBotoes(lastPonto);
-      }
-      carregarMeusAjustes(nome);
-    }
-    
-    function calcularGamificacao(dados) {
-      let visitasMes = 0; let minExtra = 0; let minTotal = 0; let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
-      dados.forEach(d => {
-         if(d.dataHora.includes(mesAtual)) {
-            if(d.tipo.includes('Saí') && !d.tipo.includes('Ponto')) visitasMes++;
-            if(d.tipo === 'Saída' && d.extra && d.extra !== '-') minExtra += horasParaMin(d.extra);
-            if(d.tipo === 'Saída' && d.total && d.total !== '-') minTotal += horasParaMin(d.total);
-         }
-      });
-      document.getElementById('lblVisitasMes').innerText = visitasMes; document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal); document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
-    }
-
-    function renderizarHistoricoHTML(dados) {
-      const tbody = document.getElementById("tblCorpo");
-      if(dados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>'; return; }
-      let html = "";
-      [...dados].reverse().forEach(d => {
-        let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
-        let obsF = d.obs;
-        if(obsF.includes('[Foto:')) obsF = obsF.replace(/\[Foto:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--primary); font-size:0.8rem; text-decoration:none;">📸 Ver Foto</a>`);
-        if(obsF.includes('[Assinatura:')) obsF = obsF.replace(/\[Assinatura:\s(https:\/\/[^\]]+)\]/g, `<br><a href="$1" target="_blank" style="color:var(--accent); font-size:0.8rem; text-decoration:none;">✍️ Ver Assinatura</a>`);
-        if(obsF.includes('[Avaliação:')) obsF = obsF.replace(/\[Avaliação:\s([^\]]+)\]/g, `<br><span style="color:#fbbf24; font-size:0.8rem; font-weight:bold;">$1</span>`);
-        html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora}</strong></td><td data-label="Ação">${renderTag(d.tipo)}</td><td data-label="Obs">${obsF || '-'}${infoExtra}</td></tr>`;
-      });
-      tbody.innerHTML = html;
-    }
-
-    async function carregarMeusAjustes(nome) {
-      const tbody = document.getElementById("tblMeusAjustes"); const dados = await callAPI('getMinhasSolicitacoes', { nome: nome });
-      if (dados.erro || !dados || dados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center; color:var(--text-muted);">Sem pedidos.</td></tr>'; return; }
-      let html = "";
-      [...dados].reverse().forEach(d => { let corStatus = d.status === 'Aprovado' ? 'var(--accent)' : (d.status === 'Recusado' ? 'var(--danger)' : 'var(--warning)'); html += `<tr><td data-label="Data"><strong>${d.dataCorreta}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Status"><span style="color:${corStatus}; font-weight:bold;">${d.status}</span></td></tr>`; });
-      tbody.innerHTML = html;
-    }
-
-    async function enviarSolicitacao() {
-      const tipo = document.getElementById('corrTipo').value; const dataHora = document.getElementById('corrDataHora').value; const motivo = document.getElementById('corrMotivo').value;
-      if (!dataHora || !motivo) return exibirMsg("Erro: Preencha a data/hora e o motivo.", true);
-      exibirMsg("Enviando...", false); const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo });
-      if(res.erro) exibirMsg(res.erro, true); else { exibirMsg(res.sucesso, false); document.getElementById('corrMotivo').value = ""; carregarMeusAjustes(usuarioAutenticado); }
-    }
-
-    async function carregarRadar(forcar = false) {
-      const div = document.getElementById("areaRadar"); const cacheLocal = sessionStorage.getItem('cacheRadar');
-      if (cacheLocal && !forcar) renderizarRadarHTML(JSON.parse(cacheLocal)); else if (!cacheLocal) div.innerHTML = "Buscando posições na base...";
-      const dados = await callAPI('getRadarEquipa');
-      if (!dados.erro && dados.length > 0) { sessionStorage.setItem('cacheRadar', JSON.stringify(dados)); renderizarRadarHTML(dados); } else if(!dados.erro) div.innerHTML = "Nenhuma localização encontrada.";
-    }
-    
-    function renderizarRadarHTML(dados) {
-      let html = "";
-      dados.forEach(d => {
-        let cor = (d.acao === 'Entrada' || d.acao === 'Retorno' || d.acao === 'Cheguei') ? 'var(--accent)' : (d.acao === 'Pausa' ? 'var(--warning)' : 'var(--danger)');
-        let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 No Ponto' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : (d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Fim'));
-        let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) ? `<a href="${d.localizacao}" target="_blank" style="color:var(--primary); text-decoration:none; font-size:0.8rem; border:1px solid var(--primary); padding:3px 8px; border-radius:4px;">🧭 Ver no Mapa</a>` : `<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>`;
-        html += `<div class="card-radar" style="border-left-color: ${cor}"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">${d.nome}</strong><small style="color:${cor}; font-weight:bold;">${icon}</small></div><div style="color:var(--primary); margin-top:4px;">${d.cliente}</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">Última ação: ${d.acao} às ${d.dataHora.split(' ')[1] || d.dataHora}</small>${linkMapa}</div></div>`;
-      });
-      document.getElementById("areaRadar").innerHTML = html;
-    }
-
-    async function carregarVisaoGeralPonto() {
-      const tbody = document.getElementById("tblGeral"); const cacheLocal = sessionStorage.getItem('cacheGeral');
-      if (cacheLocal) { dadosGeralGlobais = JSON.parse(cacheLocal); preencherSelectGeral(dadosGeralGlobais); filtrarGeralPonto(); } else tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Buscando...</td></tr>';
-      const dados = await callAPI('getTodosHistoricos');
-      if (!dados.erro && dados.length > 0) { sessionStorage.setItem('cacheGeral', JSON.stringify(dados)); dadosGeralGlobais = dados; preencherSelectGeral(dados); filtrarGeralPonto(); } else if (!dados.erro) tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'; 
-    }
-    
-    function preencherSelectGeral(dados) {
-      const select = document.getElementById("filtroGeralColab"); const colabs = [...new Set(dados.map(d => d.nome))].sort();
-      let htmlSelect = '<option value="TODOS">Por Colaborador (Todos)</option>'; colabs.forEach(c => htmlSelect += `<option value="${c}">${c}</option>`);
-      let valorAtual = select.value; select.innerHTML = htmlSelect; if(colabs.includes(valorAtual)) select.value = valorAtual;
-    }
-
-    function filtrarGeralPonto() {
-      const filtro = document.getElementById("filtroGeralColab").value; const tbody = document.getElementById("tblGeral"); let filtrados = dadosGeralGlobais;
-      if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
-      if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; return; }
-      let html = "";
-      [...filtrados].reverse().forEach(d => {
-        let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><small style="color:var(--accent);">Total: ${d.total}h</small>` : '';
-        html += `<tr><td data-label="Data">${d.dataHora}</td><td data-label="Colaborador"><strong>${d.nome}</strong></td><td data-label="Tipo">${renderTag(d.tipo)}</td><td data-label="Resumo">${d.obs||'-'}${infoExtra}</td></tr>`;
-      });
-      tbody.innerHTML = html;
-    }
-
-    function exportarGeralPDF() {
-      const filtro = document.getElementById("filtroGeralColab").value; const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto - Todos" : `Relatório de Ponto - ${filtro}`;
-      let janela = window.open('', '', 'width=900,height=700');
-      janela.document.write(`<html><head><title>${titulo}</title><style>body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; padding: 40px; color: #1e293b; background: #fff;} .cabecalho { text-align: center; border-bottom: 2px solid #e2e8f0; padding-bottom: 20px; margin-bottom: 30px; } .cabecalho h2 { color: #0f172a; margin: 0 0 10px 0; font-size: 24px; } .cabecalho p { color: #64748b; margin: 0; font-size: 14px; } table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; } th { background-color: #f1f5f9; color: #334155; padding: 12px; font-weight: bold; border-bottom: 2px solid #cbd5e1; } td { padding: 12px; border-bottom: 1px solid #e2e8f0; color: #475569; } .tag { font-weight: bold; padding: 4px 8px; border-radius: 4px; font-size: 11px; display: inline-block; background: #e2e8f0; color: #475569;} .tag-Entrada { background: #d1fae5; color: #065f46; } .tag-Pausa { background: #fef3c7; color: #92400e; } .tag-Retorno { background: #e0e7ff; color: #3730a3; } .tag-Saída { background: #fee2e2; color: #991b1b; } </style></head><body><div class="cabecalho"><h2>${titulo}</h2><p><strong>Portal Services & Solutions</strong> - Documento gerado em: ${new Date().toLocaleString('pt-BR')}</p></div><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Tipo de Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>`);
-      let filtrados = dadosGeralGlobais; if (filtro !== "TODOS") filtrados = dadosGeralGlobais.filter(d => d.nome === filtro);
-      [...filtrados].reverse().forEach(d => { let tagClass = `tag-${d.tipo}`; let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><span style="color:#059669; font-weight:bold;">Total do dia: ${d.total}h</span>` : ''; janela.document.write(`<tr><td><strong>${d.dataHora}</strong></td><td>${d.nome}</td><td><span class="tag ${tagClass}">${d.tipo}</span></td><td>${d.obs || '-'}${infoExtra}</td></tr>`); });
-      janela.document.write(`</tbody></table><script>window.onload = function() { setTimeout(function(){ window.print(); window.close(); }, 500); }<\/script></body></html>`); janela.document.close();
-    }
-
-    async function carregarBancoHoras() {
-      const mesAno = document.getElementById('mesFiltro').value.trim(); if(!mesAno || mesAno.length !== 7) return exibirMsg("Utilize o formato MM/YYYY (ex: 09/2026)", true);
-      const tbody = document.getElementById("tblBanco"); tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Consolidando...</td></tr>';
-      const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
-      if(dados.erro || !dados || dados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Sem registros.</td></tr>'; return; }
-      let html = ""; dados.forEach(d => { html += `<tr><td data-label="Nome"><strong>${d.nome}</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">${d.total}h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">${d.extra}h</td></tr>`; }); tbody.innerHTML = html;
-    }
-
-    async function carregarAprovacoes() {
-      const div = document.getElementById("listaAprovacoes"); div.innerHTML = "Buscando..."; const dados = await callAPI('getSolicitacoesPendentes');
-      if (dados.erro || !dados || dados.length === 0) { div.innerHTML = "Nenhuma pendência."; return; }
-      let html = ""; dados.forEach(d => { html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:12px; border-radius:8px; margin-bottom:10px; text-align:left;"><strong style="color:var(--primary);">${d.nome}</strong> pediu <strong>${d.tipo}</strong><br><small style="color:var(--text-muted)">Data: ${d.dataCorreta}</small><br><small style="color:var(--text-muted)">Motivo: ${d.motivo}</small><br><div style="margin-top:10px;"><button class="btn-acao" style="background:var(--accent);" onclick="julgar(${d.linha}, 'Aprovado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">✅ Aprovar</button><button class="btn-acao" style="background:var(--danger);" onclick="julgar(${d.linha}, 'Recusado', '${d.nome}', '${d.tipo}', '${d.dataCorreta}', '${d.motivo}')">❌ Recusar</button></div></div>`; }); div.innerHTML = html;
-    }
-
-    async function julgar(linha, acao, nome, tipo, dataCorreta, motivo) {
-      exibirMsg("Processando...", false); const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo });
-      if (res.erro) exibirMsg(res.erro, true); else { exibirMsg(res.sucesso, false); carregarAprovacoes(); }
-    }
-
-    const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
-    const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-    function preencherDia() { const v = document.getElementById("rotaData").value; if (!v) return; const [a, m, d] = v.split("-").map(Number); document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()]; }
-
-    async function autoCalcularKM() {
-       const origem = document.getElementById("rotaOrigem").value.trim(); const destino = document.getElementById("rotaDestino").value.trim();
-       if(!origem || !destino) return exibirMsg("Preencha Origem e Destino primeiro.", true);
-       exibirMsg("A calcular distância via Google Maps...", false); const res = await callAPI('calcularRotaFrota', { origem: origem, destino: destino });
-       if(res.sucesso) { document.getElementById("rotaKm").value = res.km; exibirMsg(`Distância encontrada: ${res.km} km`, false); } else { exibirMsg(res.erro, true); }
-    }
-
-    async function carregarRotasServidor() {
-      const cacheLocal = sessionStorage.getItem('cacheRotas');
-      if (cacheLocal) { todasRotas = JSON.parse(cacheLocal).lancamentos; preencherFiltroMeses(JSON.parse(cacheLocal).mesesDisponiveis); filtrarRotas(); }
-      const res = await callAPI('getDadosIniciaisRotas');
-      if(res.erro) return exibirMsg(res.erro, true);
-      sessionStorage.setItem('cacheRotas', JSON.stringify(res)); todasRotas = res.lancamentos || []; preencherFiltroMeses(res.mesesDisponiveis); filtrarRotas();
-    }
-    
-    function preencherFiltroMeses(mesesDisponiveis) {
-      const selMes = document.getElementById("filtroMes"); let valorAtual = selMes.value;
-      let htmlSelect = '<option value="TODOS">Todos</option>'; mesesDisponiveis.forEach(m => htmlSelect += `<option value="${m}">${m}</option>`);
-      selMes.innerHTML = htmlSelect; if(mesesDisponiveis.includes(valorAtual) || valorAtual === 'TODOS') selMes.value = valorAtual; else if(mesesDisponiveis.length > 0) selMes.value = mesesDisponiveis[mesesDisponiveis.length - 1];
-    }
-
-    function filtrarRotas() {
-      const tec = document.getElementById("filtroTecnico").value; const mes = document.getElementById("filtroMes").value;
-      const filtrados = todasRotas.filter(d => (tec === "TODOS" || d.tecnico === tec) && (mes === "TODOS" || d.mes === mes));
-      let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0;
-      filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
-      const litros = totalKm / 9.4; const combustivel = litros * 4.5; const reembolso = combustivel + totalEstac + totalPedagio - totalDesc;
-      
-      document.getElementById("mKm").innerText = totalKm.toFixed(1) + " km"; document.getElementById("mCombustivel").innerText = brl(combustivel); document.getElementById("mReembolso").innerText = brl(reembolso);
-      const tbody = document.getElementById("tblRotas"); if (filtrados.length === 0) { tbody.innerHTML = '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>'; return; }
-      
-      let html = "";
-      filtrados.reverse().forEach(d => {
-        let txtCusto = ""; if(d.estacionamento > 0) txtCusto += `Est: ${brl(d.estacionamento)}<br>`; if(d.pedagio > 0) txtCusto += `Ped: ${brl(d.pedagio)}<br>`; if(d.desconto > 0) txtCusto += `Desc: <span style="color:var(--danger)">-${brl(d.desconto)}</span>`;
-        html += `<tr><td data-label="Data"><strong>${d.data}</strong><br><small style="color:var(--text-muted)">${d.dia}</small></td><td data-label="Trajeto">${d.origem} &rarr; ${d.destino}<br><small style="color:var(--accent);">${d.km.toFixed(1)} km</small></td><td data-label="Custos">${txtCusto||'-'}</td></tr>`;
-      });
-      tbody.innerHTML = html;
-    }
-
-    async function salvarRota(e) {
-      e.preventDefault(); const btn = document.getElementById("btnSalvarRota"); btn.disabled = true; btn.innerText = "A gravar...";
-      const payload = { tecnico: document.getElementById("rotaTecnico").value, mes: document.getElementById("rotaMes").value, data: document.getElementById("rotaData").value, dia: document.getElementById("rotaDia").value, origem: document.getElementById("rotaOrigem").value, destino: document.getElementById("rotaDestino").value, km: document.getElementById("rotaKm").value, estacionamento: document.getElementById("rotaEstac").value, pedagio: document.getElementById("rotaPedagio").value, desconto: document.getElementById("rotaDesconto").value, obs: document.getElementById("rotaObs").value };
-      const res = await callAPI('salvarLancamentoRota', { dadosRota: payload });
-      btn.disabled = false; btn.innerText = "Salvar Rota";
-      if (res.erro) exibirMsg(res.erro, true); 
-      else { exibirMsg("Rota registada!", false); document.getElementById("fRota").reset(); sessionStorage.removeItem('cacheRotas'); carregarRotasServidor(); }
+      div.innerHTML = html || `<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>`;
     }
   </script>
 </body>
