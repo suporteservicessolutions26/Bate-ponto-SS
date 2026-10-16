@@ -1767,4 +1767,194 @@
       if(!elFiltro) return;
       const filtro = elFiltro.value; 
       
-      let filtrados = filtro !== "TOD
+      let filtrados = filtro !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === filtro) : dadosGeralGlobais;
+      
+      if (filtrados.length === 0) { 
+          safeSetHTML("tblGeral", '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'); 
+          return; 
+      }
+      
+      let html = ""; 
+      [...filtrados].reverse().forEach(d => { 
+          let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><small style="color:var(--accent);">Total: ' + d.total + 'h</small>' : ''; 
+          html += '<tr><td data-label="Data">' + d.dataHora + '</td><td data-label="Colaborador"><strong>' + d.nome + '</strong></td><td data-label="Tipo"><span class="tag-tipo" style="background:#334155; color:#fff">' + d.tipo + '</span></td><td data-label="Resumo">' + (d.obs||'-') + infoExtra + '</td></tr>'; 
+      }); 
+      safeSetHTML("tblGeral", html);
+    }
+
+    function exportarGeralPDF() {
+      let elFiltro = document.getElementById("filtroGeralColab");
+      if(!elFiltro) return;
+      const filtro = elFiltro.value; 
+      const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto - Todos" : "Relatório de Ponto - " + filtro; 
+      let janela = window.open('', '', 'width=900,height=700'); 
+      
+      janela.document.write('<html><head><title>' + titulo + '</title><style>body { font-family: sans-serif; padding: 40px; color: #1e293b; background: #fff;} table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; } th { background-color: #f1f5f9; padding: 12px; border-bottom: 2px solid #cbd5e1; } td { padding: 12px; border-bottom: 1px solid #e2e8f0; }</style></head><body><h2>' + titulo + '</h2><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>');
+      
+      let filtrados = filtro !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === filtro) : dadosGeralGlobais;
+      
+      [...filtrados].reverse().forEach(d => { 
+          let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><b>Total do dia: ' + d.total + 'h</b>' : ''; 
+          janela.document.write('<tr><td><strong>' + d.dataHora + '</strong></td><td>' + d.nome + '</td><td>' + d.tipo + '</td><td>' + (d.obs || '-') + infoExtra + '</td></tr>'); 
+      });
+      
+      janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
+      janela.document.close();
+    }
+
+    function carregarAprovacoes() {
+      callAPI('getSolicitacoesPendentes').then(dados => {
+         if (dados.erro || !dados || dados.length === 0) { 
+             safeSetHTML("listaAprovacoes", "Nenhuma pendência."); 
+             return; 
+         }
+         let html = ""; 
+         dados.forEach(d => { 
+             let b1 = '<button class="btn-acao" style="background:var(--accent); flex:1;" onclick="julgar(' + d.linha + ', \'Aprovado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Aprovar</button>';
+             let b2 = '<button class="btn-acao" style="background:var(--danger); flex:1;" onclick="julgar(' + d.linha + ', \'Recusado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Recusar</button>';
+             
+             html += '<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px;"><strong style="color:var(--primary); font-size:1.1rem;">' + d.nome + '</strong> pediu <strong>' + d.tipo + '</strong><br><small style="color:var(--text-muted)">Data exata: ' + d.dataCorreta + '</small><br><small style="color:var(--text-muted)">Motivo: ' + d.motivo + '</small><div style="margin-top:14px; display:flex; gap:10px;">' + b1 + b2 + '</div></div>'; 
+         }); 
+         safeSetHTML("listaAprovacoes", html);
+      });
+    }
+
+    function julgar(linha, acao, nome, tipo, dataCorreta, motivo) {
+      executarComLoader("A processar julgamento...", async () => { 
+          const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo }); 
+          if(res.erro) alert(res.erro); 
+          else { 
+              exibirMsg("Registado!", false); 
+              carregarAprovacoes(); 
+          } 
+      });
+    }
+
+    const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+    const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
+    function preencherDia() { 
+        let elData = document.getElementById("rotaData");
+        let elDia = document.getElementById("rotaDia");
+        if(!elData || !elDia) return;
+        
+        const v = elData.value; 
+        if (!v) return; 
+        const [a, m, d] = v.split("-").map(Number); 
+        elDia.value = DIAS[new Date(a, m - 1, d).getDay()]; 
+    }
+
+    function autoCalcularKM() {
+       let elOri = document.getElementById("rotaOrigem");
+       let elDest = document.getElementById("rotaDestino");
+       if(!elOri || !elDest) return;
+       
+       const origem = elOri.value.trim(); 
+       const destino = elDest.value.trim();
+       if(!origem || !destino) return alert("Preencha Origem e Destino primeiro.");
+       
+       executarComLoader("A calcular distância via Maps...", async () => { 
+           const res = await callAPI('calcularRotaFrota', { origem: origem, destino: destino }); 
+           if(res.sucesso) { 
+               let elKm = document.getElementById("rotaKm");
+               if(elKm) elKm.value = res.km; 
+               alert("Distância: " + res.km + " km"); 
+           } else alert(res.erro); 
+       });
+    }
+
+    function carregarRotasServidor() {
+      callAPI('getDadosIniciaisRotas').then(res => {
+         if(!res.erro) { 
+             todasRotas = res.lancamentos || []; 
+             const selMes = document.getElementById("filtroMes"); 
+             if(!selMes) return;
+             
+             let vAtual = selMes.value; 
+             let h = '<option value="TODOS">Todos</option>'; 
+             
+             res.mesesDisponiveis.forEach(m => {
+                 h += '<option value="' + m + '">' + m + '</option>';
+             }); 
+             
+             selMes.innerHTML = h; 
+             if(res.mesesDisponiveis.includes(vAtual) || vAtual === 'TODOS') selMes.value = vAtual; 
+             else if(res.mesesDisponiveis.length > 0) selMes.value = res.mesesDisponiveis[res.mesesDisponiveis.length - 1]; 
+             
+             filtrarRotas(); 
+         }
+      });
+    }
+
+    function filtrarRotas() {
+      let elTec = document.getElementById("filtroTecnico");
+      let elMes = document.getElementById("filtroMes");
+      if(!elTec || !elMes) return;
+      
+      const tec = elTec.value; 
+      const mes = elMes.value;
+      const filtrados = todasRotas.filter(d => (tec === "TODOS" || d.tecnico === tec) && (mes === "TODOS" || d.mes === mes));
+      
+      let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0; 
+      filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
+      
+      const reembolso = (totalKm / 9.4) * 4.5 + totalEstac + totalPedagio - totalDesc;
+      safeSetText("mKm", totalKm.toFixed(1)); 
+      safeSetText("mReembolso", brl(reembolso));
+      
+      let html = ""; 
+      filtrados.reverse().forEach(d => { 
+          let txtCusto = ""; 
+          if(d.estacionamento > 0) txtCusto += "Est: " + brl(d.estacionamento) + "<br>"; 
+          if(d.pedagio > 0) txtCusto += "Ped: " + brl(d.pedagio) + "<br>"; 
+          if(d.desconto > 0) txtCusto += 'Desc: <span style="color:var(--danger)">-' + brl(d.desconto) + '</span>'; 
+          
+          html += '<tr><td data-label="Data"><strong>' + d.data + '</strong><br><small style="color:var(--text-muted)">' + d.dia + '</small></td><td data-label="Trajeto">' + d.origem + ' &rarr; ' + d.destino + '<br><small style="color:var(--accent); font-weight:bold;">' + d.km.toFixed(1) + ' km</small></td><td data-label="Custos">' + (txtCusto||'-') + '</td></tr>'; 
+      });
+      safeSetHTML("tblRotas", html || '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>');
+    }
+
+    function salvarRota(e) {
+      e.preventDefault();
+      
+      let elTec = document.getElementById("rotaTecnico");
+      let elMes = document.getElementById("rotaMes");
+      let elData = document.getElementById("rotaData");
+      let elDia = document.getElementById("rotaDia");
+      let elOri = document.getElementById("rotaOrigem");
+      let elDest = document.getElementById("rotaDestino");
+      let elKm = document.getElementById("rotaKm");
+      let elEst = document.getElementById("rotaEstac");
+      let elPed = document.getElementById("rotaPedagio");
+      let elDesc = document.getElementById("rotaDesconto");
+      let elObs = document.getElementById("rotaObs");
+      
+      if(!elTec || !elMes || !elData || !elDia || !elOri || !elDest || !elKm || !elEst || !elPed || !elDesc || !elObs) return;
+
+      executarComLoader("A gravar deslocamento...", async () => {
+         const p = { 
+             tecnico: elTec.value, 
+             mes: elMes.value, 
+             data: elData.value, 
+             dia: elDia.value, 
+             origem: elOri.value, 
+             destino: elDest.value, 
+             km: elKm.value, 
+             estacionamento: elEst.value, 
+             pedagio: elPed.value, 
+             desconto: elDesc.value, 
+             obs: elObs.value 
+         };
+         const res = await callAPI('salvarLancamentoRota', { dadosRota: p });
+         
+         if (res.erro) alert(res.erro); 
+         else { 
+             exibirMsg("Rota registada!", false); 
+             let form = document.getElementById("fRota");
+             if(form) form.reset(); 
+             carregarRotasServidor(); 
+         }
+      });
+    }
+  </script>
+</body>
+</html>
