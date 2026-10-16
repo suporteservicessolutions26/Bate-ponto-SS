@@ -7,12 +7,13 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=20">
+  <link rel="manifest" href="manifest.json?v=21">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=20">
-  <link rel="icon" href="./LogoSS.png?v=20" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=21">
+  <link rel="icon" href="./LogoSS.png?v=21" type="image/png">
   
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
+  <!-- MOTOR DE GRÁFICOS (Protegido contra bloqueios) -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados pela rede, prosseguindo sem eles.')"></script>
 
   <style>
     :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
@@ -131,7 +132,7 @@
 </head>
 <body>
 
-  <!-- DETETOR DE ERROS -->
+  <!-- DETETOR DE ERROS FATAL -->
   <script>
     window.onerror = function(msg, url, line) {
         alert("Ocorreu um erro técnico na aplicação.\n\nDetalhe: " + msg + "\nLinha: " + line);
@@ -141,13 +142,9 @@
 
   <!-- OBRIGA O BROWSER A LIMPAR A CACHE AGORA MESMO -->
   <script>
-    if(localStorage.getItem('appVersion') !== '20') {
-      if('caches' in window) {
-         caches.keys().then(names => {
-             for(let n of names) caches.delete(n);
-         });
-      }
-      localStorage.setItem('appVersion', '20');
+    if(localStorage.getItem('appVersion') !== '21') {
+      if('caches' in window) { caches.keys().then(names => names.forEach(n => caches.delete(n))); }
+      localStorage.setItem('appVersion', '21');
       location.reload(true);
     }
   </script>
@@ -190,9 +187,7 @@
      <div id="box-assinatura">
        <label style="margin-top:10px;">✍️ Assinatura do Cliente</label>
        <canvas id="canvasAssinatura"></canvas>
-       <div style="text-align:right;">
-          <button class="btn-logout" style="border-color:var(--primary); color:var(--primary);" onclick="limparAssinatura(); hapticFeedback()">Limpar Assinatura</button>
-       </div>
+       <div style="text-align:right;"><button class="btn-logout" style="border-color:var(--primary); color:var(--primary);" onclick="limparAssinatura(); hapticFeedback()">Limpar Assinatura</button></div>
      </div>
      
      <div style="display:flex; gap:12px; margin-top:24px;">
@@ -221,7 +216,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=20" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=21" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -489,6 +484,18 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
+    // AS DUAS FUNÇÕES QUE TINHAM SIDO ESQUECIDAS NA ÚLTIMA VERSÃO:
+    function hapticFeedback() { 
+        if (navigator.vibrate) navigator.vibrate(50); 
+    }
+
+    function toggleTema() {
+      const el = document.documentElement; 
+      const tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light';
+      el.setAttribute('data-theme', tema); 
+      localStorage.setItem('ponto_tema', tema);
+    }
+
     function showLoading(msg) {
         document.getElementById('loaderMsg').innerText = msg || "A processar...";
         document.getElementById('loaderOverlay').style.display = 'flex';
@@ -498,7 +505,6 @@
         document.getElementById('loaderOverlay').style.display = 'none'; 
     }
     
-    // Motor anti-falhas
     async function executarComLoader(msg, task) {
        showLoading(msg);
        try { 
@@ -568,7 +574,6 @@
             let b = document.createElement("DIV");
             let matchIdx = arr[i].toUpperCase().indexOf(val.toUpperCase());
             
-            // Construção da string concatenada em vez de crases complexas
             let startText = arr[i].substring(0, matchIdx);
             let boldText = "<strong>" + arr[i].substring(matchIdx, matchIdx + val.length) + "</strong>";
             let endText = arr[i].substring(matchIdx + val.length);
