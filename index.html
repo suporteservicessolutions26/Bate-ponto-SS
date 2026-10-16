@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=26">
+  <link rel="manifest" href="manifest.json?v=27">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=26">
-  <link rel="icon" href="./LogoSS.png?v=26" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=27">
+  <link rel="icon" href="./LogoSS.png?v=27" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -77,10 +77,10 @@
     
     #badgeOffline { display:none; background:var(--warning); color:#000; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:0.9rem; margin-bottom:16px; animation: slideDown 0.3s ease; }
 
-    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(130px, 1fr)); gap: 12px; margin-bottom: 20px; }
-    .card-metric { background: var(--bg); border: 1px solid var(--border); padding: 18px; border-radius: 16px; text-align: center; }
-    .card-metric .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; }
-    .card-metric .val { font-size: 1.8rem; font-weight: 900; margin-top: 8px; line-height: 1; }
+    .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 20px; }
+    .card-metric { background: var(--bg); border: 1px solid var(--border); padding: 15px; border-radius: 16px; text-align: center; }
+    .card-metric .label { font-size: 0.65rem; color: var(--text-muted); text-transform: uppercase; font-weight: 800; }
+    .card-metric .val { font-size: 1.5rem; font-weight: 900; margin-top: 8px; line-height: 1; }
     
     .card-itinerario { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 16px; position:relative; overflow: hidden; }
     .card-itinerario::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 6px; background: var(--border); }
@@ -140,7 +140,7 @@
 
   <!-- NUKE DE CACHE AGRESSIVO E DESINSTALAÇÃO DE SW ANTIGOS -->
   <script>
-    const VERSAO_ATUAL = '26';
+    const VERSAO_ATUAL = '27';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -224,7 +224,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=26" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=27" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -1165,9 +1165,6 @@
           
           atualizarRegraBotoes(lastPonto);
 
-          // ATENÇÃO: A função carregarMeusAjustes não existe mais e foi removida 
-          // daqui para não bloquear (crashar) o sistema com ReferenceError.
-
       } catch (e) {
           console.error("Erro crítico no carregamento do histórico:", e);
           atualizarRegraBotoes('Saída');
@@ -1692,27 +1689,26 @@
        });
     }
 
-    function enviarSolicitacao() {
-      let elTipo = document.getElementById('corrTipo');
-      let elDataHora = document.getElementById('corrDataHora');
-      let elMotivo = document.getElementById('corrMotivo');
+    // --- FUNÇÃO DE BANCO DE HORAS RESTAURADA ---
+    async function carregarBancoHoras() {
+      let elMes = document.getElementById('mesFiltro');
+      if(!elMes) return;
+      const mesAno = elMes.value.trim(); 
+      if(!mesAno || mesAno.length !== 7) return alert("Utilize o formato MM/YYYY (ex: 09/2026)");
       
-      if(!elTipo || !elDataHora || !elMotivo) return;
-      
-      const tipo = elTipo.value; 
-      const dataHora = elDataHora.value; 
-      const motivo = elMotivo.value;
-      
-      if (!dataHora || !motivo) return alert("Preencha a data/hora e o motivo.");
-      
-      executarComLoader("A enviar pedido...", async () => { 
-          const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo }); 
-          if(res.erro) {
-              alert(res.erro); 
-          } else { 
-              elMotivo.value = ""; 
-              // A chamada fantasma a carregarMeusAjustes também foi removida daqui!
-          } 
+      executarComLoader("A consolidar horas...", async () => {
+         const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
+         if(dados.erro || !dados || dados.length === 0) { 
+             safeSetHTML("tblBanco", '<tr><td colspan="3" style="text-align:center;">Sem registros.</td></tr>'); 
+             safeSetDisplay('boxAdminGrafico', 'none'); 
+             return; 
+         }
+         let html = ""; 
+         dados.forEach(d => { 
+             html += '<tr><td data-label="Nome"><strong>' + d.nome + '</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">' + d.total + 'h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">' + d.extra + 'h</td></tr>'; 
+         }); 
+         safeSetHTML("tblBanco", html);
+         desenharAdminGrafico(dados);
       });
     }
 
