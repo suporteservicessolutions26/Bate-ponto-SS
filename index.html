@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=25">
+  <link rel="manifest" href="manifest.json?v=26">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=25">
-  <link rel="icon" href="./LogoSS.png?v=25" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=26">
+  <link rel="icon" href="./LogoSS.png?v=26" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -140,7 +140,7 @@
 
   <!-- NUKE DE CACHE AGRESSIVO E DESINSTALAÇÃO DE SW ANTIGOS -->
   <script>
-    const VERSAO_ATUAL = '25';
+    const VERSAO_ATUAL = '26';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -224,7 +224,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=25" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=26" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -1164,7 +1164,9 @@
           }
           
           atualizarRegraBotoes(lastPonto);
-          carregarMeusAjustes(nome);
+
+          // ATENÇÃO: A função carregarMeusAjustes não existe mais e foi removida 
+          // daqui para não bloquear (crashar) o sistema com ReferenceError.
 
       } catch (e) {
           console.error("Erro crítico no carregamento do histórico:", e);
@@ -1709,7 +1711,7 @@
               alert(res.erro); 
           } else { 
               elMotivo.value = ""; 
-              carregarMeusAjustes(usuarioAutenticado); 
+              // A chamada fantasma a carregarMeusAjustes também foi removida daqui!
           } 
       });
     }
