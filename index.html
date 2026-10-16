@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=23">
+  <link rel="manifest" href="manifest.json?v=25">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=23">
-  <link rel="icon" href="./LogoSS.png?v=23" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=25">
+  <link rel="icon" href="./LogoSS.png?v=25" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -32,7 +32,6 @@
     input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
     label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
     
-    /* Auto-Completar Clean */
     .input-wrapper { position: relative; width: 100%; margin-bottom: 14px; }
     .input-wrapper input { margin-bottom: 0 !important; width: 100%; }
     .autocomplete-items { position: absolute; border: 1px solid var(--border); border-top: none; z-index: 999999; top: 100%; left: 0; right: 0; background-color: var(--card-bg); max-height: 250px; overflow-y: auto; border-radius: 0 0 12px 12px; box-shadow: 0 10px 30px rgba(0,0,0,0.8); }
@@ -129,20 +128,32 @@
 </head>
 <body>
 
-  <!-- DETETOR DE ERROS FATAL -->
+  <!-- DETETOR DE ERROS FATAL SEGURO -->
   <script>
     window.onerror = function(msg, url, line) {
-        alert("Erro técnico (Linha " + line + "): " + msg);
+        console.error("Erro técnico (Linha " + line + "): " + msg);
+        let badge = document.getElementById('status-badge');
+        if (badge) { badge.innerHTML = "⚠️ AVISO DE SISTEMA"; badge.style.background = "#7f1d1d"; badge.style.color = "#fca5a5"; }
         return false;
     };
   </script>
 
-  <!-- LIMPEZA DE CACHE -->
+  <!-- NUKE DE CACHE AGRESSIVO E DESINSTALAÇÃO DE SW ANTIGOS -->
   <script>
-    if(localStorage.getItem('appVersion') !== '23') {
-      if('caches' in window) { caches.keys().then(names => names.forEach(n => caches.delete(n))); }
-      localStorage.setItem('appVersion', '23');
-      location.reload(true);
+    const VERSAO_ATUAL = '25';
+    if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
+      if('caches' in window) { 
+          caches.keys().then(names => {
+              for (let n of names) caches.delete(n);
+          }); 
+      }
+      if ('serviceWorker' in navigator) {
+          navigator.serviceWorker.getRegistrations().then(function(registrations) {
+              for(let registration of registrations) registration.unregister();
+          });
+      }
+      localStorage.setItem('appVersion', VERSAO_ATUAL);
+      setTimeout(() => location.reload(true), 500);
     }
   </script>
 
@@ -213,7 +224,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=23" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=25" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -351,14 +362,26 @@
         </div>
       </div>
 
-      <!-- ABA 3: PERFIL E GRÁFICOS -->
+      <!-- ABA 3: PERFIL E GRÁFICOS (BLINDADA) -->
       <div id="tab-hist" class="tab-content">
         <div class="box" style="border:none; padding:10px 0; background:transparent; box-shadow:none;">
             <h3 style="margin: 0 0 16px; font-size: 1.2rem; color:var(--primary);">Meu Dashboard (Mês)</h3>
+            
             <div class="metrics">
-                <div class="card-metric"><div class="label">Visitas</div><div class="val" id="lblVisitasMes" style="color:var(--primary);">0</div></div>
-                <div class="card-metric"><div class="label">Horas Totais</div><div class="val" id="lblTotalMes" style="color:var(--accent);">00:00</div></div>
+                <div class="card-metric">
+                    <div class="label">Visitas</div>
+                    <div class="val" id="lblVisitasMes" style="color:var(--primary);">0</div>
+                </div>
+                <div class="card-metric">
+                    <div class="label">Horas Totais</div>
+                    <div class="val" id="lblTotalMes" style="color:var(--accent);">00:00</div>
+                </div>
+                <div class="card-metric">
+                    <div class="label">Horas Extra</div>
+                    <div class="val" id="lblExtraMes" style="color:var(--danger);">00:00</div>
+                </div>
             </div>
+            
             <div class="box" style="padding:15px; margin-bottom: 24px;">
                 <h4 style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-bottom:10px; text-transform:uppercase;">Distribuição de Horas</h4>
                 <div class="chart-container" style="height: 180px;"><canvas id="meuGrafico"></canvas></div>
@@ -483,7 +506,23 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // --- FUNÇÕES DE SISTEMA ---
+    // --- FUNÇÕES DE SEGURANÇA (Previnem o "Cannot set properties of null") ---
+    function safeSetText(id, text) {
+        let el = document.getElementById(id);
+        if (el) el.innerText = text;
+    }
+    
+    function safeSetHTML(id, html) {
+        let el = document.getElementById(id);
+        if (el) el.innerHTML = html;
+    }
+
+    function safeSetDisplay(id, displayType) {
+        let el = document.getElementById(id);
+        if (el) el.style.display = displayType;
+    }
+
+    // --- FUNÇÕES BÁSICAS ---
     function hapticFeedback() { 
         if (navigator.vibrate) navigator.vibrate(50); 
     }
@@ -496,15 +535,14 @@
     }
 
     function showLoading(msg) {
-        document.getElementById('loaderMsg').innerText = msg || "A processar...";
-        document.getElementById('loaderOverlay').style.display = 'flex';
+        safeSetText('loaderMsg', msg || "A processar...");
+        safeSetDisplay('loaderOverlay', 'flex');
     }
     
     function hideLoading() { 
-        document.getElementById('loaderOverlay').style.display = 'none'; 
+        safeSetDisplay('loaderOverlay', 'none'); 
     }
     
-    // Motor anti-falhas
     async function executarComLoader(msg, task) {
        showLoading(msg);
        try { 
@@ -645,9 +683,13 @@
     }
 
     function autoPreencherEndereco() {
-      let cli = document.getElementById("itiCliente").value.trim();
+      let elCli = document.getElementById("itiCliente");
+      let elEnd = document.getElementById("itiEndereco");
+      if(!elCli || !elEnd) return;
+      
+      let cli = elCli.value.trim();
       if(baseClientes[cli] && baseClientes[cli] !== "") {
-          document.getElementById("itiEndereco").value = baseClientes[cli];
+          elEnd.value = baseClientes[cli];
       }
     }
 
@@ -693,11 +735,13 @@
     function atualizarBadgeOffline() {
        const badge = document.getElementById('badgeOffline'); 
        const num = document.getElementById('qtdOffline');
-       if(filaOffline.length > 0) { 
-           badge.style.display = 'block'; 
-           num.innerText = filaOffline.length; 
-       } else { 
-           badge.style.display = 'none'; 
+       if(badge && num) {
+           if(filaOffline.length > 0) { 
+               badge.style.display = 'block'; 
+               num.innerText = filaOffline.length; 
+           } else { 
+               badge.style.display = 'none'; 
+           }
        }
     }
 
@@ -766,8 +810,12 @@
     };
 
     function fazerLogin() {
-      const u = document.getElementById('loginUser').value.trim(); 
-      const s = document.getElementById('loginSenha').value;
+      const uEl = document.getElementById('loginUser'); 
+      const sEl = document.getElementById('loginSenha');
+      if(!uEl || !sEl) return;
+      
+      const u = uEl.value.trim();
+      const s = sEl.value;
       
       if(!u || !s) return alert("Preencha utilizador e password.");
       
@@ -786,14 +834,15 @@
     function entrarNoSistema(nome, perfil) {
       usuarioAutenticado = nome; 
       perfilAutenticado = perfil; 
-      document.getElementById('nomeExibicao').innerText = nome;
-      document.getElementById('tela-login').style.display = "none"; 
-      document.getElementById('tela-app').style.display = "block"; 
-      document.getElementById('btnSair').style.display = "block";
+      
+      safeSetText('nomeExibicao', nome);
+      safeSetDisplay('tela-login', 'none');
+      safeSetDisplay('tela-app', 'block');
+      safeSetDisplay('btnSair', 'block');
       
       if (perfil === 'Admin') {
-          document.getElementById('abasAdmin').style.display = "flex";
-          document.getElementById('areaAtribuirItinerario').style.display = "block"; 
+          safeSetDisplay('abasAdmin', 'flex');
+          safeSetDisplay('areaAtribuirItinerario', 'block');
       }
       
       if(navigator.onLine) carregarEstoque();
@@ -812,7 +861,9 @@
     function abrirAba(id, btn) {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-      document.getElementById(id).classList.add('active'); 
+      
+      let abaAlvo = document.getElementById(id);
+      if(abaAlvo) abaAlvo.classList.add('active'); 
       if(btn) btn.classList.add('active');
       
       if(id === 'tab-radar') carregarRadar(); 
@@ -824,11 +875,12 @@
 
     setInterval(() => {
       const a = new Date(); 
-      document.getElementById('relogio').innerText = a.toLocaleTimeString('pt-BR'); 
-      document.getElementById('data-atual').innerText = a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' });
+      safeSetText('relogio', a.toLocaleTimeString('pt-BR'));
+      safeSetText('data-atual', a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }));
     }, 1000);
 
     function parseDataBR(str) { 
+        if(!str) return new Date();
         str = str.replace(',', ''); 
         let p = str.split(" ");
         let d = p[0].split("/");
@@ -882,36 +934,28 @@
       const bSaida = document.getElementById('btnSaidaRapida'); 
       const avisoInterno = document.getElementById('aviso-trabalho-interno');
 
-      bPausa.style.display = 'none'; 
-      bRetorno.style.display = 'none'; 
-      bSaida.style.display = 'none';
+      if(bPausa) bPausa.style.display = 'none'; 
+      if(bRetorno) bRetorno.style.display = 'none'; 
+      if(bSaida) bSaida.style.display = 'none';
       
       if (statusGlobalPonto === 'Saída') { 
-          badge.innerHTML = '🔴 Fora de Expediente'; 
-          badge.style.background = '#450a0a'; 
-          badge.style.color = '#fca5a5'; 
-          acoesRapidas.style.display = 'none'; 
+          if(badge) { badge.innerHTML = '🔴 Fora de Expediente'; badge.style.background = '#450a0a'; badge.style.color = '#fca5a5'; }
+          if(acoesRapidas) acoesRapidas.style.display = 'none'; 
           if(avisoInterno) avisoInterno.style.display = 'block'; 
       } else {
-        acoesRapidas.style.display = 'flex'; 
+        if(acoesRapidas) acoesRapidas.style.display = 'flex'; 
         if(avisoInterno) avisoInterno.style.display = 'none';
         
         if (statusGlobalPonto === 'Entrada') { 
-            badge.innerHTML = '🟢 Em Expediente'; 
-            badge.style.background = '#064e3b'; 
-            badge.style.color = '#6ee7b7'; 
-            bPausa.style.display = 'block'; 
-            bSaida.style.display = 'block'; 
+            if(badge) { badge.innerHTML = '🟢 Em Expediente'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7'; }
+            if(bPausa) bPausa.style.display = 'block'; 
+            if(bSaida) bSaida.style.display = 'block'; 
         } else if (statusGlobalPonto === 'Pausa') { 
-            badge.innerHTML = '🟡 Em Pausa (Almoço)'; 
-            badge.style.background = '#78350f'; 
-            badge.style.color = '#fcd34d'; 
-            bRetorno.style.display = 'block'; 
+            if(badge) { badge.innerHTML = '🟡 Em Pausa (Almoço)'; badge.style.background = '#78350f'; badge.style.color = '#fcd34d'; }
+            if(bRetorno) bRetorno.style.display = 'block'; 
         } else if (statusGlobalPonto === 'Retorno') { 
-            badge.innerHTML = '🟢 Em Expediente (Retorno)'; 
-            badge.style.background = '#064e3b'; 
-            badge.style.color = '#6ee7b7'; 
-            bSaida.style.display = 'block'; 
+            if(badge) { badge.innerHTML = '🟢 Em Expediente (Retorno)'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7'; }
+            if(bSaida) bSaida.style.display = 'block'; 
         }
       }
       
@@ -921,19 +965,31 @@
       const mbS = document.getElementById('btnSaidaMan');
       
       if(mbE) { 
-          mbE.disabled = true; mbP.disabled = true; mbR.disabled = true; mbS.disabled = true; 
-          if (statusGlobalPonto === 'Saída') mbE.disabled = false; 
-          else if (statusGlobalPonto === 'Entrada') { mbP.disabled = false; mbS.disabled = false; } 
-          else if (statusGlobalPonto === 'Pausa') mbR.disabled = false; 
-          else if (statusGlobalPonto === 'Retorno') mbS.disabled = false; 
+          mbE.disabled = true; 
+          if(mbP) mbP.disabled = true; 
+          if(mbR) mbR.disabled = true; 
+          if(mbS) mbS.disabled = true; 
+          
+          if (statusGlobalPonto === 'Saída') {
+              mbE.disabled = false; 
+          } else if (statusGlobalPonto === 'Entrada') { 
+              if(mbP) mbP.disabled = false; 
+              if(mbS) mbS.disabled = false; 
+          } else if (statusGlobalPonto === 'Pausa') { 
+              if(mbR) mbR.disabled = false; 
+          } else if (statusGlobalPonto === 'Retorno') { 
+              if(mbS) mbS.disabled = false; 
+          } 
       }
 
       const alertaFadiga = document.getElementById('alerta-fadiga');
-      if (statusGlobalPonto === 'Entrada' && tempoInicioExpediente) { 
-          let diffHoras = (new Date() - tempoInicioExpediente) / 3600000; 
-          alertaFadiga.style.display = (diffHoras > 6) ? 'block' : 'none'; 
-      } else { 
-          alertaFadiga.style.display = 'none'; 
+      if (alertaFadiga) {
+          if (statusGlobalPonto === 'Entrada' && tempoInicioExpediente) { 
+              let diffHoras = (new Date() - tempoInicioExpediente) / 3600000; 
+              alertaFadiga.style.display = (diffHoras > 6) ? 'block' : 'none'; 
+          } else { 
+              alertaFadiga.style.display = 'none'; 
+          }
       }
     }
 
@@ -950,8 +1006,9 @@
       }
       
       let obs = ""; 
-      if (!isRapido && document.getElementById("obsManual")) {
-          obs = document.getElementById("obsManual").value;
+      let obsEl = document.getElementById("obsManual");
+      if (!isRapido && obsEl) {
+          obs = obsEl.value;
       }
       
       if (tipo === 'Entrada' && !obs) {
@@ -962,9 +1019,7 @@
          const loc = await obterLocalizacao();
          const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
          
-         if(document.getElementById("obsManual")) {
-             document.getElementById("obsManual").value = "";
-         }
+         if(obsEl) obsEl.value = "";
          
          if(res.erro) {
              alert(res.erro); 
@@ -1019,8 +1074,11 @@
     function desenharAdminGrafico(dados) {
         if (typeof Chart === 'undefined') return; 
         
-        document.getElementById('boxAdminGrafico').style.display = 'block';
-        const ctx = document.getElementById('adminGrafico').getContext('2d');
+        safeSetDisplay('boxAdminGrafico', 'block');
+        const canvasEl = document.getElementById('adminGrafico');
+        if(!canvasEl) return;
+        
+        const ctx = canvasEl.getContext('2d');
         if(chartAdminBanco) chartAdminBanco.destroy();
         
         let labels = dados.map(d => d.nome.split(' ')[0]); 
@@ -1050,7 +1108,6 @@
         });
     }
 
-    // --- FUNÇÃO CORRIGIDA DO HISTÓRICO PARA NÃO "CONGELAR" O ECRÃ ---
     async function carregarHistoricoEAtualizarBotoes(nome) {
       try {
           const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
@@ -1058,8 +1115,8 @@
           if (dados.erro) {
               console.error("Erro da API:", dados.erro);
               atualizarRegraBotoes('Saída'); 
-              document.getElementById('status-badge').innerHTML = '⚠️ Erro de Ligação';
-              document.getElementById("tblCorpo").innerHTML = '<tr><td colspan="3" style="text-align:center; color:red;">' + dados.erro + '</td></tr>';
+              safeSetHTML('status-badge', '⚠️ Erro de Ligação');
+              safeSetHTML("tblCorpo", '<tr><td colspan="3" style="text-align:center; color:red;">' + dados.erro + '</td></tr>');
               return;
           }
 
@@ -1084,11 +1141,11 @@
               });
           }
           
-          document.getElementById("tblCorpo").innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>';
+          safeSetHTML("tblCorpo", html || '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>');
           
-          document.getElementById('lblVisitasMes').innerText = visitasMes; 
-          document.getElementById('lblTotalMes').innerText = minParaHoras(minTotal); 
-          document.getElementById('lblExtraMes').innerText = minParaHoras(minExtra);
+          safeSetText('lblVisitasMes', visitasMes);
+          safeSetText('lblTotalMes', minParaHoras(minTotal));
+          safeSetText('lblExtraMes', minParaHoras(minExtra));
           desenharMeuGrafico(minTotal, minExtra);
 
           let lastPonto = 'Saída'; 
@@ -1112,34 +1169,51 @@
       } catch (e) {
           console.error("Erro crítico no carregamento do histórico:", e);
           atualizarRegraBotoes('Saída');
-          document.getElementById('status-badge').innerHTML = '⚠️ Erro no Sistema';
+          safeSetHTML('status-badge', '⚠️ Erro no Sistema');
       }
     }
 
     function toggleRecorrencia() {
-       const isRec = document.getElementById("itiRecorrente").checked;
-       document.getElementById("boxDataUnica").style.display = isRec ? "none" : "block"; 
-       document.getElementById("boxDataRecorrente").style.display = isRec ? "block" : "none";
+       let cb = document.getElementById("itiRecorrente");
+       if(!cb) return;
+       const isRec = cb.checked;
+       safeSetDisplay("boxDataUnica", isRec ? "none" : "block");
+       safeSetDisplay("boxDataRecorrente", isRec ? "block" : "none");
     }
 
     function salvarNovoItinerario() {
-      const tec = document.getElementById("itiTecnico").value; 
-      const cli = document.getElementById("itiCliente").value.trim(); 
-      const end = document.getElementById("itiEndereco").value.trim(); 
-      const hor = document.getElementById("itiHorario").value;
-      const isRec = document.getElementById("itiRecorrente").checked; 
-      const pri = document.getElementById("itiPrioridade").value;
+      let elTec = document.getElementById("itiTecnico");
+      let elCli = document.getElementById("itiCliente");
+      let elEnd = document.getElementById("itiEndereco");
+      let elHor = document.getElementById("itiHorario");
+      let elRec = document.getElementById("itiRecorrente");
+      let elPri = document.getElementById("itiPrioridade");
+      
+      if(!elTec || !elCli || !elEnd || !elHor || !elRec || !elPri) return;
+
+      const tec = elTec.value; 
+      const cli = elCli.value.trim(); 
+      const end = elEnd.value.trim(); 
+      const hor = elHor.value;
+      const isRec = elRec.checked; 
+      const pri = elPri.value;
       
       if(!cli || !end || !hor) return alert("Preencha o Local, Endereço e Horário.");
       
       let datas = [];
       if (!isRec) { 
-          let du = document.getElementById("itiData").value; 
+          let elDt = document.getElementById("itiData");
+          if(!elDt) return;
+          let du = elDt.value; 
           if(!du) return alert("Preencha a data."); 
           datas.push(du); 
       } else {
-        let dIni = document.getElementById("itiDataIni").value; 
-        let dFim = document.getElementById("itiDataFim").value; 
+        let elIni = document.getElementById("itiDataIni");
+        let elFim = document.getElementById("itiDataFim");
+        if(!elIni || !elFim) return;
+        
+        let dIni = elIni.value; 
+        let dFim = elFim.value; 
         
         if(!dIni || !dFim) return alert("Preencha o período.");
         
@@ -1176,7 +1250,6 @@
     }
 
     async function carregarItinerario(forcar = false) {
-      const div = document.getElementById("listaItinerario");
       if(forcar) showLoading("A atualizar agenda...");
       
       const nomeBusca = perfilAutenticado === 'Admin' ? 'Admin' : usuarioAutenticado;
@@ -1185,7 +1258,7 @@
       if(forcar) hideLoading();
       
       if (dados.erro || !dados || dados.length === 0) { 
-          div.innerHTML = "Sua agenda está livre."; 
+          safeSetHTML("listaItinerario", "Sua agenda está livre."); 
           return; 
       }
       
@@ -1244,7 +1317,7 @@
         html += '<div class="card-itinerario ' + corClasse + '">' + prioridadeHtml + '<strong style="font-size:1.2rem;">' + d.cliente + '</strong><br><small style="color:var(--text-muted);">📍 ' + d.endereco + '</small>' + blocoInfo + '</div>';
       });
       
-      div.innerHTML = html || '<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>';
+      safeSetHTML("listaItinerario", html || '<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>');
     }
 
     function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
@@ -1288,7 +1361,9 @@
     }
 
     function checkinAvulso(acao) {
-      const cli = document.getElementById('chkCliente').value.trim(); 
+      let elCli = document.getElementById('chkCliente');
+      if(!elCli) return;
+      const cli = elCli.value.trim(); 
       if(!cli) return alert("Informe o local avulso.");
       
       if (acao.includes('Fim de Expediente') && getQtdPendenciasAgenda() > 0) {
@@ -1319,7 +1394,7 @@
              await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + cli, nomeColaborador: usuarioAutenticado, localizacao: loc });
          }
          
-         document.getElementById('chkCliente').value = ""; 
+         elCli.value = ""; 
          carregarHistoricoEAtualizarBotoes(usuarioAutenticado); 
          exibirMsg("Registado!", false);
       });
@@ -1362,6 +1437,7 @@
        if(!res.erro) {
            estoqueGlobal = res; 
            let sel = document.getElementById('selMaterial'); 
+           if(!sel) return;
            sel.innerHTML = '<option value="">Selecionar peça...</option>';
            res.forEach(item => { 
                sel.innerHTML += '<option value="' + item.linha + '">' + item.nome + ' (Disp: ' + item.qtd + ')</option>'; 
@@ -1373,7 +1449,10 @@
        e.preventDefault(); 
        hapticFeedback(); 
        const sel = document.getElementById('selMaterial'); 
-       const qtd = parseInt(document.getElementById('qtdMaterial').value);
+       const inputQtd = document.getElementById('qtdMaterial');
+       if(!sel || !inputQtd) return;
+       
+       const qtd = parseInt(inputQtd.value);
        
        if(!sel.value || isNaN(qtd) || qtd < 1) return; 
        
@@ -1387,11 +1466,12 @@
        materiaisUsados.push({ linha: item.linha, nome: item.nome, qtdUsada: qtd }); 
        atualizarUI_Materiais(); 
        sel.value = ""; 
-       document.getElementById('qtdMaterial').value = "1";
+       inputQtd.value = "1";
     }
     
     function atualizarUI_Materiais() {
        const ul = document.getElementById('listaMateriaisUi'); 
+       if(!ul) return;
        ul.innerHTML = '';
        materiaisUsados.forEach((m, idx) => { 
            ul.innerHTML += '<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:var(--card-bg); padding:8px; border-radius:6px; border:1px solid var(--border);"><span><strong>' + m.qtdUsada + 'x</strong> ' + m.nome + '</span> <span style="color:var(--danger); cursor:pointer; font-weight:bold; font-size:1.1rem;" onclick="removeMaterial(' + idx + ')">✖</span></li>'; 
@@ -1407,56 +1487,72 @@
         pendenteCliente = cliente; 
         pendenteAcao = acao; 
         pendenteLinhaAgenda = linha; 
-        document.getElementById('txtObservacaoOS').value = ""; 
+        
+        let elObs = document.getElementById('txtObservacaoOS');
+        if(elObs) elObs.value = ""; 
+        
         materiaisUsados = []; 
         atualizarUI_Materiais(); 
         
         let showOS = (acao.includes('Saí') && acao !== 'Cliente Ausente'); 
-        document.getElementById('box-os').style.display = showOS ? 'block' : 'none'; 
-        document.getElementById('box-materiais').style.display = showOS ? 'block' : 'none'; 
-        document.getElementById('box-avaliacao').style.display = showOS ? 'block' : 'none'; 
-        document.getElementById('box-assinatura').style.display = (acao === 'Cliente Ausente') ? 'none' : 'block'; 
-        document.getElementById('lblFoto').innerText = (acao === 'Cliente Ausente') ? '📸 Tirar Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)'; 
-        document.getElementById('modalTitulo').innerText = (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar e Gerar OS'; 
+        safeSetDisplay('box-os', showOS ? 'block' : 'none');
+        safeSetDisplay('box-materiais', showOS ? 'block' : 'none');
+        safeSetDisplay('box-avaliacao', showOS ? 'block' : 'none');
+        safeSetDisplay('box-assinatura', (acao === 'Cliente Ausente') ? 'none' : 'block');
+        safeSetText('lblFoto', (acao === 'Cliente Ausente') ? '📸 Tirar Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)');
+        safeSetText('modalTitulo', (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar e Gerar OS');
+        
         setRating(0); 
-        document.getElementById('modal-overlay').style.display = 'block'; 
-        document.getElementById('modal-box').style.display = 'block'; 
+        safeSetDisplay('modal-overlay', 'block');
+        safeSetDisplay('modal-box', 'block');
+        
         limparAssinatura(); 
-        document.getElementById('fotoVisita').value = ""; 
+        let elFoto = document.getElementById('fotoVisita');
+        if(elFoto) elFoto.value = ""; 
     }
     
     function prepararModalAvulso(acao) { 
-        const cli = document.getElementById('chkCliente').value.trim(); 
+        let elCli = document.getElementById('chkCliente');
+        if(!elCli) return;
+        const cli = elCli.value.trim(); 
         if(!cli) return alert("Local avulso vazio."); 
         
         pendenteCliente = cli; 
         pendenteAcao = acao; 
         pendenteLinhaAgenda = null; 
-        document.getElementById('txtObservacaoOS').value = ""; 
+        
+        let elObs = document.getElementById('txtObservacaoOS');
+        if(elObs) elObs.value = ""; 
+        
         materiaisUsados = []; 
         atualizarUI_Materiais(); 
         
-        document.getElementById('box-os').style.display = 'block'; 
-        document.getElementById('box-materiais').style.display = 'block'; 
-        document.getElementById('box-avaliacao').style.display = 'block'; 
-        document.getElementById('box-assinatura').style.display = 'block'; 
-        document.getElementById('lblFoto').innerText = '📸 Tirar Foto (Opcional)'; 
-        document.getElementById('modalTitulo').innerText = 'Finalizar e Gerar OS'; 
+        safeSetDisplay('box-os', 'block');
+        safeSetDisplay('box-materiais', 'block');
+        safeSetDisplay('box-avaliacao', 'block');
+        safeSetDisplay('box-assinatura', 'block');
+        safeSetText('lblFoto', '📸 Tirar Foto (Opcional)');
+        safeSetText('modalTitulo', 'Finalizar e Gerar OS');
+        
         setRating(0); 
-        document.getElementById('modal-overlay').style.display = 'block'; 
-        document.getElementById('modal-box').style.display = 'block'; 
+        safeSetDisplay('modal-overlay', 'block');
+        safeSetDisplay('modal-box', 'block');
+        
         limparAssinatura(); 
-        document.getElementById('fotoVisita').value = ""; 
+        let elFoto = document.getElementById('fotoVisita');
+        if(elFoto) elFoto.value = "";  
     }
     
     function fecharModal() { 
-        document.getElementById('modal-overlay').style.display = 'none'; 
-        document.getElementById('modal-box').style.display = 'none'; 
+        safeSetDisplay('modal-overlay', 'none');
+        safeSetDisplay('modal-box', 'none');
     }
     
     function setRating(v) { 
         currentRating = v; 
-        const stars = document.getElementById('starContainer').children; 
+        const container = document.getElementById('starContainer');
+        if(!container) return;
+        const stars = container.children; 
         for(let i=0; i<5; i++) { 
             if(i<v) stars[i].classList.add('ativo'); 
             else stars[i].classList.remove('ativo'); 
@@ -1466,6 +1562,7 @@
     let canvas, ctx, assinando = false;
     function initAssinatura() {
        canvas = document.getElementById('canvasAssinatura'); 
+       if(!canvas) return;
        ctx = canvas.getContext('2d');
        
        const startPos = (e) => { assinando = true; desenhar(e); }; 
@@ -1494,14 +1591,16 @@
     }
     
     function limparAssinatura() { 
-        ctx.clearRect(0, 0, canvas.width, canvas.height); 
+        if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); 
     }
 
     function enviarComprovativoEFechar() {
        const fotoInput = document.getElementById('fotoVisita'); 
-       const textoOS = document.getElementById('txtObservacaoOS').value.trim();
+       let textoOS = "";
+       let elObs = document.getElementById('txtObservacaoOS');
+       if(elObs) textoOS = elObs.value.trim();
        
-       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput.files || !fotoInput.files[0])) {
+       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput || !fotoInput.files || !fotoInput.files[0])) {
            return alert("A foto do local é obrigatória para registar ausência.");
        }
        
@@ -1518,7 +1617,7 @@
                linksExtra += " [Materiais Usados: " + materiaisUsados.length + "]";
            }
 
-           if (fotoInput.files && fotoInput.files[0]) {
+           if (fotoInput && fotoInput.files && fotoInput.files[0]) {
                const reader = new FileReader(); 
                const fotoResult = await new Promise((res) => { 
                    reader.onload = (e) => res(e.target.result); 
@@ -1534,20 +1633,22 @@
                }
            }
            
-           const blank = document.createElement('canvas'); 
-           blank.width = canvas.width; 
-           blank.height = canvas.height;
-           
-           if (canvas.toDataURL() !== blank.toDataURL() && pendenteAcao !== 'Cliente Ausente') {
-               if(!navigator.onLine) { 
-                   linksExtra += " [Assinatura pendente]"; 
-               } else { 
-                   let nomeAss = "Assinatura_" + pendenteCliente + "_" + Date.now() + ".png";
-                   const resA = await callAPI('uploadComprovativo', { base64: canvas.toDataURL('image/png'), nomeArquivo: nomeAss }); 
-                   if(resA.sucesso) { 
-                       linksExtra += " [Assinatura: " + resA.url + "]"; 
-                       urlAssinaturaOS = resA.url; 
-                   } 
+           if(canvas) {
+               const blank = document.createElement('canvas'); 
+               blank.width = canvas.width; 
+               blank.height = canvas.height;
+               
+               if (canvas.toDataURL() !== blank.toDataURL() && pendenteAcao !== 'Cliente Ausente') {
+                   if(!navigator.onLine) { 
+                       linksExtra += " [Assinatura pendente]"; 
+                   } else { 
+                       let nomeAss = "Assinatura_" + pendenteCliente + "_" + Date.now() + ".png";
+                       const resA = await callAPI('uploadComprovativo', { base64: canvas.toDataURL('image/png'), nomeArquivo: nomeAss }); 
+                       if(resA.sucesso) { 
+                           linksExtra += " [Assinatura: " + resA.url + "]"; 
+                           urlAssinaturaOS = resA.url; 
+                       } 
+                   }
                }
            }
 
@@ -1569,7 +1670,9 @@
                if (pendenteAcao.includes('Fim de Expediente')) {
                    await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + pendenteCliente + " " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc }); 
                }
-               document.getElementById('chkCliente').value = ""; 
+               
+               let elCli = document.getElementById('chkCliente');
+               if(elCli) elCli.value = ""; 
                carregarHistoricoEAtualizarBotoes(usuarioAutenticado); 
            }
 
@@ -1588,9 +1691,16 @@
     }
 
     function enviarSolicitacao() {
-      const tipo = document.getElementById('corrTipo').value; 
-      const dataHora = document.getElementById('corrDataHora').value; 
-      const motivo = document.getElementById('corrMotivo').value;
+      let elTipo = document.getElementById('corrTipo');
+      let elDataHora = document.getElementById('corrDataHora');
+      let elMotivo = document.getElementById('corrMotivo');
+      
+      if(!elTipo || !elDataHora || !elMotivo) return;
+      
+      const tipo = elTipo.value; 
+      const dataHora = elDataHora.value; 
+      const motivo = elMotivo.value;
+      
       if (!dataHora || !motivo) return alert("Preencha a data/hora e o motivo.");
       
       executarComLoader("A enviar pedido...", async () => { 
@@ -1598,7 +1708,7 @@
           if(res.erro) {
               alert(res.erro); 
           } else { 
-              document.getElementById('corrMotivo').value = ""; 
+              elMotivo.value = ""; 
               carregarMeusAjustes(usuarioAutenticado); 
           } 
       });
@@ -1609,7 +1719,7 @@
       callAPI('getRadarEquipa').then(dados => {
          hideLoading(); 
          if (dados.erro || dados.length === 0) { 
-             document.getElementById("areaRadar").innerHTML = "Sem localizações."; 
+             safeSetHTML("areaRadar", "Sem localizações."); 
              return; 
          }
          
@@ -1629,7 +1739,7 @@
              
              html += '<div class="card-radar" style="border-left-color: ' + cor + '"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">' + d.nome + '</strong><small style="color:' + cor + '; font-weight:bold;">' + icon + '</small></div><div style="color:var(--primary); margin-top:4px;">' + d.cliente + '</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">Última ação: ' + d.acao + ' às ' + horaR + '</small>' + linkMapa + '</div></div>'; 
          }); 
-         document.getElementById("areaRadar").innerHTML = html;
+         safeSetHTML("areaRadar", html);
       });
     }
 
@@ -1638,176 +1748,23 @@
          if (!dados.erro && dados.length > 0) { 
              dadosGeralGlobais = dados; 
              const sel = document.getElementById("filtroGeralColab"); 
-             let h = '<option value="TODOS">Todos os Colaboradores</option>'; 
-             
-             [...new Set(dados.map(d => d.nome))].sort().forEach(c => {
-                 h += '<option value="' + c + '">' + c + '</option>';
-             }); 
-             sel.innerHTML = h; 
+             if(sel) {
+                 let h = '<option value="TODOS">Todos os Colaboradores</option>'; 
+                 [...new Set(dados.map(d => d.nome))].sort().forEach(c => {
+                     h += '<option value="' + c + '">' + c + '</option>';
+                 }); 
+                 sel.innerHTML = h; 
+             }
              filtrarGeralPonto(); 
          } else {
-             document.getElementById("tblGeral").innerHTML = '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'; 
+             safeSetHTML("tblGeral", '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'); 
          }
       });
     }
     
     function filtrarGeralPonto() {
-      const filtro = document.getElementById("filtroGeralColab").value; 
-      let filtrados = filtro !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === filtro) : dadosGeralGlobais;
+      let elFiltro = document.getElementById("filtroGeralColab");
+      if(!elFiltro) return;
+      const filtro = elFiltro.value; 
       
-      if (filtrados.length === 0) { 
-          document.getElementById("tblGeral").innerHTML = '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'; 
-          return; 
-      }
-      
-      let html = ""; 
-      [...filtrados].reverse().forEach(d => { 
-          let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><small style="color:var(--accent);">Total: ' + d.total + 'h</small>' : ''; 
-          html += '<tr><td data-label="Data">' + d.dataHora + '</td><td data-label="Colaborador"><strong>' + d.nome + '</strong></td><td data-label="Tipo"><span class="tag-tipo" style="background:#334155; color:#fff">' + d.tipo + '</span></td><td data-label="Resumo">' + (d.obs||'-') + infoExtra + '</td></tr>'; 
-      }); 
-      document.getElementById("tblGeral").innerHTML = html;
-    }
-
-    function exportarGeralPDF() {
-      const filtro = document.getElementById("filtroGeralColab").value; 
-      const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto - Todos" : "Relatório de Ponto - " + filtro; 
-      let janela = window.open('', '', 'width=900,height=700'); 
-      
-      janela.document.write('<html><head><title>' + titulo + '</title><style>body { font-family: sans-serif; padding: 40px; color: #1e293b; background: #fff;} table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; } th { background-color: #f1f5f9; padding: 12px; border-bottom: 2px solid #cbd5e1; } td { padding: 12px; border-bottom: 1px solid #e2e8f0; }</style></head><body><h2>' + titulo + '</h2><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>');
-      
-      let filtrados = filtro !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === filtro) : dadosGeralGlobais;
-      
-      [...filtrados].reverse().forEach(d => { 
-          let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><b>Total do dia: ' + d.total + 'h</b>' : ''; 
-          janela.document.write('<tr><td><strong>' + d.dataHora + '</strong></td><td>' + d.nome + '</td><td>' + d.tipo + '</td><td>' + (d.obs || '-') + infoExtra + '</td></tr>'); 
-      });
-      
-      janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
-      janela.document.close();
-    }
-
-    function carregarAprovacoes() {
-      callAPI('getSolicitacoesPendentes').then(dados => {
-         if (dados.erro || !dados || dados.length === 0) { 
-             document.getElementById("listaAprovacoes").innerHTML = "Nenhuma pendência."; 
-             return; 
-         }
-         let html = ""; 
-         dados.forEach(d => { 
-             let b1 = '<button class="btn-acao" style="background:var(--accent); flex:1;" onclick="julgar(' + d.linha + ', \'Aprovado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Aprovar</button>';
-             let b2 = '<button class="btn-acao" style="background:var(--danger); flex:1;" onclick="julgar(' + d.linha + ', \'Recusado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Recusar</button>';
-             
-             html += '<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px;"><strong style="color:var(--primary); font-size:1.1rem;">' + d.nome + '</strong> pediu <strong>' + d.tipo + '</strong><br><small style="color:var(--text-muted)">Data exata: ' + d.dataCorreta + '</small><br><small style="color:var(--text-muted)">Motivo: ' + d.motivo + '</small><div style="margin-top:14px; display:flex; gap:10px;">' + b1 + b2 + '</div></div>'; 
-         }); 
-         document.getElementById("listaAprovacoes").innerHTML = html;
-      });
-    }
-
-    function julgar(linha, acao, nome, tipo, dataCorreta, motivo) {
-      executarComLoader("A processar julgamento...", async () => { 
-          const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo }); 
-          if(res.erro) alert(res.erro); 
-          else { 
-              exibirMsg("Registado!", false); 
-              carregarAprovacoes(); 
-          } 
-      });
-    }
-
-    const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
-    const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
-    function preencherDia() { 
-        const v = document.getElementById("rotaData").value; 
-        if (!v) return; 
-        const [a, m, d] = v.split("-").map(Number); 
-        document.getElementById("rotaDia").value = DIAS[new Date(a, m - 1, d).getDay()]; 
-    }
-
-    function autoCalcularKM() {
-       const origem = document.getElementById("rotaOrigem").value.trim(); 
-       const destino = document.getElementById("rotaDestino").value.trim();
-       if(!origem || !destino) return alert("Preencha Origem e Destino primeiro.");
-       
-       executarComLoader("A calcular distância via Maps...", async () => { 
-           const res = await callAPI('calcularRotaFrota', { origem: origem, destino: destino }); 
-           if(res.sucesso) { 
-               document.getElementById("rotaKm").value = res.km; 
-               alert("Distância: " + res.km + " km"); 
-           } else alert(res.erro); 
-       });
-    }
-
-    function carregarRotasServidor() {
-      callAPI('getDadosIniciaisRotas').then(res => {
-         if(!res.erro) { 
-             todasRotas = res.lancamentos || []; 
-             const selMes = document.getElementById("filtroMes"); 
-             let vAtual = selMes.value; 
-             let h = '<option value="TODOS">Todos</option>'; 
-             
-             res.mesesDisponiveis.forEach(m => {
-                 h += '<option value="' + m + '">' + m + '</option>';
-             }); 
-             
-             selMes.innerHTML = h; 
-             if(res.mesesDisponiveis.includes(vAtual) || vAtual === 'TODOS') selMes.value = vAtual; 
-             else if(res.mesesDisponiveis.length > 0) selMes.value = res.mesesDisponiveis[res.mesesDisponiveis.length - 1]; 
-             
-             filtrarRotas(); 
-         }
-      });
-    }
-
-    function filtrarRotas() {
-      const tec = document.getElementById("filtroTecnico").value; 
-      const mes = document.getElementById("filtroMes").value;
-      const filtrados = todasRotas.filter(d => (tec === "TODOS" || d.tecnico === tec) && (mes === "TODOS" || d.mes === mes));
-      
-      let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0; 
-      filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
-      
-      const reembolso = (totalKm / 9.4) * 4.5 + totalEstac + totalPedagio - totalDesc;
-      document.getElementById("mKm").innerText = totalKm.toFixed(1); 
-      document.getElementById("mReembolso").innerText = brl(reembolso);
-      
-      let html = ""; 
-      filtrados.reverse().forEach(d => { 
-          let txtCusto = ""; 
-          if(d.estacionamento > 0) txtCusto += "Est: " + brl(d.estacionamento) + "<br>"; 
-          if(d.pedagio > 0) txtCusto += "Ped: " + brl(d.pedagio) + "<br>"; 
-          if(d.desconto > 0) txtCusto += 'Desc: <span style="color:var(--danger)">-' + brl(d.desconto) + '</span>'; 
-          
-          html += '<tr><td data-label="Data"><strong>' + d.data + '</strong><br><small style="color:var(--text-muted)">' + d.dia + '</small></td><td data-label="Trajeto">' + d.origem + ' &rarr; ' + d.destino + '<br><small style="color:var(--accent); font-weight:bold;">' + d.km.toFixed(1) + ' km</small></td><td data-label="Custos">' + (txtCusto||'-') + '</td></tr>'; 
-      });
-      document.getElementById("tblRotas").innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>';
-    }
-
-    function salvarRota(e) {
-      e.preventDefault();
-      executarComLoader("A gravar deslocamento...", async () => {
-         const p = { 
-             tecnico: document.getElementById("rotaTecnico").value, 
-             mes: document.getElementById("rotaMes").value, 
-             data: document.getElementById("rotaData").value, 
-             dia: document.getElementById("rotaDia").value, 
-             origem: document.getElementById("rotaOrigem").value, 
-             destino: document.getElementById("rotaDestino").value, 
-             km: document.getElementById("rotaKm").value, 
-             estacionamento: document.getElementById("rotaEstac").value, 
-             pedagio: document.getElementById("rotaPedagio").value, 
-             desconto: document.getElementById("rotaDesconto").value, 
-             obs: document.getElementById("rotaObs").value 
-         };
-         const res = await callAPI('salvarLancamentoRota', { dadosRota: p });
-         
-         if (res.erro) alert(res.erro); 
-         else { 
-             exibirMsg("Rota registada!", false); 
-             document.getElementById("fRota").reset(); 
-             carregarRotasServidor(); 
-         }
-      });
-    }
-  </script>
-</body>
-</html>
+      let filtrados = filtro !== "TOD
