@@ -1925,7 +1925,7 @@
       let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0; 
       filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
       
-      const reembolso = (totalKm / 9.4) * 4.5 + totalEstac + totalPedagio - totalDesc;
+      const reembolso = (totalKm / 14.0) * 6.5 + totalEstac + totalPedagio - totalDesc;
       safeSetText("mKm", totalKm.toFixed(1)); 
       safeSetText("mReembolso", brl(reembolso));
       
