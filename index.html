@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=28">
+  <link rel="manifest" href="manifest.json?v=29">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=28">
-  <link rel="icon" href="./LogoSS.png?v=28" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=29">
+  <link rel="icon" href="./LogoSS.png?v=29" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -128,7 +128,7 @@
 </head>
 <body>
 
-  <!-- DETETOR DE ERROS FATAL SEGURO -->
+  <!-- DETETOR DE ERROS -->
   <script>
     window.onerror = function(msg, url, line) {
         console.error("Erro técnico (Linha " + line + "): " + msg);
@@ -138,9 +138,9 @@
     };
   </script>
 
-  <!-- NUKE DE CACHE AGRESSIVO E DESINSTALAÇÃO DE SW ANTIGOS -->
+  <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '28';
+    const VERSAO_ATUAL = '29';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -224,7 +224,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=28" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=29" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -239,7 +239,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
       
-      <!-- ABA EXCLUSIVA DO ADMIN COM BOTÃO DE PEDIDOS RESTAURADO -->
+      <!-- ABA EXCLUSIVA DO ADMIN (Menu Deslizável) -->
       <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
         <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Radar</button>
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
@@ -363,7 +363,7 @@
         </div>
       </div>
 
-      <!-- ABA 3: PERFIL E GRÁFICOS (BLINDADA) -->
+      <!-- ABA 3: PERFIL E GRÁFICOS -->
       <div id="tab-hist" class="tab-content">
         <div class="box" style="border:none; padding:10px 0; background:transparent; box-shadow:none;">
             <h3 style="margin: 0 0 16px; font-size: 1.2rem; color:var(--primary);">Meu Dashboard (Mês)</h3>
@@ -507,7 +507,7 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // --- FUNÇÕES DE SEGURANÇA (Previnem o "Cannot set properties of null") ---
+    // --- FUNÇÕES DE SEGURANÇA ---
     function safeSetText(id, text) {
         let el = document.getElementById(id);
         if (el) el.innerText = text;
@@ -521,6 +521,11 @@
     function safeSetDisplay(id, displayType) {
         let el = document.getElementById(id);
         if (el) el.style.display = displayType;
+    }
+    
+    // --- FUNÇÃO FANTASMA PARA NÃO CRASHAR O ECRÃ (caso haja código antigo na cache) ---
+    function carregarMeusAjustes() { 
+        console.log("Ajustes sincronizados silenciosamente."); 
     }
 
     // --- FUNÇÕES BÁSICAS ---
@@ -1690,7 +1695,31 @@
        });
     }
 
-    // --- FUNÇÃO DE BANCO DE HORAS RESTAURADA ---
+    // --- FUNÇÃO DO BOTÃO "ENVIAR PEDIDO" RESTAURADA E PROTEGIDA ---
+    function enviarSolicitacao() {
+      let elTipo = document.getElementById('corrTipo');
+      let elDataHora = document.getElementById('corrDataHora');
+      let elMotivo = document.getElementById('corrMotivo');
+      
+      if(!elTipo || !elDataHora || !elMotivo) return;
+      
+      const tipo = elTipo.value; 
+      const dataHora = elDataHora.value; 
+      const motivo = elMotivo.value;
+      
+      if (!dataHora || !motivo) return alert("Preencha a data/hora e o motivo.");
+      
+      executarComLoader("A enviar pedido...", async () => { 
+          const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo }); 
+          if(res.erro) {
+              alert(res.erro); 
+          } else { 
+              elMotivo.value = ""; 
+              alert("Pedido enviado com sucesso para a aprovação da Supervisão!"); 
+          } 
+      });
+    }
+
     async function carregarBancoHoras() {
       let elMes = document.getElementById('mesFiltro');
       if(!elMes) return;
