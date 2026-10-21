@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=29">
+  <link rel="manifest" href="manifest.json?v=30">
   <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=29">
-  <link rel="icon" href="./LogoSS.png?v=29" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=30">
+  <link rel="icon" href="./LogoSS.png?v=30" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -140,7 +140,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '29';
+    const VERSAO_ATUAL = '30';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -212,6 +212,7 @@
       </div>
       <div style="display:flex; gap:12px; align-items:center;">
          <button class="btn-logout" style="font-size:1.3rem; padding:6px 10px; border:none;" onclick="toggleTema(); hapticFeedback()">🌓</button>
+         <button id="btnForceReload" class="btn-logout" style="font-size:1.1rem; padding:6px 10px;" onclick="forcarAtualizacaoSistema()" title="Forçar Atualização">🔄</button>
          <button id="btnSair" class="btn-logout" style="display:none;" onclick="logout()">Sair</button>
       </div>
     </header>
@@ -224,7 +225,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=29" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=30" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -239,7 +240,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
       
-      <!-- ABA EXCLUSIVA DO ADMIN (Menu Deslizável) -->
+      <!-- ABA EXCLUSIVA DO ADMIN -->
       <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
         <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Radar</button>
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
@@ -523,7 +524,6 @@
         if (el) el.style.display = displayType;
     }
     
-    // --- FUNÇÃO FANTASMA PARA NÃO CRASHAR O ECRÃ (caso haja código antigo na cache) ---
     function carregarMeusAjustes() { 
         console.log("Ajustes sincronizados silenciosamente."); 
     }
@@ -549,6 +549,37 @@
         safeSetDisplay('loaderOverlay', 'none'); 
     }
     
+    // --- FUNÇÃO DO BOTÃO CTRL+F5 / FORÇAR ATUALIZAÇÃO ---
+    async function forcarAtualizacaoSistema() {
+      hapticFeedback();
+      showLoading("A limpar cache e a atualizar...");
+
+      try {
+        if ('serviceWorker' in navigator) {
+          const registrations = await navigator.serviceWorker.getRegistrations();
+          for (const registration of registrations) {
+            await registration.unregister();
+          }
+        }
+
+        if ('caches' in window) {
+          const cacheNames = await caches.keys();
+          for (const name of cacheNames) {
+            await caches.delete(name);
+          }
+        }
+
+        const versaoAtual = parseInt(localStorage.getItem('appVersion') || '0', 10);
+        localStorage.setItem('appVersion', String(versaoAtual + 1));
+
+        const baseUrl = window.location.origin + window.location.pathname;
+        window.location.href = baseUrl + '?t=' + Date.now();
+      } catch (err) {
+        console.error("Falha ao limpar cache:", err);
+        window.location.reload();
+      }
+    }
+
     async function executarComLoader(msg, task) {
        showLoading(msg);
        try { 
@@ -1695,7 +1726,7 @@
        });
     }
 
-    // --- FUNÇÃO DO BOTÃO "ENVIAR PEDIDO" RESTAURADA E PROTEGIDA ---
+    // --- FUNÇÃO DE ENVIAR SOLICITAÇÃO ---
     function enviarSolicitacao() {
       let elTipo = document.getElementById('corrTipo');
       let elDataHora = document.getElementById('corrDataHora');
@@ -1925,7 +1956,7 @@
       let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0; 
       filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
       
-      const reembolso = (totalKm / 14.0) * 6.5 + totalEstac + totalPedagio - totalDesc;
+      const reembolso = (totalKm / 9.4) * 4.5 + totalEstac + totalPedagio - totalDesc;
       safeSetText("mKm", totalKm.toFixed(1)); 
       safeSetText("mReembolso", brl(reembolso));
       
