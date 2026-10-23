@@ -7,29 +7,50 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=30">
-  <meta name="theme-color" content="#0f172a">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=30">
-  <link rel="icon" href="./LogoSS.png?v=30" type="image/png">
+  <link rel="manifest" href="manifest.json?v=31">
+  <meta name="theme-color" content="#0a192f">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=31">
+  <link rel="icon" href="./LogoSS.png?v=31" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
   <style>
-    :root { --bg: #0f172a; --card-bg: #1e293b; --border: #334155; --text: #f8fafc; --text-muted: #94a3b8; --primary: #3b82f6; --accent: #10b981; --warning: #f59e0b; --danger: #ef4444; }
-    [data-theme="light"] { --bg: #f8fafc; --card-bg: #ffffff; --border: #e2e8f0; --text: #0f172a; --text-muted: #64748b; --primary: #2563eb; --accent: #059669; --warning: #d97706; --danger: #dc2626; }
+    /* Cores ajustadas de acordo com a paleta da Logo Services & Solutions */
+    :root { 
+      --bg: #070f1e; 
+      --card-bg: #0d1e36; 
+      --border: #1a365d; 
+      --text: #f0f6fc; 
+      --text-muted: #8ba2c0; 
+      --primary: #0088cc; 
+      --accent: #10b981; 
+      --warning: #f59e0b; 
+      --danger: #ef4444; 
+    }
+    [data-theme="light"] { 
+      --bg: #f4f7fb; 
+      --card-bg: #ffffff; 
+      --border: #d0dbe9; 
+      --text: #070f1e; 
+      --text-muted: #576f8e; 
+      --primary: #0077b6; 
+      --accent: #059669; 
+      --warning: #d97706; 
+      --danger: #dc2626; 
+    }
     
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; transition: background-color 0.3s ease, color 0.3s ease; -webkit-font-smoothing: antialiased; }
     body { background: var(--bg); color: var(--text); padding: env(safe-area-inset-top) 16px env(safe-area-inset-bottom) 16px; -webkit-tap-highlight-color: transparent; overscroll-behavior-y: none; }
     .container { max-width: 800px; margin: 0 auto; display: flex; flex-direction: column; gap: 16px; padding-top: 10px; }
     
     header { display: flex; justify-content: space-between; align-items: center; animation: fadeIn 0.5s ease; padding: 10px 0; }
-    header h2 { font-size: 1.25rem; line-height: 1.2; font-weight: 800; }
+    header h2 { font-size: 1.25rem; line-height: 1.2; font-weight: 800; color: #38bdf8; }
     
     .box { background: var(--card-bg); border: 1px solid var(--border); padding: 20px; border-radius: 16px; margin-bottom: 16px; animation: slideUp 0.4s ease; }
     
     input, select, textarea { background: var(--bg); border: 1px solid var(--border); color: var(--text); padding: 14px; border-radius: 10px; outline: none; width: 100%; font-size: 16px; margin-bottom: 14px; appearance: none; }
     [data-theme="light"] input, [data-theme="light"] select, [data-theme="light"] textarea { background: #f8fafc; border-color: #cbd5e1; }
-    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15); }
+    input:focus, select:focus, textarea:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0, 136, 204, 0.2); }
     label { font-size: 0.85rem; color: var(--text-muted); display: block; margin-bottom: 6px; font-weight: 600; text-transform: uppercase; }
     
     .input-wrapper { position: relative; width: 100%; margin-bottom: 14px; }
@@ -54,23 +75,23 @@
     
     .header-relogio { background: var(--bg); border: 1px solid var(--border); border-radius: 16px; padding: 30px 20px; text-align: center; margin-bottom: 20px; }
     [data-theme="light"] .header-relogio { background: #f8fafc; border: 1px solid #e2e8f0; }
-    #relogio { font-size: 4rem; font-weight: 800; color: var(--primary); letter-spacing: -2px; margin-bottom: 5px; }
+    #relogio { font-size: 4rem; font-weight: 800; color: #38bdf8; letter-spacing: -2px; margin-bottom: 5px; }
     #data-atual { color: var(--text-muted); font-size: 1rem; text-transform: capitalize; font-weight: 500; margin-bottom: 15px; }
     
-    .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #334155; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
-    .aviso-interno { background: rgba(59, 130, 246, 0.1); padding: 16px; text-align: center; border: 1px dashed var(--primary); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: var(--primary); cursor: pointer;}
+    .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #1a365d; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
+    .aviso-interno { background: rgba(0, 136, 204, 0.1); padding: 16px; text-align: center; border: 1px dashed var(--primary); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: #38bdf8; cursor: pointer;}
     
     .tabs { display: flex; background: var(--card-bg); padding: 6px; border-radius: 12px; margin-bottom: 20px; gap: 6px; border: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
     .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 16px; font-size: 0.9rem; font-weight: 700; cursor: pointer; flex: 1; border-radius: 8px; transition: 0.3s; white-space: nowrap; }
-    .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(59, 130, 246, 0.3); }
+    .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3); }
     #abasAdmin { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); }
     #abasAdmin .tab-btn.active { background: var(--warning); color: #000; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
 
     .tab-content { display: none; animation: fadeIn 0.4s ease; } .tab-content.active { display: block; }
     
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; text-align: left; }
-    th { background: rgba(15, 23, 42, 0.5); padding: 14px 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; }
+    th { background: rgba(10, 25, 47, 0.5); padding: 14px 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; }
     [data-theme="light"] th { background: #f1f5f9; color: #475569; }
     td { padding: 16px 12px; border-bottom: 1px solid var(--border); }
     .tag-tipo { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 800; display: inline-block; text-transform: uppercase; }
@@ -92,14 +113,14 @@
     .prioridade-badge { position: absolute; top: 16px; right: 16px; font-size: 0.65rem; font-weight: 900; padding: 4px 10px; border-radius: 20px; text-transform: uppercase; }
     .p-critica { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); animation: pulseRed 2s infinite; }
     .p-alta { background: rgba(249, 115, 22, 0.1); color: #f97316; border: 1px solid rgba(249, 115, 22, 0.2); }
-    .p-normal { background: rgba(59, 130, 246, 0.1); color: #3b82f6; border: 1px solid rgba(59, 130, 246, 0.2); }
+    .p-normal { background: rgba(0, 136, 204, 0.1); color: #38bdf8; border: 1px solid rgba(0, 136, 204, 0.2); }
     .card-itinerario.critica { border-color: rgba(239, 68, 68, 0.3); } .card-itinerario.critica::before { background: #ef4444; width: 8px; }
 
-    #loaderOverlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15,23,42,0.7); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px); animation: fadeIn 0.2s ease; }
+    #loaderOverlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(7,15,30,0.8); z-index:99999; flex-direction:column; justify-content:center; align-items:center; backdrop-filter:blur(5px); animation: fadeIn 0.2s ease; }
     .spinner { width: 50px; height: 50px; border: 4px solid rgba(255,255,255,0.1); border-left-color: var(--primary); border-radius: 50%; animation: spin 1s linear infinite; }
     #loaderMsg { margin-top:20px; color:#fff; font-weight:700; font-size:1.1rem; }
 
-    #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(15, 23, 42, 0.85); z-index:9998; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
+    #modal-overlay { display:none; position:fixed; top:0;left:0;right:0;bottom:0; background:rgba(7, 15, 30, 0.85); z-index:9998; backdrop-filter: blur(5px); animation: fadeIn 0.3s ease; }
     #modal-box { display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:420px; background:var(--card-bg); z-index:9999; padding:24px; border-radius:20px; border:1px solid var(--border); max-height:90vh; overflow-y:auto; animation: zoomIn 0.3s ease; }
     #canvasAssinatura { background:#fff; border:2px dashed #94a3b8; border-radius:12px; width:100%; height:160px; touch-action: none; margin-bottom:10px; }
     
@@ -114,6 +135,7 @@
     @keyframes slideUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes slideDown { from { opacity: 0; transform: translateY(-20px); } to { opacity: 1; transform: translateY(0); } }
     @keyframes zoomIn { from { opacity: 0; transform: translate(-50%, -45%) scale(0.95); } to { opacity: 1; transform: translate(-50%, -50%) scale(1); } }
+    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.4); } 70% { box-shadow: 0 0 0 8px rgba(239, 68, 68, 0); } 100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); } }
 
     @media (max-width: 640px) {
       .form-row { grid-template-columns: 1fr; }
@@ -140,7 +162,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '30';
+    const VERSAO_ATUAL = '31';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -225,8 +247,8 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=30" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
-      <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem;">Acesso ao Portal</h3>
+      <div class="logo-container"><img src="./LogoSS.png?v=31" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
       <button id="btnFazerLogin" class="btn btn-login" style="margin-top:20px;" onclick="fazerLogin(); hapticFeedback()">Entrar no Sistema</button>
@@ -508,30 +530,72 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // --- FUNÇÕES DE SEGURANÇA ---
-    function safeSetText(id, text) {
-        let el = document.getElementById(id);
-        if (el) el.innerText = text;
-    }
-    
-    function safeSetHTML(id, html) {
-        let el = document.getElementById(id);
-        if (el) el.innerHTML = html;
+    // Base de Clientes (mantendo seus endereços originais com coordenadas para a trava de 200m)
+    const baseClientes = {
+      "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013", lat: -22.9135, lng: -43.1878 },
+      "Audicone Contadores": { end: "Não localizamos, contatar supervisão." },
+      "BRJ": { end: "Não localizamos, contatar supervisão." },
+      "Buscharger Midia e Publicidade": { end: "Não localizamos, contatar supervisão." },
+      "CargoFlex": { end: "R. Carvalho de Sá, 436 - Chácaras Rio-Petrópolis, Duque de Caxias - RJ, 25251-600", lat: -22.7214, lng: -43.2987 },
+      "Conficont": { end: "R. Otávio Tarquino, 410 - sala 806/808 - Centro, Nova Iguaçu - RJ, 26210-350", lat: -22.7562, lng: -43.4519 },
+      "Domínio Soluções": { end: "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630", lat: -22.8795, lng: -43.2718 },
+      "Dynamic Services": { end: "Não localizamos, contatar supervisão." },
+      "Eliel Figueiredo": { end: "Não localizamos, contatar supervisão." },
+      "Engesystems": { end: "R. Anequira, 141 - Cordovil, Rio de Janeiro - RJ, 21215-440", lat: -22.8274, lng: -43.2965 },
+      "Exata Contabilidade": { end: "Não localizamos, contatar supervisão." },
+      "Fiamma": { end: "Não localizamos, contatar supervisão." },
+      "ForteMetal": { end: "Não localizamos, contatar supervisão." },
+      "FVC": { end: "Praça Marco Aurélio, 70 - Vila da Penha, Rio de Janeiro - RJ, 21221-260", lat: -22.8465, lng: -43.3082 },
+      "Grupo Mserv": { end: "Não localizamos, contatar supervisão." },
+      "Healingmed": { end: "Não localizamos, contatar supervisão." },
+      "INFOB": { end: "Não localizamos, contatar supervisão." },
+      "Lwart Lubrificantes": { end: "R. Cap. Guynemer, 1625 - Xerém, Duque de Caxias - RJ, 25250-615", lat: -22.5891, lng: -43.3089 },
+      "M Ferreira": { end: "Não localizamos, contatar supervisão." },
+      "MCM TRANSP LOGISTICA LTDA": { end: "Av. Brasil, 420 - Coréia, Mesquita - RJ, 26556-000", lat: -22.7981, lng: -43.4312 },
+      "MILLENNIHUM": { end: "Não localizamos, contatar supervisão." },
+      "MP Master": { end: "Não localizamos, contatar supervisão." },
+      "Nascimento Transportes": { end: "Não localizamos, contatar supervisão." },
+      "Nova A3": { end: "R. da Cevada, 93 - Sl 315 - Penha Circular, Rio de Janeiro - RJ, 21011-080", lat: -22.8336, lng: -43.2847 },
+      "Philos": { end: "Não localizamos, contatar supervisão." },
+      "PlayCity": { end: "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630", lat: -22.8795, lng: -43.2718 },
+      "PROTEC": { end: "Não localizamos, contatar supervisão." },
+      "QTL": { end: "R. do Arroz, 90 - Grupo: 530 a 532 - Penha Circular, Rio de Janeiro - RJ, 21011-070", lat: -22.8341, lng: -43.2852 },
+      "Reis Principe": { end: "Centro Profissional do BarraShopping - Av. das Américas, 4790 - Sl 607 - Barra da Tijuca, RJ", lat: -22.9998, lng: -43.3592 },
+      "Suporte": { end: "" },
+      "YouData": { end: "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904", lat: -23.0018, lng: -43.3184 }
+    };
+
+    // --- CÁLCULO DE HAVERSINE PARA O RAIO DE 200M ---
+    function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
+      const R = 6371e3;
+      const dLat = (lat2 - lat1) * Math.PI / 180;
+      const dLon = (lon2 - lon1) * Math.PI / 180;
+      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
+                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
+                Math.sin(dLon/2) * Math.sin(dLon/2);
+      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
+      return R * c;
     }
 
-    function safeSetDisplay(id, displayType) {
-        let el = document.getElementById(id);
-        if (el) el.style.display = displayType;
+    async function obterPosicaoGPSExata() {
+      return new Promise((resolve, reject) => {
+        if (!navigator.geolocation) return reject(new Error("GPS não suportado"));
+        navigator.geolocation.getCurrentPosition(
+          (pos) => resolve(pos.coords),
+          (err) => reject(err),
+          { enableHighAccuracy: true, timeout: 9000, maximumAge: 0 }
+        );
+      });
     }
-    
-    function carregarMeusAjustes() { 
-        console.log("Ajustes sincronizados silenciosamente."); 
-    }
+
+    // --- FUNÇÕES DE SEGURANÇA ---
+    function safeSetText(id, text) { let el = document.getElementById(id); if (el) el.innerText = text; }
+    function safeSetHTML(id, html) { let el = document.getElementById(id); if (el) el.innerHTML = html; }
+    function safeSetDisplay(id, displayType) { let el = document.getElementById(id); if (el) el.style.display = displayType; }
+    function carregarMeusAjustes() { console.log("Ajustes sincronizados silenciosamente."); }
 
     // --- FUNÇÕES BÁSICAS ---
-    function hapticFeedback() { 
-        if (navigator.vibrate) navigator.vibrate(50); 
-    }
+    function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
 
     function toggleTema() {
       const el = document.documentElement; 
@@ -540,98 +604,43 @@
       localStorage.setItem('ponto_tema', tema);
     }
 
-    function showLoading(msg) {
-        safeSetText('loaderMsg', msg || "A processar...");
-        safeSetDisplay('loaderOverlay', 'flex');
-    }
+    function showLoading(msg) { safeSetText('loaderMsg', msg || "A processar..."); safeSetDisplay('loaderOverlay', 'flex'); }
+    function hideLoading() { safeSetDisplay('loaderOverlay', 'none'); }
     
-    function hideLoading() { 
-        safeSetDisplay('loaderOverlay', 'none'); 
-    }
-    
-    // --- FUNÇÃO DO BOTÃO CTRL+F5 / FORÇAR ATUALIZAÇÃO ---
     async function forcarAtualizacaoSistema() {
       hapticFeedback();
       showLoading("A limpar cache e a atualizar...");
-
       try {
         if ('serviceWorker' in navigator) {
           const registrations = await navigator.serviceWorker.getRegistrations();
-          for (const registration of registrations) {
-            await registration.unregister();
-          }
+          for (const registration of registrations) await registration.unregister();
         }
-
         if ('caches' in window) {
           const cacheNames = await caches.keys();
-          for (const name of cacheNames) {
-            await caches.delete(name);
-          }
+          for (const name of cacheNames) await caches.delete(name);
         }
-
         const versaoAtual = parseInt(localStorage.getItem('appVersion') || '0', 10);
         localStorage.setItem('appVersion', String(versaoAtual + 1));
-
         const baseUrl = window.location.origin + window.location.pathname;
         window.location.href = baseUrl + '?t=' + Date.now();
       } catch (err) {
-        console.error("Falha ao limpar cache:", err);
         window.location.reload();
       }
     }
 
     async function executarComLoader(msg, task) {
        showLoading(msg);
-       try { 
-           await task(); 
-       } catch(e) { 
-           console.error(e); 
-           alert("Erro técnico: " + e.message); 
-       }
+       try { await task(); } catch(e) { console.error(e); alert("Erro técnico: " + e.message); }
        hideLoading();
     }
 
-    let chartMeuDesempenho = null; let chartAdminBanco = null;
-    let usuarioAutenticado = ""; let perfilAutenticado = ""; let statusGlobalPonto = "Saída";
-    let todasRotas = []; let dadosGeralGlobais = []; let notificadoHoje = false;
-    let pendenteCliente = ""; let pendenteAcao = ""; let pendenteLinhaAgenda = null;
-    let currentRating = 0; let tempoInicioExpediente = null;
+    let chartMeuDesempenho = null, chartAdminBanco = null;
+    let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
+    let todasRotas = [], dadosGeralGlobais = [], notificadoHoje = false;
+    let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
+    let currentRating = 0, tempoInicioExpediente = null;
     let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
-    let estoqueGlobal = []; let materiaisUsados = [];
-
-    const baseClientes = {
-      "ABC-TUR": "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013",
-      "Audicone Contadores": "Não localizamos, contatar supervisão.",
-      "BRJ": "Não localizamos, contatar supervisão.",
-      "Buscharger Midia e Publicidade": "Não localizamos, contatar supervisão.",
-      "CargoFlex": "R. Carvalho de Sá, 436 - Chácaras Rio-Petrópolis, Duque de Caxias - RJ, 25251-600",
-      "Conficont": "R. Otávio Tarquino, 410 - sala 806/808 - Centro, Nova Iguaçu - RJ, 26210-350",
-      "Domínio Soluções": "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630",
-      "Dynamic Services": "Não localizamos, contatar supervisão.",
-      "Eliel Figueiredo": "Não localizamos, contatar supervisão.",
-      "Engesystems": "R. Anequira, 141 - Cordovil, Rio de Janeiro - RJ, 21215-440",
-      "Exata Contabilidade": "Não localizamos, contatar supervisão.",
-      "Fiamma": "Não localizamos, contatar supervisão.",
-      "ForteMetal": "Não localizamos, contatar supervisão.",
-      "FVC": "Praça Marco Aurélio, 70 - Vila da Penha, Rio de Janeiro - RJ, 21221-260",
-      "Grupo Mserv": "Não localizamos, contatar supervisão.",
-      "Healingmed": "Não localizamos, contatar supervisão.",
-      "INFOB": "Não localizamos, contatar supervisão.",
-      "Lwart Lubrificantes": "R. Cap. Guynemer, 1625 - Xerém, Duque de Caxias - RJ, 25250-615",
-      "M Ferreira": "Não localizamos, contatar supervisão.",
-      "MCM TRANSP LOGISTICA LTDA": "Av. Brasil, 420 - Coréia, Mesquita - RJ, 26556-000",
-      "MILLENNIHUM": "Não localizamos, contatar supervisão.",
-      "MP Master": "Não localizamos, contatar supervisão.",
-      "Nascimento Transportes": "Não localizamos, contatar supervisão.",
-      "Nova A3": "R. da Cevada, 93 - Sl 315 - Penha Circular, Rio de Janeiro - RJ, 21011-080",
-      "Philos": "Não localizamos, contatar supervisão.",
-      "PlayCity": "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630",
-      "PROTEC": "Não localizamos, contatar supervisão.",
-      "QTL": "R. do Arroz, 90 - Grupo: 530 a 532 - Penha Circular, Rio de Janeiro - RJ, 21011-070",
-      "Reis Principe": "Centro Profissional do BarraShopping - Av. das Américas, 4790 - Sl 607 - Barra da Tijuca, RJ",
-      "Suporte": "",
-      "YouData": "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904"
-    };
+    let estoqueGlobal = [], materiaisUsados = [];
 
     function configAutocomplete(inp, arr) {
       if(!inp) return;
@@ -639,7 +648,6 @@
         closeAllLists();
         if (!val) return; 
         let a = document.createElement("DIV");
-        a.setAttribute("id", inp.id + "autocomplete-list");
         a.setAttribute("class", "autocomplete-items");
         inp.parentNode.appendChild(a);
         
@@ -648,7 +656,6 @@
           if (arr[i].toUpperCase().includes(val.toUpperCase())) {
             let b = document.createElement("DIV");
             let matchIdx = arr[i].toUpperCase().indexOf(val.toUpperCase());
-            
             let startText = arr[i].substring(0, matchIdx);
             let boldText = "<strong>" + arr[i].substring(matchIdx, matchIdx + val.length) + "</strong>";
             let endText = arr[i].substring(matchIdx + val.length);
@@ -663,7 +670,6 @@
                 closeAllLists();
                 if(inp.id === 'itiCliente') autoPreencherEndereco();
             };
-            
             b.addEventListener("mousedown", selectItem);
             b.addEventListener("touchstart", selectItem, {passive: false});
             a.appendChild(b);
@@ -680,14 +686,11 @@
          if(!this.value) { 
             closeAllLists();
             let a = document.createElement("DIV");
-            a.setAttribute("id", inp.id + "autocomplete-list");
             a.setAttribute("class", "autocomplete-items");
             inp.parentNode.appendChild(a);
-            
             for (let i = 0; i < arr.length; i++) {
                let b = document.createElement("DIV");
                b.innerHTML = arr[i] + "<input type='hidden' value='" + arr[i].replace(/'/g, "&#39;") + "'>";
-               
                let selectItem = function(ev) {
                    ev.preventDefault(); 
                    ev.stopPropagation();
@@ -695,7 +698,6 @@
                    closeAllLists();
                    if(inp.id === 'itiCliente') autoPreencherEndereco();
                };
-               
                b.addEventListener("mousedown", selectItem);
                b.addEventListener("touchstart", selectItem, {passive: false});
                a.appendChild(b);
@@ -705,34 +707,21 @@
 
       function closeAllLists(elmnt) {
         let x = document.getElementsByClassName("autocomplete-items");
-        for (let i = 0; i < x.length; i++) { 
-            if (elmnt != x[i] && elmnt != inp) { 
-                x[i].parentNode.removeChild(x[i]); 
-            } 
-        }
+        for (let i = 0; i < x.length; i++) { if (elmnt != x[i] && elmnt != inp) x[i].parentNode.removeChild(x[i]); }
       }
       document.addEventListener("click", function (e) { closeAllLists(e.target); });
-      document.addEventListener("touchstart", function (e) { 
-          if(e.target !== inp && !e.target.closest('.autocomplete-items')) {
-              closeAllLists(e.target); 
-          }
-      }, {passive: true});
+      document.addEventListener("touchstart", function (e) { if(e.target !== inp && !e.target.closest('.autocomplete-items')) closeAllLists(e.target); }, {passive: true});
     }
 
     function autoPreencherEndereco() {
       let elCli = document.getElementById("itiCliente");
       let elEnd = document.getElementById("itiEndereco");
       if(!elCli || !elEnd) return;
-      
       let cli = elCli.value.trim();
-      if(baseClientes[cli] && baseClientes[cli] !== "") {
-          elEnd.value = baseClientes[cli];
-      }
+      if(baseClientes[cli] && baseClientes[cli].end) elEnd.value = baseClientes[cli].end;
     }
 
-    function isSyncable(action) { 
-        return action === 'registrarPonto' || action === 'registrarCheckin'; 
-    }
+    function isSyncable(action) { return action === 'registrarPonto' || action === 'registrarCheckin'; }
 
     async function callAPI(action, payload = {}) {
       payload.action = action;
@@ -764,21 +753,14 @@
       }
     }
 
-    function exibirMsg(msg, isErro) { 
-        hapticFeedback(); 
-        setTimeout(() => alert(msg), 100); 
-    }
+    function exibirMsg(msg, isErro) { hapticFeedback(); setTimeout(() => alert(msg), 100); }
 
     function atualizarBadgeOffline() {
        const badge = document.getElementById('badgeOffline'); 
        const num = document.getElementById('qtdOffline');
        if(badge && num) {
-           if(filaOffline.length > 0) { 
-               badge.style.display = 'block'; 
-               num.innerText = filaOffline.length; 
-           } else { 
-               badge.style.display = 'none'; 
-           }
+           if(filaOffline.length > 0) { badge.style.display = 'block'; num.innerText = filaOffline.length; } 
+           else { badge.style.display = 'none'; }
        }
     }
 
@@ -788,23 +770,14 @@
        let novaFila = [];
        for (let i = 0; i < filaOffline.length; i++) {
           try { 
-              await fetch(API_URL, { 
-                  method: "POST", 
-                  body: JSON.stringify(filaOffline[i]), 
-                  headers: { "Content-Type": "text/plain;charset=utf-8" }
-              }); 
-          } catch(e) { 
-              novaFila.push(filaOffline[i]); 
-          }
+              await fetch(API_URL, { method: "POST", body: JSON.stringify(filaOffline[i]), headers: { "Content-Type": "text/plain;charset=utf-8" } }); 
+          } catch(e) { novaFila.push(filaOffline[i]); }
        }
        filaOffline = novaFila; 
        localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); 
        atualizarBadgeOffline();
        hideLoading();
-       if(filaOffline.length === 0) { 
-           alert("Sincronização offline concluída!"); 
-           carregarHistoricoEAtualizarBotoes(usuarioAutenticado); 
-       }
+       if(filaOffline.length === 0) { alert("Sincronização offline concluída!"); carregarHistoricoEAtualizarBotoes(usuarioAutenticado); }
     }
     
     window.addEventListener('online', sincronizarFila); 
@@ -814,20 +787,15 @@
       return new Promise((resolve) => {
         if (!navigator.geolocation) return resolve("GPS não suportado");
         navigator.geolocation.getCurrentPosition(
-            (pos) => { 
-                let linkMaps = "https://www.google.com/maps/search/?api=1&query=" + pos.coords.latitude + "," + pos.coords.longitude;
-                resolve(linkMaps); 
-            }, 
-            () => { resolve("Sem permissão de GPS"); }, 
+            (pos) => resolve("https://www.google.com/maps/search/?api=1&query=" + pos.coords.latitude + "," + pos.coords.longitude), 
+            () => resolve("Sem permissão de GPS"), 
             { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
         );
       });
     }
 
     window.onload = () => {
-      if(localStorage.getItem('ponto_tema') === 'light') {
-          document.documentElement.setAttribute('data-theme', 'light');
-      }
+      if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
       
       const arrClientes = Object.keys(baseClientes); 
       configAutocomplete(document.getElementById("itiCliente"), arrClientes); 
@@ -835,14 +803,9 @@
       configAutocomplete(document.getElementById("rotaDestino"), arrClientes);
       
       atualizarBadgeOffline();
-      
       let uNome = localStorage.getItem('ponto_auth_nome');
       let uPerfil = localStorage.getItem('ponto_auth_perfil');
-      
-      if (uNome && uPerfil) {
-          entrarNoSistema(uNome, uPerfil);
-      }
-      
+      if (uNome && uPerfil) entrarNoSistema(uNome, uPerfil);
       initAssinatura();
     };
 
@@ -850,17 +813,13 @@
       const uEl = document.getElementById('loginUser'); 
       const sEl = document.getElementById('loginSenha');
       if(!uEl || !sEl) return;
-      
-      const u = uEl.value.trim();
-      const s = sEl.value;
-      
+      const u = uEl.value.trim(), s = sEl.value;
       if(!u || !s) return alert("Preencha utilizador e password.");
       
       executarComLoader("A autenticar...", async () => {
          const res = await callAPI('autenticarUsuario', { login: u, senha: s });
-         if (res.erro) {
-             alert(res.erro);
-         } else { 
+         if (res.erro) alert(res.erro);
+         else { 
              localStorage.setItem('ponto_auth_nome', res.nome); 
              localStorage.setItem('ponto_auth_perfil', res.perfil); 
              entrarNoSistema(res.nome, res.perfil); 
@@ -871,7 +830,6 @@
     function entrarNoSistema(nome, perfil) {
       usuarioAutenticado = nome; 
       perfilAutenticado = perfil; 
-      
       safeSetText('nomeExibicao', nome);
       safeSetDisplay('tela-login', 'none');
       safeSetDisplay('tela-app', 'block');
@@ -881,24 +839,17 @@
           safeSetDisplay('abasAdmin', 'flex');
           safeSetDisplay('areaAtribuirItinerario', 'block');
       }
-      
       if(navigator.onLine) carregarEstoque();
-      
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); 
       carregarHistoricoEAtualizarBotoes(nome); 
       carregarItinerario(true); 
     }
 
-    function logout() { 
-        localStorage.clear(); 
-        sessionStorage.clear(); 
-        location.reload(); 
-    }
+    function logout() { localStorage.clear(); sessionStorage.clear(); location.reload(); }
 
     function abrirAba(id, btn) {
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
-      
       let abaAlvo = document.getElementById(id);
       if(abaAlvo) abaAlvo.classList.add('active'); 
       if(btn) btn.classList.add('active');
@@ -919,43 +870,31 @@
     function parseDataBR(str) { 
         if(!str) return new Date();
         str = str.replace(',', ''); 
-        let p = str.split(" ");
-        let d = p[0].split("/");
-        let h = (p[1]||"00:00:00").split(":"); 
+        let p = str.split(" "), d = p[0].split("/"), h = (p[1]||"00:00:00").split(":"); 
         return new Date(d[2], d[1]-1, d[0], h[0], h[1], h[2]||0); 
     }
-    
     function horasParaMin(hStr) { 
         if(!hStr || hStr==='-' || hStr==='Erro') return 0; 
         let p = String(hStr).replace(/'/g, '').split(':'); 
         return parseInt(p[0]||0)*60 + parseInt(p[1]||0); 
     }
-    
     function minParaHoras(min) { 
         if(min<=0) return "00:00"; 
-        let h=Math.floor(min/60);
-        let m=min%60; 
-        let hTexto = h < 10 ? "0" + h : h;
-        let mTexto = m < 10 ? "0" + m : m;
-        return hTexto + ":" + mTexto; 
+        let h=Math.floor(min/60), m=min%60; 
+        return (h<10?"0"+h:h) + ":" + (m<10?"0"+m:m); 
     }
 
     function getQtdPendenciasAgenda(ignorarLinha = null) {
       const cacheStr = sessionStorage.getItem('cacheAgenda_' + usuarioAutenticado);
       if (!cacheStr) return 0;
-      
       const agendaDia = JSON.parse(cacheStr);
       const hojeStr = new Date().toLocaleDateString('pt-BR');
-      
       let qtd = 0;
-      for(let i = 0; i < agendaDia.length; i++) {
-          let d = agendaDia[i];
+      for(let d of agendaDia) {
           if(d.data === hojeStr && d.linha !== ignorarLinha) {
               if(d.status === 'Em Andamento' || d.status === 'Pendente') {
                   let cLowerCase = d.cliente.toLowerCase();
-                  if(!cLowerCase.includes('base') && !cLowerCase.includes('interno')) {
-                      qtd++;
-                  }
+                  if(!cLowerCase.includes('base') && !cLowerCase.includes('interno')) qtd++;
               }
           }
       }
@@ -1000,23 +939,11 @@
       const mbP = document.getElementById('btnPausaMan');
       const mbR = document.getElementById('btnRetornoMan');
       const mbS = document.getElementById('btnSaidaMan');
-      
       if(mbE) { 
-          mbE.disabled = true; 
-          if(mbP) mbP.disabled = true; 
-          if(mbR) mbR.disabled = true; 
-          if(mbS) mbS.disabled = true; 
-          
-          if (statusGlobalPonto === 'Saída') {
-              mbE.disabled = false; 
-          } else if (statusGlobalPonto === 'Entrada') { 
-              if(mbP) mbP.disabled = false; 
-              if(mbS) mbS.disabled = false; 
-          } else if (statusGlobalPonto === 'Pausa') { 
-              if(mbR) mbR.disabled = false; 
-          } else if (statusGlobalPonto === 'Retorno') { 
-              if(mbS) mbS.disabled = false; 
-          } 
+          mbE.disabled = (statusGlobalPonto !== 'Saída'); 
+          if(mbP) mbP.disabled = (statusGlobalPonto !== 'Entrada'); 
+          if(mbR) mbR.disabled = (statusGlobalPonto !== 'Pausa'); 
+          if(mbS) mbS.disabled = (statusGlobalPonto !== 'Entrada' && statusGlobalPonto !== 'Retorno'); 
       }
 
       const alertaFadiga = document.getElementById('alerta-fadiga');
@@ -1030,37 +957,24 @@
       }
     }
 
-    function baterPontoRapido(tipo) { 
-        hapticFeedback(); 
-        baterPontoManual(tipo, true); 
-    }
+    function baterPontoRapido(tipo) { hapticFeedback(); baterPontoManual(tipo, true); }
 
     function baterPontoManual(tipo, isRapido = false) {
       if (tipo === 'Saída') { 
          let p = getQtdPendenciasAgenda();
-         if (p > 0) return alert("Erro: Tem " + p + " atendimento(s) pendente(s). Conclua-os antes de encerrar o expediente.");
+         if (p > 0) return alert("BLOQUEIO: Você possui " + p + " atendimento(s) em aberto na agenda. Conclua o atendimento no cliente antes de encerrar o expediente.");
          if (!confirm("Deseja encerrar o turno de hoje?")) return; 
       }
       
-      let obs = ""; 
-      let obsEl = document.getElementById("obsManual");
-      if (!isRapido && obsEl) {
-          obs = obsEl.value;
-      }
-      
-      if (tipo === 'Entrada' && !obs) {
-          obs = "Início Manual na Base";
-      }
+      let obs = isRapido ? "" : (document.getElementById("obsManual") ? document.getElementById("obsManual").value : "");
+      if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
       
       executarComLoader("A registar " + tipo + "...", async () => {
          const loc = await obterLocalizacao();
          const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
-         
-         if(obsEl) obsEl.value = "";
-         
-         if(res.erro) {
-             alert(res.erro); 
-         } else { 
+         if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
+         if(res.erro) alert(res.erro); 
+         else { 
              exibirMsg("Ponto registado!", false); 
              carregarHistoricoEAtualizarBotoes(usuarioAutenticado); 
              if (tipo === 'Saída') { 
@@ -1073,74 +987,48 @@
 
     function desenharMeuGrafico(minNormal, minExtra) {
         if (typeof Chart === 'undefined') return; 
-        
         const canvasEl = document.getElementById('meuGrafico');
         if(!canvasEl) return;
-        
         const ctx = canvasEl.getContext('2d');
         if(chartMeuDesempenho) chartMeuDesempenho.destroy();
-        
-        let colorNormal = document.documentElement.getAttribute('data-theme') === 'light' ? '#2563eb' : '#3b82f6';
-        let colorExtra = document.documentElement.getAttribute('data-theme') === 'light' ? '#dc2626' : '#ef4444';
         
         chartMeuDesempenho = new Chart(ctx, { 
             type: 'doughnut', 
             data: { 
                 labels: ['H. Normais', 'H. Extra'], 
-                datasets: [{ 
-                    data: [minNormal, minExtra], 
-                    backgroundColor: [colorNormal, colorExtra], 
-                    borderWidth: 0, 
-                    hoverOffset: 4 
-                }] 
+                datasets: [{ data: [minNormal, minExtra], backgroundColor: ['#0088cc', '#ef4444'], borderWidth: 0, hoverOffset: 4 }] 
             }, 
             options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
-                cutout: '75%', 
-                plugins: { 
-                    legend: { 
-                        position: 'right', 
-                        labels: { color: '#94a3b8', font: { size: 11, weight: 'bold' } } 
-                    } 
-                } 
+                responsive: true, maintainAspectRatio: false, cutout: '75%', 
+                plugins: { legend: { position: 'right', labels: { color: '#8ba2c0', font: { size: 11, weight: 'bold' } } } } 
             } 
         });
     }
 
     function desenharAdminGrafico(dados) {
         if (typeof Chart === 'undefined') return; 
-        
         safeSetDisplay('boxAdminGrafico', 'block');
         const canvasEl = document.getElementById('adminGrafico');
         if(!canvasEl) return;
-        
         const ctx = canvasEl.getContext('2d');
         if(chartAdminBanco) chartAdminBanco.destroy();
-        
-        let labels = dados.map(d => d.nome.split(' ')[0]); 
-        let totais = dados.map(d => horasParaMin(d.total) / 60); 
-        let extras = dados.map(d => horasParaMin(d.extra) / 60);
         
         chartAdminBanco = new Chart(ctx, { 
             type: 'bar', 
             data: { 
-                labels: labels, 
+                labels: dados.map(d => d.nome.split(' ')[0]), 
                 datasets: [ 
-                    { label: 'Horas Normais', data: totais, backgroundColor: '#3b82f6', borderRadius: 4 }, 
-                    { label: 'Horas Extras', data: extras, backgroundColor: '#f59e0b', borderRadius: 4 } 
+                    { label: 'Horas Normais', data: dados.map(d => horasParaMin(d.total) / 60), backgroundColor: '#0088cc', borderRadius: 4 }, 
+                    { label: 'Horas Extras', data: dados.map(d => horasParaMin(d.extra) / 60), backgroundColor: '#f59e0b', borderRadius: 4 } 
                 ] 
             }, 
             options: { 
-                responsive: true, 
-                maintainAspectRatio: false, 
+                responsive: true, maintainAspectRatio: false, 
                 scales: { 
-                    y: { beginAtZero: true, grid: { color: 'rgba(148, 163, 184, 0.1)' }, ticks: { color: '#94a3b8' } }, 
-                    x: { grid: { display: false }, ticks: { color: '#94a3b8' } } 
+                    y: { beginAtZero: true, grid: { color: 'rgba(139, 162, 192, 0.1)' }, ticks: { color: '#8ba2c0' } }, 
+                    x: { grid: { display: false }, ticks: { color: '#8ba2c0' } } 
                 }, 
-                plugins: { 
-                    legend: { labels: { color: '#94a3b8' } } 
-                } 
+                plugins: { legend: { labels: { color: '#8ba2c0' } } } 
             } 
         });
     }
@@ -1148,18 +1036,14 @@
     async function carregarHistoricoEAtualizarBotoes(nome) {
       try {
           const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
-          
           if (dados.erro) {
-              console.error("Erro da API:", dados.erro);
               atualizarRegraBotoes('Saída'); 
               safeSetHTML('status-badge', '⚠️ Erro de Ligação');
               safeSetHTML("tblCorpo", '<tr><td colspan="3" style="text-align:center; color:red;">' + dados.erro + '</td></tr>');
               return;
           }
 
-          let visitasMes = 0; 
-          let minExtra = 0; 
-          let minTotal = 0; 
+          let visitasMes = 0, minExtra = 0, minTotal = 0; 
           let mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'});
           let html = "";
           
@@ -1170,16 +1054,13 @@
                     if(d.tipo === 'Saída' && d.extra && d.extra !== '-') minExtra += horasParaMin(d.extra);
                     if(d.tipo === 'Saída' && d.total && d.total !== '-') minTotal += horasParaMin(d.total);
                  }
-                 
-                 let tagHtml = '<span class="tag-tipo" style="background:#334155; color:#fff">' + (d.tipo || '-') + '</span>';
+                 let tagHtml = '<span class="tag-tipo" style="background:#1a365d; color:#fff">' + (d.tipo || '-') + '</span>';
                  let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><small style="color:var(--accent);">Total: ' + d.total + 'h</small>' : '';
-                 
                  html += '<tr><td data-label="Data/Hora"><strong>' + (d.dataHora || '-') + '</strong></td><td data-label="Ação">' + tagHtml + '</td><td data-label="Obs">' + (d.obs || '-') + infoExtra + '</td></tr>';
               });
           }
           
           safeSetHTML("tblCorpo", html || '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>');
-          
           safeSetText('lblVisitasMes', visitasMes);
           safeSetText('lblTotalMes', minParaHoras(minTotal));
           safeSetText('lblExtraMes', minParaHoras(minExtra));
@@ -1187,23 +1068,17 @@
 
           let lastPonto = 'Saída'; 
           tempoInicioExpediente = null;
-          
           if (Array.isArray(dados) && dados.length > 0) {
               for (let i = dados.length - 1; i >= 0; i--) { 
                   if (dados[i].tipo && ['Entrada', 'Pausa', 'Retorno', 'Saída'].includes(dados[i].tipo)) { 
                       lastPonto = dados[i].tipo; 
-                      if(lastPonto === 'Entrada' && dados[i].dataHora) {
-                          tempoInicioExpediente = parseDataBR(dados[i].dataHora); 
-                      }
+                      if(lastPonto === 'Entrada' && dados[i].dataHora) tempoInicioExpediente = parseDataBR(dados[i].dataHora); 
                       break; 
                   } 
               }
           }
-          
           atualizarRegraBotoes(lastPonto);
-
       } catch (e) {
-          console.error("Erro crítico no carregamento do histórico:", e);
           atualizarRegraBotoes('Saída');
           safeSetHTML('status-badge', '⚠️ Erro no Sistema');
       }
@@ -1212,59 +1087,31 @@
     function toggleRecorrencia() {
        let cb = document.getElementById("itiRecorrente");
        if(!cb) return;
-       const isRec = cb.checked;
-       safeSetDisplay("boxDataUnica", isRec ? "none" : "block");
-       safeSetDisplay("boxDataRecorrente", isRec ? "block" : "none");
+       safeSetDisplay("boxDataUnica", cb.checked ? "none" : "block");
+       safeSetDisplay("boxDataRecorrente", cb.checked ? "block" : "none");
     }
 
     function salvarNovoItinerario() {
-      let elTec = document.getElementById("itiTecnico");
-      let elCli = document.getElementById("itiCliente");
-      let elEnd = document.getElementById("itiEndereco");
-      let elHor = document.getElementById("itiHorario");
-      let elRec = document.getElementById("itiRecorrente");
-      let elPri = document.getElementById("itiPrioridade");
-      
+      let elTec = document.getElementById("itiTecnico"), elCli = document.getElementById("itiCliente"), elEnd = document.getElementById("itiEndereco"), elHor = document.getElementById("itiHorario"), elRec = document.getElementById("itiRecorrente"), elPri = document.getElementById("itiPrioridade");
       if(!elTec || !elCli || !elEnd || !elHor || !elRec || !elPri) return;
 
-      const tec = elTec.value; 
-      const cli = elCli.value.trim(); 
-      const end = elEnd.value.trim(); 
-      const hor = elHor.value;
-      const isRec = elRec.checked; 
-      const pri = elPri.value;
-      
+      const tec = elTec.value, cli = elCli.value.trim(), end = elEnd.value.trim(), hor = elHor.value, isRec = elRec.checked, pri = elPri.value;
       if(!cli || !end || !hor) return alert("Preencha o Local, Endereço e Horário.");
       
       let datas = [];
       if (!isRec) { 
           let elDt = document.getElementById("itiData");
-          if(!elDt) return;
-          let du = elDt.value; 
-          if(!du) return alert("Preencha a data."); 
-          datas.push(du); 
+          if(!elDt || !elDt.value) return alert("Preencha a data."); 
+          datas.push(elDt.value); 
       } else {
-        let elIni = document.getElementById("itiDataIni");
-        let elFim = document.getElementById("itiDataFim");
-        if(!elIni || !elFim) return;
-        
-        let dIni = elIni.value; 
-        let dFim = elFim.value; 
-        
-        if(!dIni || !dFim) return alert("Preencha o período.");
-        
+        let elIni = document.getElementById("itiDataIni"), elFim = document.getElementById("itiDataFim");
+        if(!elIni || !elFim || !elIni.value || !elFim.value) return alert("Preencha o período.");
         let dMarcados = Array.from(document.querySelectorAll('.chk-dia:checked')).map(cb => parseInt(cb.value)); 
         if(dMarcados.length === 0) return alert("Selecione os dias.");
-        
-        let da = new Date(dIni + "T12:00:00"); 
-        let df = new Date(dFim + "T12:00:00"); 
+        let da = new Date(elIni.value + "T12:00:00"), df = new Date(elFim.value + "T12:00:00"); 
         if(da > df) return alert("Data Início maior que Data Fim.");
-        
         while(da <= df) { 
-            if (dMarcados.includes(da.getDay())) { 
-                let dataFormatada = da.getFullYear() + "-" + String(da.getMonth() + 1).padStart(2, '0') + "-" + String(da.getDate()).padStart(2, '0');
-                datas.push(dataFormatada); 
-            } 
+            if (dMarcados.includes(da.getDay())) datas.push(da.toISOString().split('T')[0]); 
             da.setDate(da.getDate() + 1); 
         }
       }
@@ -1272,10 +1119,8 @@
       executarComLoader("A agendar " + datas.length + " compromisso(s)...", async () => {
          const p = datas.map(dt => ({ tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: "", prioridade: pri }));
          const res = await callAPI('addItinerarioMulti', { dadosArray: p });
-         
-         if(res.erro) {
-             alert(res.erro); 
-         } else { 
+         if(res.erro) alert(res.erro); 
+         else { 
              exibirMsg("Agendado!", false); 
              document.getElementById("itiCliente").value = ""; 
              document.getElementById("itiEndereco").value = ""; 
@@ -1287,10 +1132,8 @@
 
     async function carregarItinerario(forcar = false) {
       if(forcar) showLoading("A atualizar agenda...");
-      
       const nomeBusca = perfilAutenticado === 'Admin' ? 'Admin' : usuarioAutenticado;
       const dados = await callAPI('getItinerario', { nome: nomeBusca });
-      
       if(forcar) hideLoading();
       
       if (dados.erro || !dados || dados.length === 0) { 
@@ -1298,8 +1141,8 @@
           return; 
       }
       
+      sessionStorage.setItem('cacheAgenda_' + usuarioAutenticado, JSON.stringify(dados));
       const hojeStr = new Date().toLocaleDateString('pt-BR');
-      
       dados.forEach(d => { 
           let peso = 3; 
           if(d.prioridade === 'Crítica') peso = 0; 
@@ -1307,32 +1150,28 @@
           else if(d.prioridade === 'Baixa') peso = 4; 
           d.pesoPrioridade = peso; 
       });
-      
       dados.sort((a, b) => a.pesoPrioridade - b.pesoPrioridade);
       
       let html = "";
       dados.forEach(d => {
         if (d.status === 'Concluído') return;
-        
         let isPerdida = d.status === 'Perdida'; 
         let isAndamento = d.status === 'Em Andamento'; 
         let isHoje = d.data === hojeStr;
         let corClasse = isPerdida ? 'perdida' : (isAndamento ? 'andamento' : 'pendente');
-        
-        let classPriori = d.prioridade === 'Crítica' ? 'p-critica' : (d.prioridade === 'Alta' ? 'p-alta' : 'p-baixa');
-        let prioridadeHtml = d.prioridade && d.prioridade !== 'Normal' ? '<span class="prioridade-badge ' + classPriori + '">' + d.prioridade + '</span>' : "";
-        
-        let argForcar = "checkinGeolocalizado('" + d.cliente + "', 'Forçar Remoção', " + d.linha + ")";
+        let classPriori = d.prioridade === 'Crítica' ? 'p-critica' : (d.prioridade === 'Alta' ? 'p-alta' : 'p-normal');
+        let prioridadeHtml = '<span class="prioridade-badge ' + classPriori + '">' + (d.prioridade || 'Normal') + '</span>';
+        let argForcar = "checkinGeolocalizado('" + d.cliente + "', 'Forçar Remoção', " + d.linha + ", '" + (d.coordenadas||"") + "')";
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? '<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="' + argForcar + '">✔ Forçar Remoção (Admin)</button>' : '';
         
         let botoesGeo = "";
         if (isPerdida) { 
             botoesGeo = '<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida</span>' + btnConcluirAdmin; 
         } else if (isAndamento) {
-            let argBase = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Base)', " + d.linha + ")";
-            let argProx = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Próx. Cliente)', " + d.linha + ")";
-            let argAusente = "checkinGeolocalizado('" + d.cliente + "', 'Cliente Ausente', " + d.linha + ")";
-            let argFim = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Fim de Expediente)', " + d.linha + ")";
+            let argBase = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Base)', " + d.linha + ", '" + (d.coordenadas||"") + "')";
+            let argProx = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Próx. Cliente)', " + d.linha + ", '" + (d.coordenadas||"") + "')";
+            let argAusente = "checkinGeolocalizado('" + d.cliente + "', 'Cliente Ausente', " + d.linha + ", '" + (d.coordenadas||"") + "')";
+            let argFim = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Fim de Expediente)', " + d.linha + ", '" + (d.coordenadas||"") + "')";
             
             let btnBase = '<button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="' + argBase + '">🏢 P/ Base</button>';
             let btnProx = '<button class="btn-acao" style="background:var(--danger); margin:0;" onclick="' + argProx + '">🚶 P/ Próximo</button>';
@@ -1344,19 +1183,19 @@
             if (!isHoje && perfilAutenticado !== 'Admin') { 
                 botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; 
             } else { 
-                let argCheguei = "checkinGeolocalizado('" + d.cliente + "', 'Cheguei', " + d.linha + ", '" + d.endereco + "')";
-                botoesGeo = '<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="' + argCheguei + '">📍 Cheguei no Local</button>' + btnConcluirAdmin; 
+                let argCheguei = "checkinGeolocalizado('" + d.cliente + "', 'Cheguei', " + d.linha + ", '" + (d.coordenadas||"") + "')";
+                botoesGeo = '<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="' + argCheguei + '">📍 Cheguei no Local (200m)</button>' + btnConcluirAdmin; 
             }
         }
         
         let blocoInfo = '<div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;"><small style="color:var(--text-muted); font-weight:bold;">🕒 ' + d.data + ' às ' + d.horario + ' - <span style="color:var(--text);">' + d.status + '</span></small>' + botoesGeo + '</div>';
-        html += '<div class="card-itinerario ' + corClasse + '">' + prioridadeHtml + '<strong style="font-size:1.2rem;">' + d.cliente + '</strong><br><small style="color:var(--text-muted);">📍 ' + d.endereco + '</small>' + blocoInfo + '</div>';
+        html += '<div class="card-itinerario ' + corClasse + '">' + prioridadeHtml + '<strong style="font-size:1.2rem; color:#38bdf8;">' + d.cliente + '</strong><br><small style="color:var(--text-muted);">📍 ' + d.endereco + '</small>' + blocoInfo + '</div>';
       });
-      
       safeSetHTML("listaItinerario", html || '<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>');
     }
 
-    function checkinGeolocalizado(cliente, tipo, linhaAgenda, enderecoCliente) {
+    // --- BLOQUEIO DE RAIO DE 200 METROS ---
+    async function checkinGeolocalizado(cliente, tipo, linhaAgenda, coordsCadastradas) {
       if (tipo === 'Forçar Remoção') { 
           if(confirm("Remover este compromisso?")) { 
               executarComLoader("A forçar remoção...", async () => { 
@@ -1369,21 +1208,40 @@
       }
       
       if (tipo.includes('Fim de Expediente') && getQtdPendenciasAgenda(linhaAgenda) > 0) {
-          return alert("Erro: Finalize os outros atendimentos da agenda antes de encerrar o expediente.");
+          return alert("BLOQUEIO: Finalize os outros atendimentos da agenda antes de encerrar o expediente.");
       }
       
-      executarComLoader("A validar GPS para " + tipo + "...", async () => {
-         let loc = "Sem GPS"; 
-         try { 
-             const pos = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 8000 })); 
-             loc = "https://www.google.com/maps/search/?api=1&query=" + pos.coords.latitude + "," + pos.coords.longitude; 
-         } catch(e) {}
-         
+      executarComLoader("A validar posição GPS no cliente...", async () => {
+         let coords = null;
+         try {
+             coords = await obterPosicaoGPSExata();
+         } catch(e) {
+             return alert("ERRO: É obrigatório ativar o GPS para registrar chegada ou saída no cliente.");
+         }
+
          let cLimpo = cliente.toLowerCase();
          let ehBase = cLimpo.includes('base') || cLimpo.includes('interno');
+
+         // Verificação de raio de 200 metros
+         let targetLat = null, targetLng = null;
+         if (coordsCadastradas && coordsCadastradas.includes(',')) {
+             let p = coordsCadastradas.split(',');
+             targetLat = parseFloat(p[0]); targetLng = parseFloat(p[1]);
+         } else if (baseClientes[cliente] && baseClientes[cliente].lat) {
+             targetLat = baseClientes[cliente].lat; targetLng = baseClientes[cliente].lng;
+         }
+
+         if (!ehBase && targetLat && targetLng) {
+             let distancia = calcularDistanciaMetros(coords.latitude, coords.longitude, targetLat, targetLng);
+             if (distancia > 200) {
+                 return alert("BLOQUEIO DE LOCALIZAÇÃO: Você está a " + Math.round(distancia) + " metros do cliente. É necessário estar dentro do raio de 200m para bater ponto ou finalizar.");
+             }
+         }
+
+         let locUrl = "https://www.google.com/maps/search/?api=1&query=" + coords.latitude + "," + coords.longitude;
          
          if (ehBase) { 
-             processarVisita(cliente, tipo, linhaAgenda, loc, ""); 
+             processarVisita(cliente, tipo, linhaAgenda, locUrl, ""); 
              return; 
          }
          
@@ -1392,7 +1250,7 @@
              prepararModalAgenda(cliente, tipo, linhaAgenda); 
              return; 
          }
-         processarVisita(cliente, tipo, linhaAgenda, loc, "");
+         processarVisita(cliente, tipo, linhaAgenda, locUrl, "");
       });
     }
 
@@ -1403,11 +1261,10 @@
       if(!cli) return alert("Informe o local avulso.");
       
       if (acao.includes('Fim de Expediente') && getQtdPendenciasAgenda() > 0) {
-          return alert("Erro: Finalize os atendimentos da agenda antes de encerrar o expediente.");
+          return alert("BLOQUEIO: Finalize os atendimentos da agenda antes de encerrar.");
       }
       
       let ehBase = cli.toLowerCase().includes('base') || cli.toLowerCase().includes('interno');
-      
       if(acao.includes('Saí') && !ehBase) { 
           prepararModalAvulso(acao); 
           return; 
@@ -1415,11 +1272,7 @@
       
       executarComLoader("A gravar check-in...", async () => {
          let loc = await obterLocalizacao();
-         let logAcao = acao; 
-         
-         if (ehBase) { 
-             logAcao = acao === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)"; 
-         }
+         let logAcao = ehBase ? (acao === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)") : acao;
          
          await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
          
@@ -1439,25 +1292,19 @@
     async function processarVisita(cliente, tipo, linhaAgenda, loc, linksExtra) {
       let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
       let logAcao = tipo === 'Cliente Ausente' ? "Saí (Ausente)" : tipo;
-      
-      if(ehBase) {
-          logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
-      }
+      if(ehBase) logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
 
       await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       if (tipo === 'Cheguei' && statusGlobalPonto === 'Saída') {
           await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: "Início: " + cliente, nomeColaborador: usuarioAutenticado, localizacao: loc });
       }
-      
       if (linhaAgenda && tipo === 'Cheguei') {
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       }
-      
       if (tipo.includes('Fim de Expediente')) {
           await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim: " + cliente + " " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
       }
-      
       if ((tipo.includes('Saí') || tipo === 'Cliente Ausente') && linhaAgenda) {
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: (tipo === 'Cliente Ausente' ? 'Perdida' : 'Concluído') });
       }
@@ -1475,34 +1322,23 @@
            let sel = document.getElementById('selMaterial'); 
            if(!sel) return;
            sel.innerHTML = '<option value="">Selecionar peça...</option>';
-           res.forEach(item => { 
-               sel.innerHTML += '<option value="' + item.linha + '">' + item.nome + ' (Disp: ' + item.qtd + ')</option>'; 
-           });
+           res.forEach(item => { sel.innerHTML += '<option value="' + item.linha + '">' + item.nome + ' (Disp: ' + item.qtd + ')</option>'; });
        }
     }
 
     function addMaterialUI(e) {
        e.preventDefault(); 
        hapticFeedback(); 
-       const sel = document.getElementById('selMaterial'); 
-       const inputQtd = document.getElementById('qtdMaterial');
+       const sel = document.getElementById('selMaterial'), inputQtd = document.getElementById('qtdMaterial');
        if(!sel || !inputQtd) return;
-       
        const qtd = parseInt(inputQtd.value);
-       
        if(!sel.value || isNaN(qtd) || qtd < 1) return; 
-       
        const item = estoqueGlobal.find(i => i.linha == sel.value); 
-       if(!item) return;
-       
-       if(qtd > item.qtd) {
-           return alert("Estoque insuficiente! Apenas " + item.qtd + " disponíveis.");
-       }
+       if(!item || qtd > item.qtd) return alert("Estoque insuficiente!");
        
        materiaisUsados.push({ linha: item.linha, nome: item.nome, qtdUsada: qtd }); 
        atualizarUI_Materiais(); 
-       sel.value = ""; 
-       inputQtd.value = "1";
+       sel.value = ""; inputQtd.value = "1";
     }
     
     function atualizarUI_Materiais() {
@@ -1513,35 +1349,25 @@
            ul.innerHTML += '<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:var(--card-bg); padding:8px; border-radius:6px; border:1px solid var(--border);"><span><strong>' + m.qtdUsada + 'x</strong> ' + m.nome + '</span> <span style="color:var(--danger); cursor:pointer; font-weight:bold; font-size:1.1rem;" onclick="removeMaterial(' + idx + ')">✖</span></li>'; 
        });
     }
-    
-    function removeMaterial(idx) { 
-        materiaisUsados.splice(idx, 1); 
-        atualizarUI_Materiais(); 
-    }
+    function removeMaterial(idx) { materiaisUsados.splice(idx, 1); atualizarUI_Materiais(); }
 
     function prepararModalAgenda(cliente, acao, linha) { 
-        pendenteCliente = cliente; 
-        pendenteAcao = acao; 
-        pendenteLinhaAgenda = linha; 
-        
+        pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; 
         let elObs = document.getElementById('txtObservacaoOS');
         if(elObs) elObs.value = ""; 
-        
-        materiaisUsados = []; 
-        atualizarUI_Materiais(); 
+        materiaisUsados = []; atualizarUI_Materiais(); 
         
         let showOS = (acao.includes('Saí') && acao !== 'Cliente Ausente'); 
         safeSetDisplay('box-os', showOS ? 'block' : 'none');
         safeSetDisplay('box-materiais', showOS ? 'block' : 'none');
         safeSetDisplay('box-avaliacao', showOS ? 'block' : 'none');
         safeSetDisplay('box-assinatura', (acao === 'Cliente Ausente') ? 'none' : 'block');
-        safeSetText('lblFoto', (acao === 'Cliente Ausente') ? '📸 Tirar Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)');
+        safeSetText('lblFoto', (acao === 'Cliente Ausente') ? '📸 Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)');
         safeSetText('modalTitulo', (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar e Gerar OS');
         
         setRating(0); 
         safeSetDisplay('modal-overlay', 'block');
         safeSetDisplay('modal-box', 'block');
-        
         limparAssinatura(); 
         let elFoto = document.getElementById('fotoVisita');
         if(elFoto) elFoto.value = ""; 
@@ -1549,19 +1375,11 @@
     
     function prepararModalAvulso(acao) { 
         let elCli = document.getElementById('chkCliente');
-        if(!elCli) return;
-        const cli = elCli.value.trim(); 
-        if(!cli) return alert("Local avulso vazio."); 
-        
-        pendenteCliente = cli; 
-        pendenteAcao = acao; 
-        pendenteLinhaAgenda = null; 
-        
+        if(!elCli || !elCli.value.trim()) return alert("Local avulso vazio."); 
+        pendenteCliente = elCli.value.trim(); pendenteAcao = acao; pendenteLinhaAgenda = null; 
         let elObs = document.getElementById('txtObservacaoOS');
         if(elObs) elObs.value = ""; 
-        
-        materiaisUsados = []; 
-        atualizarUI_Materiais(); 
+        materiaisUsados = []; atualizarUI_Materiais(); 
         
         safeSetDisplay('box-os', 'block');
         safeSetDisplay('box-materiais', 'block');
@@ -1573,26 +1391,19 @@
         setRating(0); 
         safeSetDisplay('modal-overlay', 'block');
         safeSetDisplay('modal-box', 'block');
-        
         limparAssinatura(); 
         let elFoto = document.getElementById('fotoVisita');
         if(elFoto) elFoto.value = "";  
     }
     
-    function fecharModal() { 
-        safeSetDisplay('modal-overlay', 'none');
-        safeSetDisplay('modal-box', 'none');
-    }
+    function fecharModal() { safeSetDisplay('modal-overlay', 'none'); safeSetDisplay('modal-box', 'none'); }
     
     function setRating(v) { 
         currentRating = v; 
         const container = document.getElementById('starContainer');
         if(!container) return;
         const stars = container.children; 
-        for(let i=0; i<5; i++) { 
-            if(i<v) stars[i].classList.add('ativo'); 
-            else stars[i].classList.remove('ativo'); 
-        } 
+        for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); } 
     }
     
     let canvas, ctx, assinando = false;
@@ -1600,69 +1411,39 @@
        canvas = document.getElementById('canvasAssinatura'); 
        if(!canvas) return;
        ctx = canvas.getContext('2d');
-       
        const startPos = (e) => { assinando = true; desenhar(e); }; 
        const endPos = () => { assinando = false; ctx.beginPath(); };
-       
        const desenhar = (e) => { 
            if(!assinando) return; 
            e.preventDefault(); 
            const rect = canvas.getBoundingClientRect(); 
            const x = (e.clientX || e.touches[0].clientX) - rect.left; 
            const y = (e.clientY || e.touches[0].clientY) - rect.top; 
-           ctx.lineWidth = 2; 
-           ctx.lineCap = 'round'; 
-           ctx.lineTo(x, y); 
-           ctx.stroke(); 
-           ctx.beginPath(); 
-           ctx.moveTo(x, y); 
+           ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); 
        };
-       
-       canvas.addEventListener('mousedown', startPos); 
-       canvas.addEventListener('mouseup', endPos); 
-       canvas.addEventListener('mousemove', desenhar);
-       canvas.addEventListener('touchstart', startPos, {passive:false}); 
-       canvas.addEventListener('touchend', endPos); 
-       canvas.addEventListener('touchmove', desenhar, {passive:false});
+       canvas.addEventListener('mousedown', startPos); canvas.addEventListener('mouseup', endPos); canvas.addEventListener('mousemove', desenhar);
+       canvas.addEventListener('touchstart', startPos, {passive:false}); canvas.addEventListener('touchend', endPos); canvas.addEventListener('touchmove', desenhar, {passive:false});
     }
-    
-    function limparAssinatura() { 
-        if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); 
-    }
+    function limparAssinatura() { if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); }
 
     function enviarComprovativoEFechar() {
        const fotoInput = document.getElementById('fotoVisita'); 
-       let textoOS = "";
-       let elObs = document.getElementById('txtObservacaoOS');
-       if(elObs) textoOS = elObs.value.trim();
-       
+       let textoOS = document.getElementById('txtObservacaoOS') ? document.getElementById('txtObservacaoOS').value.trim() : "";
        if (pendenteAcao === 'Cliente Ausente' && (!fotoInput || !fotoInput.files || !fotoInput.files[0])) {
            return alert("A foto do local é obrigatória para registar ausência.");
        }
-       
        fecharModal();
        
        executarComLoader("A gerar OS e concluir...", async () => {
            let linksExtra = ""; 
            let urlAssinaturaOS = "";
-           
-           if(currentRating > 0) {
-               linksExtra += " [Avaliação: " + currentRating + "⭐]";
-           }
-           if(materiaisUsados.length > 0) {
-               linksExtra += " [Materiais Usados: " + materiaisUsados.length + "]";
-           }
+           if(currentRating > 0) linksExtra += " [Avaliação: " + currentRating + "⭐]";
+           if(materiaisUsados.length > 0) linksExtra += " [Materiais Usados: " + materiaisUsados.length + "]";
 
            if (fotoInput && fotoInput.files && fotoInput.files[0]) {
                const reader = new FileReader(); 
-               const fotoResult = await new Promise((res) => { 
-                   reader.onload = (e) => res(e.target.result); 
-                   reader.readAsDataURL(fotoInput.files[0]); 
-               });
-               
-               if(!navigator.onLine) { 
-                   linksExtra += " [Foto pendente]"; 
-               } else { 
+               const fotoResult = await new Promise((res) => { reader.onload = (e) => res(e.target.result); reader.readAsDataURL(fotoInput.files[0]); });
+               if(navigator.onLine) { 
                    let nomeFoto = "Foto_" + pendenteCliente + "_" + Date.now() + ".jpg";
                    const resF = await callAPI('uploadComprovativo', { base64: fotoResult, nomeArquivo: nomeFoto }); 
                    if(resF.sucesso) linksExtra += " [Foto: " + resF.url + "]"; 
@@ -1671,42 +1452,23 @@
            
            if(canvas) {
                const blank = document.createElement('canvas'); 
-               blank.width = canvas.width; 
-               blank.height = canvas.height;
-               
-               if (canvas.toDataURL() !== blank.toDataURL() && pendenteAcao !== 'Cliente Ausente') {
-                   if(!navigator.onLine) { 
-                       linksExtra += " [Assinatura pendente]"; 
-                   } else { 
-                       let nomeAss = "Assinatura_" + pendenteCliente + "_" + Date.now() + ".png";
-                       const resA = await callAPI('uploadComprovativo', { base64: canvas.toDataURL('image/png'), nomeArquivo: nomeAss }); 
-                       if(resA.sucesso) { 
-                           linksExtra += " [Assinatura: " + resA.url + "]"; 
-                           urlAssinaturaOS = resA.url; 
-                       } 
-                   }
+               blank.width = canvas.width; blank.height = canvas.height;
+               if (canvas.toDataURL() !== blank.toDataURL() && pendenteAcao !== 'Cliente Ausente' && navigator.onLine) { 
+                   let nomeAss = "Assinatura_" + pendenteCliente + "_" + Date.now() + ".png";
+                   const resA = await callAPI('uploadComprovativo', { base64: canvas.toDataURL('image/png'), nomeArquivo: nomeAss }); 
+                   if(resA.sucesso) { linksExtra += " [Assinatura: " + resA.url + "]"; urlAssinaturaOS = resA.url; } 
                }
            }
-
-           if(textoOS) {
-               linksExtra += " | OS: " + textoOS;
-           }
+           if(textoOS) linksExtra += " | OS: " + textoOS;
            
-           let loc = "Sem GPS"; 
-           try { 
-               const posObj = await new Promise((res, rej) => navigator.geolocation.getCurrentPosition(res, rej, { enableHighAccuracy: true, timeout: 8000 })); 
-               loc = "https://www.google.com/maps/search/?api=1&query=" + posObj.coords.latitude + "," + posObj.coords.longitude; 
-           } catch(e) {}
-           
+           let loc = await obterLocalizacao();
            if (pendenteLinhaAgenda) { 
                await processarVisita(pendenteCliente, pendenteAcao, pendenteLinhaAgenda, loc, linksExtra); 
            } else { 
                await callAPI('registrarCheckin', { cliente: pendenteCliente, acao: pendenteAcao, observacao: "Visita Avulsa" + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc }); 
-               
                if (pendenteAcao.includes('Fim de Expediente')) {
                    await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + pendenteCliente + " " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc }); 
                }
-               
                let elCli = document.getElementById('chkCliente');
                if(elCli) elCli.value = ""; 
                carregarHistoricoEAtualizarBotoes(usuarioAutenticado); 
@@ -1715,8 +1477,7 @@
            if (pendenteAcao !== 'Cliente Ausente' && navigator.onLine) {
                let dataAgoraLimpa = new Date().toLocaleString('pt-BR').replace(',', '');
                let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: dataAgoraLimpa, materiais: materiaisUsados });
-               
-               if(osRes.sucesso) { 
+               if(osRes && osRes.sucesso) { 
                    let textoUrl = "Olá! Segue a Ordem de Serviço:\n\n📄 Visualizar Relatório: " + osRes.url;
                    let wppLink = "https://api.whatsapp.com/send?text=" + encodeURIComponent(textoUrl);
                    setTimeout(() => window.open(wppLink, '_blank'), 1500); 
@@ -1726,25 +1487,15 @@
        });
     }
 
-    // --- FUNÇÃO DE ENVIAR SOLICITAÇÃO ---
     function enviarSolicitacao() {
-      let elTipo = document.getElementById('corrTipo');
-      let elDataHora = document.getElementById('corrDataHora');
-      let elMotivo = document.getElementById('corrMotivo');
-      
+      let elTipo = document.getElementById('corrTipo'), elDataHora = document.getElementById('corrDataHora'), elMotivo = document.getElementById('corrMotivo');
       if(!elTipo || !elDataHora || !elMotivo) return;
-      
-      const tipo = elTipo.value; 
-      const dataHora = elDataHora.value; 
-      const motivo = elMotivo.value;
-      
-      if (!dataHora || !motivo) return alert("Preencha a data/hora e o motivo.");
+      if (!elDataHora.value || !elMotivo.value) return alert("Preencha a data/hora e o motivo.");
       
       executarComLoader("A enviar pedido...", async () => { 
-          const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: tipo, dataHoraCorreta: dataHora, motivo: motivo }); 
-          if(res.erro) {
-              alert(res.erro); 
-          } else { 
+          const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: elTipo.value, dataHoraCorreta: elDataHora.value, motivo: elMotivo.value }); 
+          if(res.erro) alert(res.erro); 
+          else { 
               elMotivo.value = ""; 
               alert("Pedido enviado com sucesso para a aprovação da Supervisão!"); 
           } 
@@ -1755,7 +1506,7 @@
       let elMes = document.getElementById('mesFiltro');
       if(!elMes) return;
       const mesAno = elMes.value.trim(); 
-      if(!mesAno || mesAno.length !== 7) return alert("Utilize o formato MM/YYYY (ex: 09/2026)");
+      if(!mesAno || mesAno.length !== 7) return alert("Utilize o formato MM/YYYY (ex: 10/2026)");
       
       executarComLoader("A consolidar horas...", async () => {
          const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
@@ -1781,22 +1532,11 @@
              safeSetHTML("areaRadar", "Sem localizações."); 
              return; 
          }
-         
          let html = ""; 
          dados.forEach(d => { 
-             let cor = (d.acao === 'Entrada' || d.acao === 'Retorno' || d.acao === 'Cheguei') ? 'var(--accent)' : (d.acao === 'Pausa' ? 'var(--warning)' : 'var(--danger)'); 
-             let icon = (d.acao === 'Entrada' || d.acao === 'Retorno') ? '📍 No Ponto' : (d.acao === 'Pausa' ? '⏸ Em Pausa' : (d.acao === 'Cheguei' ? '📍 No Cliente' : '🚗 Em Trânsito / Fim')); 
-             
-             let linkMapa = "";
-             if (d.localizacao && d.localizacao.startsWith('http')) {
-                 linkMapa = '<a href="' + d.localizacao + '" target="_blank" style="color:var(--primary); font-size:0.8rem; border:1px solid var(--primary); padding:4px 8px; border-radius:6px; text-decoration:none;">🧭 Ver no Mapa</a>';
-             } else {
-                 linkMapa = '<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>';
-             }
-             
+             let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) ? '<a href="' + d.localizacao + '" target="_blank" style="color:var(--primary); font-size:0.8rem; border:1px solid var(--primary); padding:4px 8px; border-radius:6px; text-decoration:none;">🧭 Ver no Mapa</a>' : '<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>';
              let horaR = d.dataHora.split(' ')[1] || d.dataHora;
-             
-             html += '<div class="card-radar" style="border-left-color: ' + cor + '"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">' + d.nome + '</strong><small style="color:' + cor + '; font-weight:bold;">' + icon + '</small></div><div style="color:var(--primary); margin-top:4px;">' + d.cliente + '</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">Última ação: ' + d.acao + ' às ' + horaR + '</small>' + linkMapa + '</div></div>'; 
+             html += '<div class="card-radar" style="border-left-color: var(--primary)"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">' + d.nome + '</strong><small style="color:var(--primary); font-weight:bold;">' + d.acao + '</small></div><div style="color:var(--primary); margin-top:4px;">' + d.cliente + '</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">' + horaR + '</small>' + linkMapa + '</div></div>'; 
          }); 
          safeSetHTML("areaRadar", html);
       });
@@ -1809,9 +1549,7 @@
              const sel = document.getElementById("filtroGeralColab"); 
              if(sel) {
                  let h = '<option value="TODOS">Todos os Colaboradores</option>'; 
-                 [...new Set(dados.map(d => d.nome))].sort().forEach(c => {
-                     h += '<option value="' + c + '">' + c + '</option>';
-                 }); 
+                 [...new Set(dados.map(d => d.nome))].sort().forEach(c => { h += '<option value="' + c + '">' + c + '</option>'; }); 
                  sel.innerHTML = h; 
              }
              filtrarGeralPonto(); 
@@ -1824,19 +1562,15 @@
     function filtrarGeralPonto() {
       let elFiltro = document.getElementById("filtroGeralColab");
       if(!elFiltro) return;
-      const filtro = elFiltro.value; 
-      
-      let filtrados = filtro !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === filtro) : dadosGeralGlobais;
-      
+      let filtrados = elFiltro.value !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === elFiltro.value) : dadosGeralGlobais;
       if (filtrados.length === 0) { 
           safeSetHTML("tblGeral", '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'); 
           return; 
       }
-      
       let html = ""; 
       [...filtrados].reverse().forEach(d => { 
           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><small style="color:var(--accent);">Total: ' + d.total + 'h</small>' : ''; 
-          html += '<tr><td data-label="Data">' + d.dataHora + '</td><td data-label="Colaborador"><strong>' + d.nome + '</strong></td><td data-label="Tipo"><span class="tag-tipo" style="background:#334155; color:#fff">' + d.tipo + '</span></td><td data-label="Resumo">' + (d.obs||'-') + infoExtra + '</td></tr>'; 
+          html += '<tr><td data-label="Data">' + d.dataHora + '</td><td data-label="Colaborador"><strong>' + d.nome + '</strong></td><td data-label="Tipo"><span class="tag-tipo" style="background:#1a365d; color:#fff">' + d.tipo + '</span></td><td data-label="Resumo">' + (d.obs||'-') + infoExtra + '</td></tr>'; 
       }); 
       safeSetHTML("tblGeral", html);
     }
@@ -1844,19 +1578,14 @@
     function exportarGeralPDF() {
       let elFiltro = document.getElementById("filtroGeralColab");
       if(!elFiltro) return;
-      const filtro = elFiltro.value; 
-      const titulo = filtro === "TODOS" ? "Relatório Geral de Ponto - Todos" : "Relatório de Ponto - " + filtro; 
+      const titulo = elFiltro.value === "TODOS" ? "Relatório Geral de Ponto - Todos" : "Relatório de Ponto - " + elFiltro.value; 
       let janela = window.open('', '', 'width=900,height=700'); 
-      
-      janela.document.write('<html><head><title>' + titulo + '</title><style>body { font-family: sans-serif; padding: 40px; color: #1e293b; background: #fff;} table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; } th { background-color: #f1f5f9; padding: 12px; border-bottom: 2px solid #cbd5e1; } td { padding: 12px; border-bottom: 1px solid #e2e8f0; }</style></head><body><h2>' + titulo + '</h2><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>');
-      
-      let filtrados = filtro !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === filtro) : dadosGeralGlobais;
-      
+      janela.document.write('<html><head><title>' + titulo + '</title><style>body { font-family: sans-serif; padding: 40px; color: #070f1e; background: #fff;} table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; } th { background-color: #f1f5f9; padding: 12px; border-bottom: 2px solid #cbd5e1; } td { padding: 12px; border-bottom: 1px solid #e2e8f0; }</style></head><body><h2>' + titulo + '</h2><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>');
+      let filtrados = elFiltro.value !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === elFiltro.value) : dadosGeralGlobais;
       [...filtrados].reverse().forEach(d => { 
           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><b>Total do dia: ' + d.total + 'h</b>' : ''; 
           janela.document.write('<tr><td><strong>' + d.dataHora + '</strong></td><td>' + d.nome + '</td><td>' + d.tipo + '</td><td>' + (d.obs || '-') + infoExtra + '</td></tr>'); 
       });
-      
       janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
       janela.document.close();
     }
@@ -1871,7 +1600,6 @@
          dados.forEach(d => { 
              let b1 = '<button class="btn-acao" style="background:var(--accent); flex:1;" onclick="julgar(' + d.linha + ', \'Aprovado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Aprovar</button>';
              let b2 = '<button class="btn-acao" style="background:var(--danger); flex:1;" onclick="julgar(' + d.linha + ', \'Recusado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Recusar</button>';
-             
              html += '<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px;"><strong style="color:var(--primary); font-size:1.1rem;">' + d.nome + '</strong> pediu <strong>' + d.tipo + '</strong><br><small style="color:var(--text-muted)">Data exata: ' + d.dataCorreta + '</small><br><small style="color:var(--text-muted)">Motivo: ' + d.motivo + '</small><div style="margin-top:14px; display:flex; gap:10px;">' + b1 + b2 + '</div></div>'; 
          }); 
          safeSetHTML("listaAprovacoes", html);
@@ -1882,37 +1610,24 @@
       executarComLoader("A processar julgamento...", async () => { 
           const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo }); 
           if(res.erro) alert(res.erro); 
-          else { 
-              exibirMsg("Registado!", false); 
-              carregarAprovacoes(); 
-          } 
+          else { exibirMsg("Registado!", false); carregarAprovacoes(); } 
       });
     }
 
     const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
     const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
     function preencherDia() { 
-        let elData = document.getElementById("rotaData");
-        let elDia = document.getElementById("rotaDia");
-        if(!elData || !elDia) return;
-        
-        const v = elData.value; 
-        if (!v) return; 
-        const [a, m, d] = v.split("-").map(Number); 
+        let elData = document.getElementById("rotaData"), elDia = document.getElementById("rotaDia");
+        if (!elData || !elDia || !elData.value) return; 
+        const [a, m, d] = elData.value.split("-").map(Number); 
         elDia.value = DIAS[new Date(a, m - 1, d).getDay()]; 
     }
 
     function autoCalcularKM() {
-       let elOri = document.getElementById("rotaOrigem");
-       let elDest = document.getElementById("rotaDestino");
-       if(!elOri || !elDest) return;
-       
-       const origem = elOri.value.trim(); 
-       const destino = elDest.value.trim();
-       if(!origem || !destino) return alert("Preencha Origem e Destino primeiro.");
-       
+       let elOri = document.getElementById("rotaOrigem"), elDest = document.getElementById("rotaDestino");
+       if(!elOri || !elDest || !elOri.value.trim() || !elDest.value.trim()) return alert("Preencha Origem e Destino primeiro.");
        executarComLoader("A calcular distância via Maps...", async () => { 
-           const res = await callAPI('calcularRotaFrota', { origem: origem, destino: destino }); 
+           const res = await callAPI('calcularRotaFrota', { origem: elOri.value.trim(), destino: elDest.value.trim() }); 
            if(res.sucesso) { 
                let elKm = document.getElementById("rotaKm");
                if(elKm) elKm.value = res.km; 
@@ -1927,32 +1642,21 @@
              todasRotas = res.lancamentos || []; 
              const selMes = document.getElementById("filtroMes"); 
              if(!selMes) return;
-             
              let vAtual = selMes.value; 
              let h = '<option value="TODOS">Todos</option>'; 
-             
-             res.mesesDisponiveis.forEach(m => {
-                 h += '<option value="' + m + '">' + m + '</option>';
-             }); 
-             
+             res.mesesDisponiveis.forEach(m => { h += '<option value="' + m + '">' + m + '</option>'; }); 
              selMes.innerHTML = h; 
              if(res.mesesDisponiveis.includes(vAtual) || vAtual === 'TODOS') selMes.value = vAtual; 
              else if(res.mesesDisponiveis.length > 0) selMes.value = res.mesesDisponiveis[res.mesesDisponiveis.length - 1]; 
-             
              filtrarRotas(); 
          }
       });
     }
 
     function filtrarRotas() {
-      let elTec = document.getElementById("filtroTecnico");
-      let elMes = document.getElementById("filtroMes");
+      let elTec = document.getElementById("filtroTecnico"), elMes = document.getElementById("filtroMes");
       if(!elTec || !elMes) return;
-      
-      const tec = elTec.value; 
-      const mes = elMes.value;
-      const filtrados = todasRotas.filter(d => (tec === "TODOS" || d.tecnico === tec) && (mes === "TODOS" || d.mes === mes));
-      
+      const filtrados = todasRotas.filter(d => (elTec.value === "TODOS" || d.tecnico === elTec.value) && (elMes.value === "TODOS" || d.mes === elMes.value));
       let totalKm = 0, totalEstac = 0, totalPedagio = 0, totalDesc = 0; 
       filtrados.forEach(d => { totalKm += d.km; totalEstac += d.estacionamento; totalPedagio += d.pedagio; totalDesc += d.desconto; });
       
@@ -1966,7 +1670,6 @@
           if(d.estacionamento > 0) txtCusto += "Est: " + brl(d.estacionamento) + "<br>"; 
           if(d.pedagio > 0) txtCusto += "Ped: " + brl(d.pedagio) + "<br>"; 
           if(d.desconto > 0) txtCusto += 'Desc: <span style="color:var(--danger)">-' + brl(d.desconto) + '</span>'; 
-          
           html += '<tr><td data-label="Data"><strong>' + d.data + '</strong><br><small style="color:var(--text-muted)">' + d.dia + '</small></td><td data-label="Trajeto">' + d.origem + ' &rarr; ' + d.destino + '<br><small style="color:var(--accent); font-weight:bold;">' + d.km.toFixed(1) + ' km</small></td><td data-label="Custos">' + (txtCusto||'-') + '</td></tr>'; 
       });
       safeSetHTML("tblRotas", html || '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>');
@@ -1974,37 +1677,16 @@
 
     function salvarRota(e) {
       e.preventDefault();
-      
-      let elTec = document.getElementById("rotaTecnico");
-      let elMes = document.getElementById("rotaMes");
-      let elData = document.getElementById("rotaData");
-      let elDia = document.getElementById("rotaDia");
-      let elOri = document.getElementById("rotaOrigem");
-      let elDest = document.getElementById("rotaDestino");
-      let elKm = document.getElementById("rotaKm");
-      let elEst = document.getElementById("rotaEstac");
-      let elPed = document.getElementById("rotaPedagio");
-      let elDesc = document.getElementById("rotaDesconto");
-      let elObs = document.getElementById("rotaObs");
-      
+      let elTec = document.getElementById("rotaTecnico"), elMes = document.getElementById("rotaMes"), elData = document.getElementById("rotaData"), elDia = document.getElementById("rotaDia"), elOri = document.getElementById("rotaOrigem"), elDest = document.getElementById("rotaDestino"), elKm = document.getElementById("rotaKm"), elEst = document.getElementById("rotaEstac"), elPed = document.getElementById("rotaPedagio"), elDesc = document.getElementById("rotaDesconto"), elObs = document.getElementById("rotaObs");
       if(!elTec || !elMes || !elData || !elDia || !elOri || !elDest || !elKm || !elEst || !elPed || !elDesc || !elObs) return;
 
       executarComLoader("A gravar deslocamento...", async () => {
          const p = { 
-             tecnico: elTec.value, 
-             mes: elMes.value, 
-             data: elData.value, 
-             dia: elDia.value, 
-             origem: elOri.value, 
-             destino: elDest.value, 
-             km: elKm.value, 
-             estacionamento: elEst.value, 
-             pedagio: elPed.value, 
-             desconto: elDesc.value, 
-             obs: elObs.value 
+             tecnico: elTec.value, mes: elMes.value, data: elData.value, dia: elDia.value, 
+             origem: elOri.value, destino: elDest.value, km: elKm.value, 
+             estacionamento: elEst.value, pedagio: elPed.value, desconto: elDesc.value, obs: elObs.value 
          };
          const res = await callAPI('salvarLancamentoRota', { dadosRota: p });
-         
          if (res.erro) alert(res.erro); 
          else { 
              exibirMsg("Rota registada!", false); 
