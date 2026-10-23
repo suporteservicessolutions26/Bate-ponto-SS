@@ -7,15 +7,14 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=31">
+  <link rel="manifest" href="manifest.json?v=32">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=31">
-  <link rel="icon" href="./LogoSS.png?v=31" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=32">
+  <link rel="icon" href="./LogoSS.png?v=32" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
   <style>
-    /* Cores ajustadas de acordo com a paleta da Logo Services & Solutions */
     :root { 
       --bg: #070f1e; 
       --card-bg: #0d1e36; 
@@ -162,7 +161,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '31';
+    const VERSAO_ATUAL = '32';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -226,6 +225,13 @@
      </div>
   </div>
 
+  <!-- MODAL: HISTÓRICO DE OS DO CLIENTE -->
+  <div id="modal-historico-cliente" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:85vh; overflow-y:auto;">
+     <h3 style="color:#38bdf8; margin-bottom:12px;" id="histCliTitulo">Histórico do Cliente</h3>
+     <div id="histCliCorpo" style="font-size:0.85rem; color:var(--text-muted); line-height:1.5;">Buscando histórico...</div>
+     <button class="btn btn-logout" style="margin-top:16px;" onclick="fecharModalHistoricoOS()">Fechar</button>
+  </div>
+
   <div class="container">
     <header>
       <div>
@@ -247,7 +253,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=31" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=32" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -365,6 +371,7 @@
           <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
           <label>Nome do Cliente / Local</label>
           <div class="input-wrapper"><input type="text" id="chkCliente" placeholder="Pesquisar cliente..." autocomplete="off" /></div>
+          <button type="button" class="btn-logout" style="width:100%; margin-bottom:12px; color:#38bdf8; border-color:var(--border);" onclick="consultarHistoricoOSCliente(document.getElementById('chkCliente').value.trim())">📋 Ver Histórico de OS deste Cliente</button>
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
             <button class="btn btn-acao" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
@@ -383,6 +390,26 @@
           </div>
           <input type="text" id="corrMotivo" placeholder="Motivo. Ex: Esqueci de bater a pausa" />
           <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar Pedido</button>
+        </div>
+
+        <!-- MÓDULO: SOLICITAÇÃO DE AUSÊNCIAS (FÉRIAS, FOLGA, ATESTADO) -->
+        <div class="box" style="border-color: #38bdf8;">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Solicitar Férias, Folga ou Atestado</h3>
+          <label>Tipo de Ausência</label>
+          <select id="ausTipo">
+             <option value="Folga (Banco de Horas)">Folga Compensatória (Abater Banco)</option>
+             <option value="Férias">Férias Programadas</option>
+             <option value="Atestado Médico">Atestado Médico / Declaração</option>
+          </select>
+          <div class="form-row" style="display:flex; gap:10px; margin-bottom:12px;">
+             <div style="flex:1;"><label>Data Início</label><input type="date" id="ausDataIni" style="margin-bottom:0;" /></div>
+             <div style="flex:1;"><label>Data Fim</label><input type="date" id="ausDataFim" style="margin-bottom:0;" /></div>
+          </div>
+          <label>Observação / Justificativa</label>
+          <input type="text" id="ausMotivo" placeholder="Ex: Procedimento médico ou descanso programado..." />
+          <label>Comprovante / Atestado (Foto/PDF)</label>
+          <input type="file" id="ausArquivo" accept="image/*,.pdf" />
+          <button class="btn" style="background:#0088cc;" onclick="enviarSolicitacaoAusencia()">Enviar para Aprovação</button>
         </div>
       </div>
 
@@ -410,6 +437,19 @@
                 <h4 style="text-align:center; color:var(--text-muted); font-size:0.85rem; margin-bottom:10px; text-transform:uppercase;">Distribuição de Horas</h4>
                 <div class="chart-container" style="height: 180px;"><canvas id="meuGrafico"></canvas></div>
             </div>
+        </div>
+
+        <!-- MÓDULO: FERRAMENTAL E CARGA ATIVA -->
+        <div class="box" style="border-color: #1e3a5f;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+             <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">🧰 Meu Ferramental & Carga</h3>
+             <button class="btn-logout" onclick="carregarMeusEquipamentos(); hapticFeedback()">🔄</button>
+          </div>
+          <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Itens e equipamentos sob sua custódia e responsabilidade.</p>
+          <ul id="listaMeusEquipamentos" style="list-style:none; padding:0; font-size:0.88rem; display:flex; flex-direction:column; gap:8px;">
+             <li style="color:var(--text-muted);">A carregar carga de ferramentas...</li>
+          </ul>
+          <button class="btn-logout" style="width:100%; margin-top:14px; border-color:var(--warning); color:var(--warning);" onclick="abrirReporteFerramenta()">⚠️ Reportar Avaria, Perda ou Solicitar Reposição</button>
         </div>
 
         <div class="box" style="padding: 20px; margin-top: 16px;">
@@ -530,7 +570,7 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // Base de Clientes (mantendo seus endereços originais com coordenadas para a trava de 200m)
+    // Base de Clientes com Coordenadas para trava de 200m
     const baseClientes = {
       "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013", lat: -22.9135, lng: -43.1878 },
       "Audicone Contadores": { end: "Não localizamos, contatar supervisão." },
@@ -565,7 +605,7 @@
       "YouData": { end: "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904", lat: -23.0018, lng: -43.3184 }
     };
 
-    // --- CÁLCULO DE HAVERSINE PARA O RAIO DE 200M ---
+    // --- HAVERSINE: RAIO DE 200 METROS ---
     function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
       const R = 6371e3;
       const dLat = (lat2 - lat1) * Math.PI / 180;
@@ -588,11 +628,22 @@
       });
     }
 
+    // --- LEITURA DO NÍVEL DE BATERIA DO DISPOSITIVO ---
+    async function obterInfoBateria() {
+       try {
+          if ('getBattery' in navigator) {
+             const b = await navigator.getBattery();
+             return " [Bateria: " + Math.round(b.level * 100) + "%]";
+          }
+       } catch(e) {}
+       return "";
+    }
+
     // --- FUNÇÕES DE SEGURANÇA ---
     function safeSetText(id, text) { let el = document.getElementById(id); if (el) el.innerText = text; }
     function safeSetHTML(id, html) { let el = document.getElementById(id); if (el) el.innerHTML = html; }
     function safeSetDisplay(id, displayType) { let el = document.getElementById(id); if (el) el.style.display = displayType; }
-    function carregarMeusAjustes() { console.log("Ajustes sincronizados silenciosamente."); }
+    function carregarMeusAjustes() { console.log("Ajustes sincronizados."); }
 
     // --- FUNÇÕES BÁSICAS ---
     function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
@@ -636,7 +687,7 @@
 
     let chartMeuDesempenho = null, chartAdminBanco = null;
     let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
-    let todasRotas = [], dadosGeralGlobais = [], notificadoHoje = false;
+    let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [];
     let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
     let currentRating = 0, tempoInicioExpediente = null;
     let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
@@ -838,8 +889,12 @@
       if (perfil === 'Admin') {
           safeSetDisplay('abasAdmin', 'flex');
           safeSetDisplay('areaAtribuirItinerario', 'block');
+          carregarAusenciasEquipe();
       }
-      if(navigator.onLine) carregarEstoque();
+      if(navigator.onLine) {
+          carregarEstoque();
+          carregarMeusEquipamentos();
+      }
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); 
       carregarHistoricoEAtualizarBotoes(nome); 
       carregarItinerario(true); 
@@ -970,8 +1025,9 @@
       if (tipo === 'Entrada' && !obs) obs = "Início Manual na Base";
       
       executarComLoader("A registar " + tipo + "...", async () => {
-         const loc = await obterLocalizacao();
-         const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs, nomeColaborador: usuarioAutenticado, localizacao: loc });
+         let loc = await obterLocalizacao();
+         let batInfo = await obterInfoBateria();
+         const res = await callAPI('registrarPonto', { tipoRegistro: tipo, observacao: obs + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
          if(document.getElementById("obsManual")) document.getElementById("obsManual").value = "";
          if(res.erro) alert(res.erro); 
          else { 
@@ -1091,6 +1147,23 @@
        safeSetDisplay("boxDataRecorrente", cb.checked ? "block" : "none");
     }
 
+    // --- CARREGAMENTO DE AUSÊNCIAS PARA BLOQUEIO NA AGENDA ---
+    async function carregarAusenciasEquipe() {
+      const res = await callAPI('getAusenciasAprovadas');
+      if (res && Array.isArray(res)) ausenciasEquipe = res;
+    }
+
+    function verificarTecnicoEmAusencia(nomeTecnico, dataStr) {
+       for (let a of ausenciasEquipe) {
+          if (a.nome === nomeTecnico && a.status === 'Aprovado') {
+             if (dataStr >= a.dataIni && dataStr <= a.dataFim) {
+                return a.tipo; // Férias, Folga, Atestado
+             }
+          }
+       }
+       return null;
+    }
+
     function salvarNovoItinerario() {
       let elTec = document.getElementById("itiTecnico"), elCli = document.getElementById("itiCliente"), elEnd = document.getElementById("itiEndereco"), elHor = document.getElementById("itiHorario"), elRec = document.getElementById("itiRecorrente"), elPri = document.getElementById("itiPrioridade");
       if(!elTec || !elCli || !elEnd || !elHor || !elRec || !elPri) return;
@@ -1114,6 +1187,14 @@
             if (dMarcados.includes(da.getDay())) datas.push(da.toISOString().split('T')[0]); 
             da.setDate(da.getDate() + 1); 
         }
+      }
+
+      // Validação de Ausência/Férias do Técnico
+      for (let dt of datas) {
+         let motivoAus = verificarTecnicoEmAusencia(tec, dt);
+         if (motivoAus) {
+            return alert(`BLOQUEIO DE ESCALA: O técnico ${tec} está cadastrado em [${motivoAus}] na data ${dt}. Não é possível agendar.`);
+         }
       }
 
       executarComLoader("A agendar " + datas.length + " compromisso(s)...", async () => {
@@ -1188,7 +1269,9 @@
             }
         }
         
-        let blocoInfo = '<div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:12px;"><small style="color:var(--text-muted); font-weight:bold;">🕒 ' + d.data + ' às ' + d.horario + ' - <span style="color:var(--text);">' + d.status + '</span></small>' + botoesGeo + '</div>';
+        let btnHistOS = `<button type="button" class="btn-logout" style="width:100%; margin-top:8px; border-color:var(--border); color:#38bdf8;" onclick="consultarHistoricoOSCliente('${d.cliente}')">📋 Ver Últimas OS deste Cliente</button>`;
+
+        let blocoInfo = '<div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;"><small style="color:var(--text-muted); font-weight:bold;">🕒 ' + d.data + ' às ' + d.horario + ' - <span style="color:var(--text);">' + d.status + '</span></small>' + botoesGeo + btnHistOS + '</div>';
         html += '<div class="card-itinerario ' + corClasse + '">' + prioridadeHtml + '<strong style="font-size:1.2rem; color:#38bdf8;">' + d.cliente + '</strong><br><small style="color:var(--text-muted);">📍 ' + d.endereco + '</small>' + blocoInfo + '</div>';
       });
       safeSetHTML("listaItinerario", html || '<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>');
@@ -1272,15 +1355,16 @@
       
       executarComLoader("A gravar check-in...", async () => {
          let loc = await obterLocalizacao();
+         let batInfo = await obterInfoBateria();
          let logAcao = ehBase ? (acao === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)") : acao;
          
-         await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Visita Avulsa", nomeColaborador: usuarioAutenticado, localizacao: loc });
+         await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Visita Avulsa" + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
          
          if (acao === 'Cheguei' && statusGlobalPonto === 'Saída') {
-             await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: "Início (Avulso): " + cli, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: "Início (Avulso): " + cli + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
          }
          if (acao.includes('Fim de Expediente')) {
-             await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + cli, nomeColaborador: usuarioAutenticado, localizacao: loc });
+             await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + cli + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
          }
          
          elCli.value = ""; 
@@ -1294,16 +1378,17 @@
       let logAcao = tipo === 'Cliente Ausente' ? "Saí (Ausente)" : tipo;
       if(ehBase) logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
 
-      await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      let batInfo = await obterInfoBateria();
+      await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       if (tipo === 'Cheguei' && statusGlobalPonto === 'Saída') {
-          await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: "Início: " + cliente, nomeColaborador: usuarioAutenticado, localizacao: loc });
+          await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: "Início: " + cliente + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
       }
       if (linhaAgenda && tipo === 'Cheguei') {
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       }
       if (tipo.includes('Fim de Expediente')) {
-          await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim: " + cliente + " " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc });
+          await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim: " + cliente + " " + linksExtra + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
       }
       if ((tipo.includes('Saí') || tipo === 'Cliente Ausente') && linhaAgenda) {
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: (tipo === 'Cliente Ausente' ? 'Perdida' : 'Concluído') });
@@ -1502,6 +1587,113 @@
       });
     }
 
+    // --- ENVIAR SOLICITAÇÃO DE AUSÊNCIA (FÉRIAS / FOLGA / ATESTADO) ---
+    async function enviarSolicitacaoAusencia() {
+       const tipo = document.getElementById("ausTipo").value;
+       const dIni = document.getElementById("ausDataIni").value;
+       const dFim = document.getElementById("ausDataFim").value;
+       const motivo = document.getElementById("ausMotivo").value.trim();
+       const fileInput = document.getElementById("ausArquivo");
+
+       if (!dIni || !dFim) return alert("Informe a data de início e fim.");
+       if (dIni > dFim) return alert("Data de início não pode ser maior que o fim.");
+
+       executarComLoader("A enviar solicitação de ausência...", async () => {
+          let urlArquivo = "";
+          if (fileInput.files && fileInput.files[0]) {
+             const reader = new FileReader();
+             const b64 = await new Promise(res => { reader.onload = e => res(e.target.result); reader.readAsDataURL(fileInput.files[0]); });
+             const resUp = await callAPI('uploadComprovativo', { base64: b64, nomeArquivo: `Comprovante_${usuarioAutenticado}_${Date.now()}` });
+             if (resUp && resUp.url) urlArquivo = resUp.url;
+          }
+
+          const res = await callAPI('solicitarAusencia', {
+             nome: usuarioAutenticado,
+             tipo: tipo,
+             dataIni: dIni,
+             dataFim: dFim,
+             motivo: motivo,
+             comprovanteUrl: urlArquivo
+          });
+
+          if (res.erro) alert(res.erro);
+          else {
+             alert("Solicitação de " + tipo + " enviada com sucesso para a supervisão!");
+             document.getElementById("ausMotivo").value = "";
+             document.getElementById("ausArquivo").value = "";
+          }
+       });
+    }
+
+    // --- CONSULTAR HISTÓRICO DE OS DO CLIENTE EM CAMPO ---
+    async function consultarHistoricoOSCliente(nomeCliente) {
+       if (!nomeCliente) return alert("Informe ou selecione o cliente primeiro.");
+       showLoading("Buscando histórico técnico...");
+       const res = await callAPI('getHistoricoOSCliente', { cliente: nomeCliente });
+       hideLoading();
+
+       safeSetText("histCliTitulo", "Histórico: " + nomeCliente);
+       if (!res || res.erro || !Array.isArray(res) || res.length === 0) {
+          safeSetHTML("histCliCorpo", "<p style='text-align:center;'>Nenhum histórico anterior registrado para este cliente.</p>");
+       } else {
+          let html = "";
+          res.slice(0, 5).forEach(os => {
+             html += `<div style="background:var(--bg); border:1px solid var(--border); padding:10px; border-radius:8px; margin-bottom:10px;">
+                        <strong style="color:#38bdf8;">📅 ${os.dataHora}</strong> - Técnico: <b>${os.tecnico}</b><br>
+                        <p style="margin-top:4px;"><b>Serviço:</b> ${os.observacao || 'Manutenção geral'}</p>
+                        ${os.materiais ? `<small style="color:var(--text-muted);">Peças: ${os.materiais}</small><br>` : ''}
+                        ${os.url ? `<a href="${os.url}" target="_blank" style="color:var(--primary); font-size:0.8rem;">Visualizar Relatório Assinado</a>` : ''}
+                      </div>`;
+          });
+          safeSetHTML("histCliCorpo", html);
+       }
+       safeSetDisplay("modal-overlay", "block");
+       safeSetDisplay("modal-historico-cliente", "block");
+    }
+
+    function fecharModalHistoricoOS() {
+       safeSetDisplay("modal-overlay", "none");
+       safeSetDisplay("modal-historico-cliente", "none");
+    }
+
+    // --- GESTÃO DE EQUIPAMENTOS E FERRAMENTAL DO TÉCNICO ---
+    async function carregarMeusEquipamentos() {
+       const res = await callAPI('getMeusEquipamentos', { nome: usuarioAutenticado });
+       const ul = document.getElementById("listaMeusEquipamentos");
+       if (!ul) return;
+       if (!res || res.erro || !Array.isArray(res) || res.length === 0) {
+          ul.innerHTML = `<li style="background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+                             Kit Básico Padrão: Notebook Técnico, Patch Cord, Crimpador RJ45, Testador de Rede, Multímetro.
+                          </li>`;
+          return;
+       }
+       let html = "";
+       res.forEach(item => {
+          html += `<li style="display:flex; justify-content:space-between; background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
+                     <span><strong>${item.equipamento}</strong> (Patrimônio: ${item.patrimonio || 'N/A'})</span>
+                     <span class="tag-tipo" style="background:#064e3b; color:#6ee7b7;">OK</span>
+                   </li>`;
+       });
+       ul.innerHTML = html;
+    }
+
+    function abrirReporteFerramenta() {
+       const item = prompt("Qual ferramenta ou EPI você deseja reportar avaria, perda ou pedir reposição?");
+       if (!item) return;
+       const motivo = prompt("Descreva o ocorrido:");
+       if (!motivo) return;
+
+       executarComLoader("A registrar chamado de ferramenta...", async () => {
+          const res = await callAPI('solicitarAjusteFerramental', {
+             tecnico: usuarioAutenticado,
+             item: item,
+             motivo: motivo
+          });
+          if (res.erro) alert(res.erro);
+          else alert("Chamado de ferramental enviado com sucesso para a coordenação!");
+       });
+    }
+
     async function carregarBancoHoras() {
       let elMes = document.getElementById('mesFiltro');
       if(!elMes) return;
@@ -1553,7 +1745,7 @@
                  sel.innerHTML = h; 
              }
              filtrarGeralPonto(); 
-         } else {
+         } else { 
              safeSetHTML("tblGeral", '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'); 
          }
       });
@@ -1600,7 +1792,13 @@
          dados.forEach(d => { 
              let b1 = '<button class="btn-acao" style="background:var(--accent); flex:1;" onclick="julgar(' + d.linha + ', \'Aprovado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Aprovar</button>';
              let b2 = '<button class="btn-acao" style="background:var(--danger); flex:1;" onclick="julgar(' + d.linha + ', \'Recusado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Recusar</button>';
-             html += '<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px;"><strong style="color:var(--primary); font-size:1.1rem;">' + d.nome + '</strong> pediu <strong>' + d.tipo + '</strong><br><small style="color:var(--text-muted)">Data exata: ' + d.dataCorreta + '</small><br><small style="color:var(--text-muted)">Motivo: ' + d.motivo + '</small><div style="margin-top:14px; display:flex; gap:10px;">' + b1 + b2 + '</div></div>'; 
+             html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px;">
+                        <strong style="color:var(--primary); font-size:1.1rem;">${d.nome}</strong> pediu <strong>${d.tipo}</strong><br>
+                        <small style="color:var(--text-muted)">Período / Data: ${d.dataCorreta}</small><br>
+                        <small style="color:var(--text-muted)">Motivo: ${d.motivo}</small>
+                        ${d.comprovante ? `<br><a href="${d.comprovante}" target="_blank" style="color:#38bdf8; font-size:0.8rem;">📎 Ver Anexo / Atestado</a>` : ''}
+                        <div style="margin-top:14px; display:flex; gap:10px;">${b1}${b2}</div>
+                      </div>`; 
          }); 
          safeSetHTML("listaAprovacoes", html);
       });
@@ -1610,7 +1808,11 @@
       executarComLoader("A processar julgamento...", async () => { 
           const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo }); 
           if(res.erro) alert(res.erro); 
-          else { exibirMsg("Registado!", false); carregarAprovacoes(); } 
+          else { 
+              exibirMsg("Registado!", false); 
+              carregarAprovacoes();
+              if (perfilAutenticado === 'Admin') carregarAusenciasEquipe();
+          } 
       });
     }
 
