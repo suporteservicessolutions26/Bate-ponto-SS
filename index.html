@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=32">
+  <link rel="manifest" href="manifest.json?v=33">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=32">
-  <link rel="icon" href="./LogoSS.png?v=32" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=33">
+  <link rel="icon" href="./LogoSS.png?v=33" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -161,7 +161,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '32';
+    const VERSAO_ATUAL = '33';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -253,7 +253,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=32" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=33" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -628,7 +628,6 @@
       });
     }
 
-    // --- LEITURA DO NÍVEL DE BATERIA DO DISPOSITIVO ---
     async function obterInfoBateria() {
        try {
           if ('getBattery' in navigator) {
@@ -1147,7 +1146,7 @@
        safeSetDisplay("boxDataRecorrente", cb.checked ? "block" : "none");
     }
 
-    // --- CARREGAMENTO DE AUSÊNCIAS PARA BLOQUEIO NA AGENDA ---
+    // --- CARREGAMENTO DE AUSÊNCIAS (SE DISPONÍVEL NO BACKEND) ---
     async function carregarAusenciasEquipe() {
       const res = await callAPI('getAusenciasAprovadas');
       if (res && Array.isArray(res)) ausenciasEquipe = res;
@@ -1157,7 +1156,7 @@
        for (let a of ausenciasEquipe) {
           if (a.nome === nomeTecnico && a.status === 'Aprovado') {
              if (dataStr >= a.dataIni && dataStr <= a.dataFim) {
-                return a.tipo; // Férias, Folga, Atestado
+                return a.tipo;
              }
           }
        }
@@ -1189,7 +1188,6 @@
         }
       }
 
-      // Validação de Ausência/Férias do Técnico
       for (let dt of datas) {
          let motivoAus = verificarTecnicoEmAusencia(tec, dt);
          if (motivoAus) {
@@ -1305,7 +1303,6 @@
          let cLimpo = cliente.toLowerCase();
          let ehBase = cLimpo.includes('base') || cLimpo.includes('interno');
 
-         // Verificação de raio de 200 metros
          let targetLat = null, targetLng = null;
          if (coordsCadastradas && coordsCadastradas.includes(',')) {
              let p = coordsCadastradas.split(',');
@@ -1587,7 +1584,7 @@
       });
     }
 
-    // --- ENVIAR SOLICITAÇÃO DE AUSÊNCIA (FÉRIAS / FOLGA / ATESTADO) ---
+    // --- ENVIAR SOLICITAÇÃO DE AUSÊNCIA COM TRATAMENTO SEGURO ---
     async function enviarSolicitacaoAusencia() {
        const tipo = document.getElementById("ausTipo").value;
        const dIni = document.getElementById("ausDataIni").value;
@@ -1625,7 +1622,7 @@
        });
     }
 
-    // --- CONSULTAR HISTÓRICO DE OS DO CLIENTE EM CAMPO ---
+    // --- CONSULTAR HISTÓRICO DE OS DO CLIENTE COM TRATAMENTO SEGURO ---
     async function consultarHistoricoOSCliente(nomeCliente) {
        if (!nomeCliente) return alert("Informe ou selecione o cliente primeiro.");
        showLoading("Buscando histórico técnico...");
@@ -1656,14 +1653,14 @@
        safeSetDisplay("modal-historico-cliente", "none");
     }
 
-    // --- GESTÃO DE EQUIPAMENTOS E FERRAMENTAL DO TÉCNICO ---
+    // --- GESTÃO DE EQUIPAMENTOS (COM FALLBACK SE NÃO HOUVER NO BACKEND) ---
     async function carregarMeusEquipamentos() {
        const res = await callAPI('getMeusEquipamentos', { nome: usuarioAutenticado });
        const ul = document.getElementById("listaMeusEquipamentos");
        if (!ul) return;
        if (!res || res.erro || !Array.isArray(res) || res.length === 0) {
           ul.innerHTML = `<li style="background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">
-                             Kit Básico Padrão: Notebook Técnico, Patch Cord, Crimpador RJ45, Testador de Rede, Multímetro.
+                             Kit Básico: Notebook Corporativo, Patch Cord, Crimpador RJ45, Testador de Cabo de Rede, Multímetro.
                           </li>`;
           return;
        }
