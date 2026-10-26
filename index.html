@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=34">
+  <link rel="manifest" href="manifest.json?v=35">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=34">
-  <link rel="icon" href="./LogoSS.png?v=34" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=35">
+  <link rel="icon" href="./LogoSS.png?v=35" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -95,6 +95,18 @@
     td { padding: 16px 12px; border-bottom: 1px solid var(--border); }
     .tag-tipo { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 800; display: inline-block; text-transform: uppercase; }
     
+    /* ESTILOS DOS CARDS DE SOLICITAÇÕES DO COLABORADOR */
+    .req-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; position: relative; overflow: hidden; }
+    .req-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); }
+    .req-card.st-aprovado::before { background: var(--accent); }
+    .req-card.st-recusado::before { background: var(--danger); }
+    .req-card.st-pendente::before { background: var(--warning); }
+    
+    .badge-status-req { font-size: 0.72rem; font-weight: 800; padding: 5px 10px; border-radius: 20px; text-transform: uppercase; white-space: nowrap; }
+    .bg-aprovado { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+    .bg-recusado { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
+    .bg-pendente { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
     #badgeOffline { display:none; background:var(--warning); color:#000; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:0.9rem; margin-bottom:16px; animation: slideDown 0.3s ease; }
 
     .metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(110px, 1fr)); gap: 12px; margin-bottom: 20px; }
@@ -161,7 +173,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '34';
+    const VERSAO_ATUAL = '35';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -253,7 +265,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=34" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=35" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -439,6 +451,20 @@
             </div>
         </div>
 
+        <!-- NOVO PAINEL: ACOMPANHAMENTO DE SOLICITAÇÕES DO COLABORADOR -->
+        <div class="box" style="border-color: var(--primary);">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+             <div>
+                <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">🔔 Minhas Solicitações & Status</h3>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Acompanhe seus pedidos de ponto, folgas, férias e ferramentas.</p>
+             </div>
+             <button class="btn-logout" onclick="carregarMeusAjustes(usuarioAutenticado); hapticFeedback()">🔄</button>
+          </div>
+          <div id="listaMinhasSolicitacoes" style="margin-top:10px;">
+             <div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding:10px;">A carregar solicitações...</div>
+          </div>
+        </div>
+
         <!-- MÓDULO: FERRAMENTAL E CARGA ATIVA -->
         <div class="box" style="border-color: #1e3a5f;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
@@ -570,7 +596,7 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // Base de Clientes (mantendo seus endereços originais)
+    // Base de Clientes
     const baseClientes = {
       "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013" },
       "Audicone Contadores": { end: "Não localizamos, contatar supervisão." },
@@ -619,7 +645,59 @@
     function safeSetText(id, text) { let el = document.getElementById(id); if (el) el.innerText = text; }
     function safeSetHTML(id, html) { let el = document.getElementById(id); if (el) el.innerHTML = html; }
     function safeSetDisplay(id, displayType) { let el = document.getElementById(id); if (el) el.style.display = displayType; }
-    function carregarMeusAjustes() { console.log("Ajustes sincronizados."); }
+
+    // --- FUNÇÃO ATIVA DE CARREGAR STATUS DAS SOLICITAÇÕES DO COLABORADOR ---
+    async function carregarMeusAjustes(nome) { 
+      const colab = nome || usuarioAutenticado;
+      if (!colab) return;
+      const div = document.getElementById("listaMinhasSolicitacoes");
+      if (!div) return;
+
+      const res = await callAPI('getMinhasSolicitacoes', { nome: colab });
+      if (!res || res.erro || !Array.isArray(res) || res.length === 0) {
+        div.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding:12px; background:var(--bg); border-radius:10px; border:1px dashed var(--border);">Nenhuma solicitação enviada recentemente.</div>`;
+        return;
+      }
+
+      let html = "";
+      res.forEach(item => {
+        let st = String(item.status || 'Pendente');
+        let stLower = st.toLowerCase();
+        let cardClass = 'st-pendente';
+        let badgeClass = 'bg-pendente';
+        let icon = '⏳';
+
+        if (stLower.includes('aprovado')) {
+          cardClass = 'st-aprovado';
+          badgeClass = 'bg-aprovado';
+          icon = '✅';
+        } else if (stLower.includes('recusado') || stLower.includes('rejeitado')) {
+          cardClass = 'st-recusado';
+          badgeClass = 'bg-recusado';
+          icon = '❌';
+        }
+
+        let catLabel = item.categoria ? `<small style="color:#38bdf8; font-weight:700; text-transform:uppercase; font-size:0.68rem; display:block; margin-bottom:2px;">${item.categoria}</small>` : '';
+        let motivoHtml = item.motivo && item.motivo !== '-' ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">💬 ${item.motivo}</div>` : '';
+        let linkAnexo = item.comprovante ? `<a href="${item.comprovante}" target="_blank" style="display:inline-block; margin-top:4px; font-size:0.75rem; color:#38bdf8; text-decoration:underline;">📎 Ver Comprovante</a>` : '';
+
+        html += `
+          <div class="req-card ${cardClass}">
+            <div style="flex:1;">
+              ${catLabel}
+              <strong style="font-size:0.95rem; color:var(--text);">${item.tipo}</strong>
+              <div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">📅 Ref: <b>${item.dataCorreta}</b></div>
+              ${motivoHtml}
+              ${linkAnexo}
+            </div>
+            <div>
+              <span class="badge-status-req ${badgeClass}">${icon} ${st}</span>
+            </div>
+          </div>`;
+      });
+
+      div.innerHTML = html;
+    }
 
     // --- FUNÇÕES BÁSICAS ---
     function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
@@ -870,6 +948,7 @@
       if(navigator.onLine) {
           carregarEstoque();
           carregarMeusEquipamentos();
+          carregarMeusAjustes(nome);
       }
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); 
       carregarHistoricoEAtualizarBotoes(nome); 
@@ -885,6 +964,7 @@
       if(abaAlvo) abaAlvo.classList.add('active'); 
       if(btn) btn.classList.add('active');
       
+      if(id === 'tab-hist') carregarMeusAjustes(usuarioAutenticado);
       if(id === 'tab-radar') carregarRadar(); 
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto(); 
       if(id === 'tab-banco') carregarBancoHoras(); 
@@ -1110,6 +1190,7 @@
               }
           }
           atualizarRegraBotoes(lastPonto);
+          carregarMeusAjustes(nome);
       } catch (e) {
           atualizarRegraBotoes('Saída');
           safeSetHTML('status-badge', '⚠️ Erro no Sistema');
@@ -1123,7 +1204,6 @@
        safeSetDisplay("boxDataRecorrente", cb.checked ? "block" : "none");
     }
 
-    // --- CARREGAMENTO DE AUSÊNCIAS (SE DISPONÍVEL NO BACKEND) ---
     async function carregarAusenciasEquipe() {
       const res = await callAPI('getAusenciasAprovadas');
       if (res && Array.isArray(res)) ausenciasEquipe = res;
@@ -1252,7 +1332,6 @@
       safeSetHTML("listaItinerario", html || '<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>');
     }
 
-    // --- CHECK-IN SEM TRAVA DE DISTÂNCIA / RAIO ---
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, coordsCadastradas) {
       if (tipo === 'Forçar Remoção') { 
           if(confirm("Remover este compromisso?")) { 
@@ -1533,12 +1612,12 @@
           if(res.erro) alert(res.erro); 
           else { 
               elMotivo.value = ""; 
-              alert("Pedido enviado com sucesso para a aprovação da Supervisão!"); 
+              carregarMeusAjustes(usuarioAutenticado);
+              alert("Pedido enviado com sucesso! Acompanhe o status na aba Perfil."); 
           } 
       });
     }
 
-    // --- ENVIAR SOLICITAÇÃO DE AUSÊNCIA ---
     async function enviarSolicitacaoAusencia() {
        const tipo = document.getElementById("ausTipo").value;
        const dIni = document.getElementById("ausDataIni").value;
@@ -1569,14 +1648,14 @@
 
           if (res.erro) alert(res.erro);
           else {
-             alert("Solicitação de " + tipo + " enviada com sucesso para a supervisão!");
              document.getElementById("ausMotivo").value = "";
              document.getElementById("ausArquivo").value = "";
+             carregarMeusAjustes(usuarioAutenticado);
+             alert("Solicitação de " + tipo + " enviada! Acompanhe o status na aba Perfil.");
           }
        });
     }
 
-    // --- CONSULTAR HISTÓRICO DE OS DO CLIENTE ---
     async function consultarHistoricoOSCliente(nomeCliente) {
        if (!nomeCliente) return alert("Informe ou selecione o cliente primeiro.");
        showLoading("Buscando histórico técnico...");
@@ -1607,7 +1686,6 @@
        safeSetDisplay("modal-historico-cliente", "none");
     }
 
-    // --- GESTÃO DE EQUIPAMENTOS ---
     async function carregarMeusEquipamentos() {
        const res = await callAPI('getMeusEquipamentos', { nome: usuarioAutenticado });
        const ul = document.getElementById("listaMeusEquipamentos");
@@ -1641,7 +1719,10 @@
              motivo: motivo
           });
           if (res.erro) alert(res.erro);
-          else alert("Chamado de ferramental enviado com sucesso para a coordenação!");
+          else {
+             carregarMeusAjustes(usuarioAutenticado);
+             alert("Chamado de ferramental enviado com sucesso!");
+          }
        });
     }
 
@@ -1729,7 +1810,7 @@
           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><b>Total do dia: ' + d.total + 'h</b>' : ''; 
           janela.document.write('<tr><td><strong>' + d.dataHora + '</strong></td><td>' + d.nome + '</td><td>' + d.tipo + '</td><td>' + (d.obs || '-') + infoExtra + '</td></tr>'); 
       });
-      janela.document.write('</tbody></table><script>window.onload=function(){window.print();window.close();};<\/script></body></html>'); 
+      janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
       janela.document.close();
     }
 
