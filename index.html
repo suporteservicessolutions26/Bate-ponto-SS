@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=33">
+  <link rel="manifest" href="manifest.json?v=34">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=33">
-  <link rel="icon" href="./LogoSS.png?v=33" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=34">
+  <link rel="icon" href="./LogoSS.png?v=34" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -161,7 +161,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '33';
+    const VERSAO_ATUAL = '34';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -253,7 +253,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=33" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=34" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -570,63 +570,40 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // Base de Clientes com Coordenadas para trava de 200m
+    // Base de Clientes (mantendo seus endereços originais)
     const baseClientes = {
-      "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013", lat: -22.9135, lng: -43.1878 },
+      "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013" },
       "Audicone Contadores": { end: "Não localizamos, contatar supervisão." },
       "BRJ": { end: "Não localizamos, contatar supervisão." },
       "Buscharger Midia e Publicidade": { end: "Não localizamos, contatar supervisão." },
-      "CargoFlex": { end: "R. Carvalho de Sá, 436 - Chácaras Rio-Petrópolis, Duque de Caxias - RJ, 25251-600", lat: -22.7214, lng: -43.2987 },
-      "Conficont": { end: "R. Otávio Tarquino, 410 - sala 806/808 - Centro, Nova Iguaçu - RJ, 26210-350", lat: -22.7562, lng: -43.4519 },
-      "Domínio Soluções": { end: "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630", lat: -22.8795, lng: -43.2718 },
+      "CargoFlex": { end: "R. Carvalho de Sá, 436 - Chácaras Rio-Petrópolis, Duque de Caxias - RJ, 25251-600" },
+      "Conficont": { end: "R. Otávio Tarquino, 410 - sala 806/808 - Centro, Nova Iguaçu - RJ, 26210-350" },
+      "Domínio Soluções": { end: "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630" },
       "Dynamic Services": { end: "Não localizamos, contatar supervisão." },
       "Eliel Figueiredo": { end: "Não localizamos, contatar supervisão." },
-      "Engesystems": { end: "R. Anequira, 141 - Cordovil, Rio de Janeiro - RJ, 21215-440", lat: -22.8274, lng: -43.2965 },
+      "Engesystems": { end: "R. Anequira, 141 - Cordovil, Rio de Janeiro - RJ, 21215-440" },
       "Exata Contabilidade": { end: "Não localizamos, contatar supervisão." },
       "Fiamma": { end: "Não localizamos, contatar supervisão." },
       "ForteMetal": { end: "Não localizamos, contatar supervisão." },
-      "FVC": { end: "Praça Marco Aurélio, 70 - Vila da Penha, Rio de Janeiro - RJ, 21221-260", lat: -22.8465, lng: -43.3082 },
+      "FVC": { end: "Praça Marco Aurélio, 70 - Vila da Penha, Rio de Janeiro - RJ, 21221-260" },
       "Grupo Mserv": { end: "Não localizamos, contatar supervisão." },
       "Healingmed": { end: "Não localizamos, contatar supervisão." },
       "INFOB": { end: "Não localizamos, contatar supervisão." },
-      "Lwart Lubrificantes": { end: "R. Cap. Guynemer, 1625 - Xerém, Duque de Caxias - RJ, 25250-615", lat: -22.5891, lng: -43.3089 },
+      "Lwart Lubrificantes": { end: "R. Cap. Guynemer, 1625 - Xerém, Duque de Caxias - RJ, 25250-615" },
       "M Ferreira": { end: "Não localizamos, contatar supervisão." },
-      "MCM TRANSP LOGISTICA LTDA": { end: "Av. Brasil, 420 - Coréia, Mesquita - RJ, 26556-000", lat: -22.7981, lng: -43.4312 },
+      "MCM TRANSP LOGISTICA LTDA": { end: "Av. Brasil, 420 - Coréia, Mesquita - RJ, 26556-000" },
       "MILLENNIHUM": { end: "Não localizamos, contatar supervisão." },
       "MP Master": { end: "Não localizamos, contatar supervisão." },
       "Nascimento Transportes": { end: "Não localizamos, contatar supervisão." },
-      "Nova A3": { end: "R. da Cevada, 93 - Sl 315 - Penha Circular, Rio de Janeiro - RJ, 21011-080", lat: -22.8336, lng: -43.2847 },
+      "Nova A3": { end: "R. da Cevada, 93 - Sl 315 - Penha Circular, Rio de Janeiro - RJ, 21011-080" },
       "Philos": { end: "Não localizamos, contatar supervisão." },
-      "PlayCity": { end: "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630", lat: -22.8795, lng: -43.2718 },
+      "PlayCity": { end: "Av. Pastor Martin Luther King Jr., 126 - Del Castilho, Rio de Janeiro - RJ, 20765-630" },
       "PROTEC": { end: "Não localizamos, contatar supervisão." },
-      "QTL": { end: "R. do Arroz, 90 - Grupo: 530 a 532 - Penha Circular, Rio de Janeiro - RJ, 21011-070", lat: -22.8341, lng: -43.2852 },
-      "Reis Principe": { end: "Centro Profissional do BarraShopping - Av. das Américas, 4790 - Sl 607 - Barra da Tijuca, RJ", lat: -22.9998, lng: -43.3592 },
+      "QTL": { end: "R. do Arroz, 90 - Grupo: 530 a 532 - Penha Circular, Rio de Janeiro - RJ, 21011-070" },
+      "Reis Principe": { end: "Centro Profissional do BarraShopping - Av. das Américas, 4790 - Sl 607 - Barra da Tijuca, RJ" },
       "Suporte": { end: "" },
-      "YouData": { end: "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904", lat: -23.0018, lng: -43.3184 }
+      "YouData": { end: "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904" }
     };
-
-    // --- HAVERSINE: RAIO DE 200 METROS ---
-    function calcularDistanciaMetros(lat1, lon1, lat2, lon2) {
-      const R = 6371e3;
-      const dLat = (lat2 - lat1) * Math.PI / 180;
-      const dLon = (lon2 - lon1) * Math.PI / 180;
-      const a = Math.sin(dLat/2) * Math.sin(dLat/2) +
-                Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *
-                Math.sin(dLon/2) * Math.sin(dLon/2);
-      const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));
-      return R * c;
-    }
-
-    async function obterPosicaoGPSExata() {
-      return new Promise((resolve, reject) => {
-        if (!navigator.geolocation) return reject(new Error("GPS não suportado"));
-        navigator.geolocation.getCurrentPosition(
-          (pos) => resolve(pos.coords),
-          (err) => reject(err),
-          { enableHighAccuracy: true, timeout: 9000, maximumAge: 0 }
-        );
-      });
-    }
 
     async function obterInfoBateria() {
        try {
@@ -1263,7 +1240,7 @@
                 botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; 
             } else { 
                 let argCheguei = "checkinGeolocalizado('" + d.cliente + "', 'Cheguei', " + d.linha + ", '" + (d.coordenadas||"") + "')";
-                botoesGeo = '<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="' + argCheguei + '">📍 Cheguei no Local (200m)</button>' + btnConcluirAdmin; 
+                botoesGeo = '<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="' + argCheguei + '">📍 Cheguei no Local</button>' + btnConcluirAdmin; 
             }
         }
         
@@ -1275,7 +1252,7 @@
       safeSetHTML("listaItinerario", html || '<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>');
     }
 
-    // --- BLOQUEIO DE RAIO DE 200 METROS ---
+    // --- CHECK-IN SEM TRAVA DE DISTÂNCIA / RAIO ---
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, coordsCadastradas) {
       if (tipo === 'Forçar Remoção') { 
           if(confirm("Remover este compromisso?")) { 
@@ -1292,33 +1269,10 @@
           return alert("BLOQUEIO: Finalize os outros atendimentos da agenda antes de encerrar o expediente.");
       }
       
-      executarComLoader("A validar posição GPS no cliente...", async () => {
-         let coords = null;
-         try {
-             coords = await obterPosicaoGPSExata();
-         } catch(e) {
-             return alert("ERRO: É obrigatório ativar o GPS para registrar chegada ou saída no cliente.");
-         }
-
+      executarComLoader("A registar check-in...", async () => {
+         let locUrl = await obterLocalizacao();
          let cLimpo = cliente.toLowerCase();
          let ehBase = cLimpo.includes('base') || cLimpo.includes('interno');
-
-         let targetLat = null, targetLng = null;
-         if (coordsCadastradas && coordsCadastradas.includes(',')) {
-             let p = coordsCadastradas.split(',');
-             targetLat = parseFloat(p[0]); targetLng = parseFloat(p[1]);
-         } else if (baseClientes[cliente] && baseClientes[cliente].lat) {
-             targetLat = baseClientes[cliente].lat; targetLng = baseClientes[cliente].lng;
-         }
-
-         if (!ehBase && targetLat && targetLng) {
-             let distancia = calcularDistanciaMetros(coords.latitude, coords.longitude, targetLat, targetLng);
-             if (distancia > 200) {
-                 return alert("BLOQUEIO DE LOCALIZAÇÃO: Você está a " + Math.round(distancia) + " metros do cliente. É necessário estar dentro do raio de 200m para bater ponto ou finalizar.");
-             }
-         }
-
-         let locUrl = "https://www.google.com/maps/search/?api=1&query=" + coords.latitude + "," + coords.longitude;
          
          if (ehBase) { 
              processarVisita(cliente, tipo, linhaAgenda, locUrl, ""); 
@@ -1584,7 +1538,7 @@
       });
     }
 
-    // --- ENVIAR SOLICITAÇÃO DE AUSÊNCIA COM TRATAMENTO SEGURO ---
+    // --- ENVIAR SOLICITAÇÃO DE AUSÊNCIA ---
     async function enviarSolicitacaoAusencia() {
        const tipo = document.getElementById("ausTipo").value;
        const dIni = document.getElementById("ausDataIni").value;
@@ -1622,7 +1576,7 @@
        });
     }
 
-    // --- CONSULTAR HISTÓRICO DE OS DO CLIENTE COM TRATAMENTO SEGURO ---
+    // --- CONSULTAR HISTÓRICO DE OS DO CLIENTE ---
     async function consultarHistoricoOSCliente(nomeCliente) {
        if (!nomeCliente) return alert("Informe ou selecione o cliente primeiro.");
        showLoading("Buscando histórico técnico...");
@@ -1653,7 +1607,7 @@
        safeSetDisplay("modal-historico-cliente", "none");
     }
 
-    // --- GESTÃO DE EQUIPAMENTOS (COM FALLBACK SE NÃO HOUVER NO BACKEND) ---
+    // --- GESTÃO DE EQUIPAMENTOS ---
     async function carregarMeusEquipamentos() {
        const res = await callAPI('getMeusEquipamentos', { nome: usuarioAutenticado });
        const ul = document.getElementById("listaMeusEquipamentos");
@@ -1775,7 +1729,7 @@
           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><b>Total do dia: ' + d.total + 'h</b>' : ''; 
           janela.document.write('<tr><td><strong>' + d.dataHora + '</strong></td><td>' + d.nome + '</td><td>' + d.tipo + '</td><td>' + (d.obs || '-') + infoExtra + '</td></tr>'); 
       });
-      janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
+      janela.document.write('</tbody></table><script>window.onload=function(){window.print();window.close();};<\/script></body></html>'); 
       janela.document.close();
     }
 
