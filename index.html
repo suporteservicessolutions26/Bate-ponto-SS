@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=40">
+  <link rel="manifest" href="manifest.json?v=41">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=40">
-  <link rel="icon" href="./LogoSS.png?v=40" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=41">
+  <link rel="icon" href="./LogoSS.png?v=41" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos offline.')"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -50,10 +50,12 @@
     .mural-banner { background: linear-gradient(135deg, rgba(0,136,204,0.18), rgba(245,158,11,0.12)); border: 1px solid rgba(56,189,248,0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; display: none; }
     .mural-banner h4 { font-size: 0.8rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; }
     .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    
     #mapaEquipa { width: 100%; height: 320px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 16px; z-index: 1; }
     .leaflet-popup-content-wrapper { background: #0d1e36; color: #f0f6fc; border: 1px solid #38bdf8; border-radius: 10px; }
     .leaflet-popup-tip { background: #0d1e36; }
     .pin-custom { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; font-weight: 900; font-size: 0.78rem; border: 2px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.6); }
+    
     .nav-pills { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
     .nav-pill { font-size: 0.76rem; font-weight: 700; padding: 6px 10px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; }
     .nav-pill:active { transform: scale(0.95); background: var(--primary); color: #fff; }
@@ -65,6 +67,7 @@
     .btn-mic { background: var(--danger); color: #fff; border: none; padding: 8px 12px; border-radius: 8px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px; }
     .btn-mic.gravando { animation: pulseRed 1.5s infinite; }
     .badge-notif { background: var(--danger); color: #fff; font-size: 0.7rem; font-weight: 900; padding: 2px 6px; border-radius: 10px; margin-left: 4px; display: none; }
+
     .tabs { display: flex; background: var(--card-bg); padding: 6px; border-radius: 12px; margin-bottom: 20px; gap: 6px; border: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
     .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 14px; font-size: 0.88rem; font-weight: 700; cursor: pointer; flex: 1; border-radius: 8px; transition: 0.3s; white-space: nowrap; }
@@ -72,10 +75,12 @@
     #abasAdmin { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); }
     #abasAdmin .tab-btn.active { background: var(--warning); color: #000; box-shadow: 0 4px 10px rgba(245,158,11,0.3); }
     .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
+    
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; text-align: left; }
     th { background: rgba(10,25,47,0.5); padding: 14px 12px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; font-size: 0.75rem; }
     td { padding: 16px 12px; border-bottom: 1px solid var(--border); }
     .tag-tipo { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 800; display: inline-block; text-transform: uppercase; }
+    
     .req-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; position: relative; overflow: hidden; }
     .req-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); }
     .req-card.st-aprovado::before { background: var(--accent); } .req-card.st-recusado::before { background: var(--danger); } .req-card.st-pendente::before { background: var(--warning); }
@@ -122,7 +127,7 @@
 <body>
 
   <script>
-    const VERSAO_ATUAL = '40';
+    const VERSAO_ATUAL = '41';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) caches.keys().then(n => { for (let k of n) caches.delete(k); }); 
       if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => { for(let a of r) a.unregister(); });
@@ -195,7 +200,22 @@
      <button class="btn btn-logout" style="margin-top:16px;" onclick="fecharModalHistoricoOS()">Fechar</button>
   </div>
 
-  <!-- MODAL COFRE / FICHA -->
+  <!-- MODAL OPORTUNIDADE DE VENDA / UPSELL (V41) -->
+  <div id="modal-oportunidade" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
+     <h3 style="color:var(--warning); margin-bottom:6px;">💡 Reportar Venda / Oportunidade</h3>
+     <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Identificou a necessidade de uma peça ou melhoria? Avise o comercial.</p>
+     <input type="hidden" id="oppNomeCliente" />
+     <label>O que o cliente precisa?</label>
+     <textarea id="oppDesc" rows="3" placeholder="Ex: Nobreak não aguenta carga, precisa de um de 2000VA..."></textarea>
+     <label>📸 Foto do Local/Equipamento (Recomendado)</label>
+     <input type="file" id="oppFoto" accept="image/*" capture="environment" />
+     <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="btn btn-logout" style="flex:1;" onclick="fecharModalOportunidade()">Cancelar</button>
+        <button class="btn" style="flex:2; background:var(--warning); color:#000;" onclick="salvarOportunidadeUI()">Enviar ao Comercial</button>
+     </div>
+  </div>
+
+  <!-- MODAL COFRE -->
   <div id="modal-ficha-cliente" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
      <h3 style="color:#38bdf8; margin-bottom:6px;" id="fichaCliTitulo">🔑 Ficha Técnica</h3>
      <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Informações confidenciais.</p>
@@ -216,7 +236,6 @@
      </div>
   </div>
 
-  <!-- APLICAÇÃO -->
   <div class="container">
     <header>
       <div>
@@ -240,7 +259,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=40" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=41" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="O seu utilizador" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="A sua palavra-passe" />
@@ -259,11 +278,12 @@
       <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
         <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
+        <button class="tab-btn" onclick="abrirAba('tab-oportunidades', this); hapticFeedback()">💡 Vendas</button>
         <button class="tab-btn" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
       </div>
 
-      <!-- ABA: AGENDA -->
+      <!-- AGENDA -->
       <div id="tab-itinerario" class="tab-content active">
         <div class="header-relogio">
           <div id="relogio">00:00:00</div>
@@ -277,6 +297,9 @@
              <button id="btnSaidaRapida" class="btn-acao" style="background:var(--danger); color:#fff; width:100%; max-width:300px;" onclick="baterPontoRapido('Saída')">⏹ Encerrar Expediente</button>
           </div>
         </div>
+        <div id="aviso-trabalho-interno" class="aviso-interno" onclick="abrirAba('tab-form', document.querySelectorAll('.tab-btn')[1])">
+           ⏳ Expediente fechado. Inicie um compromisso na agenda ou <u>clique aqui se fará Trabalho Interno.</u>
+        </div>
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
@@ -285,7 +308,7 @@
           </div>
           <div class="form-row" style="margin-bottom:12px; display:flex; gap:12px;">
              <div style="flex:1; background:var(--bg); padding:14px; border-radius:10px; border:1px solid var(--border);">
-               <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:20px; height:20px; margin:0;"> Recorrente</label>
+               <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()"> Recorrente</label>
              </div>
              <div style="flex:2;">
                  <select id="itiPrioridade" style="margin-bottom:0; border-color:var(--primary); height:100%;">
@@ -323,15 +346,16 @@
         </div>
       </div>
 
-      <!-- ABA: AVULSOS / PONTO MANUAL -->
+      <!-- AVULSOS / PONTO MANUAL -->
       <div id="tab-form" class="tab-content">
         <div class="box">
           <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
           <label>Nome do Cliente / Local</label>
           <div class="input-wrapper"><input type="text" id="chkCliente" placeholder="Pesquisar cliente..." autocomplete="off" /></div>
-          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
-             <button type="button" class="btn-logout" style="color:#38bdf8; border-color:var(--border);" onclick="consultarHistoricoOSCliente(document.getElementById('chkCliente').value.trim())">📋 Últimas OS</button>
-             <button type="button" class="btn-logout" style="color:var(--warning); border-color:var(--border);" onclick="abrirFichaTecnicaCliente(document.getElementById('chkCliente').value.trim())">🔑 Ficha Técnica</button>
+          <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; margin-bottom:12px;">
+             <button type="button" class="btn-logout" style="color:#38bdf8; border-color:var(--border); padding:6px;" onclick="consultarHistoricoOSCliente(document.getElementById('chkCliente').value.trim())">📋 Últimas OS</button>
+             <button type="button" class="btn-logout" style="color:var(--warning); border-color:var(--border); padding:6px;" onclick="abrirFichaTecnicaCliente(document.getElementById('chkCliente').value.trim())">🔑 Ficha</button>
+             <button type="button" class="btn-logout" style="color:var(--accent); border-color:var(--border); padding:6px;" onclick="abrirModalOportunidade(document.getElementById('chkCliente').value.trim())">💡 Nova Venda</button>
           </div>
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
             <button class="btn btn-acao" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
@@ -365,6 +389,7 @@
           <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar Pedido</button>
         </div>
 
+        <!-- SOLICITAÇÃO DE AUSÊNCIAS -->
         <div class="box" style="border-color: #38bdf8;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Solicitar Férias, Folga ou Atestado</h3>
           <label>Tipo de Ausência</label>
@@ -417,14 +442,18 @@
         </div>
       </div>
 
-      <!-- ABA: MAPA AO VIVO DA EQUIPE -->
+      <!-- MAPA AO VIVO DA EQUIPE -->
       <div id="tab-radar" class="tab-content">
-        <div class="box">
+        <div class="box" id="boxMapaWrapper">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
              <div><h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">🗺️ Mapa da Equipe</h3></div>
-             <button class="btn-logout" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar</button>
+             <div style="display:flex; gap:8px;">
+                <button class="btn-logout" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar</button>
+                <!-- BOTÃO MODO TELÃO NOC -->
+                <button class="btn-logout" style="border-color:var(--accent); color:var(--accent);" onclick="ativarModoNOC()" title="Ativar ecrã inteiro na TV">🖥️ Telão</button>
+             </div>
           </div>
-          <div class="metrics" style="margin-bottom:14px;">
+          <div class="metrics" style="margin-bottom:14px;" id="radMetricsBox">
              <div class="card-metric"><div class="label">Em Campo</div><div class="val" id="radAtivos" style="color:var(--accent);">0</div></div>
              <div class="card-metric"><div class="label">Em Pausa</div><div class="val" id="radPausa" style="color:var(--warning);">0</div></div>
              <div class="card-metric"><div class="label">Fora / Fim</div><div class="val" id="radFora" style="color:var(--danger);">0</div></div>
@@ -442,7 +471,9 @@
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral da Operação</h3>
             <div style="display:flex; gap:10px; align-items:center;">
-               <select id="filtroGeralColab" style="margin:0; padding:8px 12px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()"><option value="TODOS">Todos os Colaboradores</option></select>
+               <!-- FILTRO DE DATA (V41) -->
+               <input type="date" id="filtroDataPonto" onchange="filtrarGeralPonto()" style="margin:0; padding:8px; width:130px; border-radius:8px;" title="Filtrar por dia específico" />
+               <select id="filtroGeralColab" style="margin:0; padding:8px 12px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()"><option value="TODOS">Todos</option></select>
                <button class="btn-acao" style="background:#dc2626; margin:0; padding:8px 16px;" onclick="exportarGeralPDF()">📄 PDF</button>
             </div>
           </div>
@@ -450,19 +481,16 @@
             <table><thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Ação</th><th>Resumo</th></tr></thead><tbody id="tblGeral"></tbody></table>
           </div>
         </div>
-        
-        <!-- BANCO HORAS -->
-        <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
-          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--primary);">Fechamento Mensal</h3>
-          <div style="display:flex; gap:10px; margin-bottom: 20px;">
-             <input type="text" id="mesFiltro" placeholder="MM/YYYY" maxlength="7" style="margin:0; flex:2;" />
-             <button class="btn" style="flex:1; margin:0; background: var(--primary);" onclick="carregarBancoHoras()">Consolidar</button>
-             <button class="btn-logout" style="margin:0; border-color:var(--accent); color:var(--accent);" onclick="exportarBancoCSV()" title="Baixar CSV">📥 CSV</button>
+      </div>
+      
+      <!-- OPORTUNIDADES COMERCIAIS / UPSELL (V41) -->
+      <div id="tab-oportunidades" class="tab-content">
+        <div class="box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+             <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">💡 Oportunidades de Venda (Upsell)</h3>
+             <button class="btn-logout" onclick="carregarOportunidades(); hapticFeedback()">🔄</button>
           </div>
-          <div class="box" style="padding:15px; margin-bottom:20px; display:none;" id="boxAdminGrafico"><div class="chart-container" style="height: 220px;"><canvas id="adminGrafico"></canvas></div></div>
-          <div class="box" style="padding:0; overflow:hidden;">
-            <table><thead><tr><th>Colaborador</th><th>Total Mensal</th><th>Horas Extras</th></tr></thead><tbody id="tblBanco"><tr><td colspan="3" style="text-align:center; padding:20px;">Insira o mês e clique em Consolidar.</td></tr></tbody></table>
-          </div>
+          <div id="listaOportunidades" style="color: var(--text-muted); text-align: center;">A carregar funil de vendas...</div>
         </div>
       </div>
 
@@ -482,7 +510,7 @@
              <input type="text" id="estNomeItem" placeholder="Nome da Peça / Material" style="flex:2; margin-bottom:0;" />
              <input type="number" id="estQtdItem" placeholder="Qtd (+)" style="flex:1; margin-bottom:0;" />
           </div>
-          <button class="btn" style="background:var(--accent);" onclick="adicionarOuReporEstoque()">➕ Adicionar / Repor</button>
+          <button class="btn" style="background:var(--accent);" onclick="adicionarOuReporEstoque()">➕ Adicionar / Repor no Estoque</button>
         </div>
         <div class="box" style="padding:0; overflow:hidden;">
           <table><thead><tr><th>Peça</th><th>Saldo Atual</th><th>Status</th></tr></thead><tbody id="tblAdminEstoque"><tr><td colspan="3" style="text-align:center; padding:16px;">A carregar estoque...</td></tr></tbody></table>
@@ -578,14 +606,13 @@
     let recognizer;
     function iniciarDitadoVoz() {
        const btn = document.getElementById('btnVoz'), txt = document.getElementById('txtObservacaoOS');
-       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("O seu navegador não suporta ditado por voz. Use o Chrome.");
+       if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) return alert("Navegador não suporta voz.");
        if (btn.classList.contains('gravando')) { if(recognizer) recognizer.stop(); btn.classList.remove('gravando'); btn.innerText = "🎤 Falar"; return; }
        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
        recognizer = new SpeechRecognition(); recognizer.lang = 'pt-BR'; recognizer.interimResults = false;
        recognizer.onstart = () => { btn.classList.add('gravando'); btn.innerText = "🔴 Gravando..."; hapticFeedback(); };
        recognizer.onresult = (e) => { txt.value = txt.value ? txt.value + " " + e.results[0][0].transcript : e.results[0][0].transcript; salvarRascunhoOS(txt.value); };
        recognizer.onend = () => { btn.classList.remove('gravando'); btn.innerText = "🎤 Falar"; };
-       recognizer.onerror = () => { btn.classList.remove('gravando'); btn.innerText = "🎤 Falar"; alert("Erro na gravação. Tente novamente."); };
        recognizer.start();
     }
 
@@ -613,6 +640,92 @@
     let currentRating = 0, tempoInicioExpediente = null, filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
 
+    // --- MODO TELÃO NOC ---
+    function ativarModoNOC() {
+       const isFull = document.fullscreenElement;
+       if (!isFull) {
+           document.documentElement.requestFullscreen().catch(()=>{});
+           document.querySelector('header').style.display = 'none';
+           document.querySelectorAll('.tabs').forEach(t => t.style.display = 'none');
+           document.getElementById('radMetricsBox').style.display = 'none';
+           document.getElementById('mapaEquipa').style.height = '85vh';
+       } else {
+           document.exitFullscreen();
+       }
+    }
+    document.addEventListener("fullscreenchange", function() {
+       if (!document.fullscreenElement) {
+           document.querySelector('header').style.display = 'flex';
+           document.querySelectorAll('.tabs').forEach(t => t.style.display = 'flex');
+           document.getElementById('radMetricsBox').style.display = 'grid';
+           document.getElementById('mapaEquipa').style.height = '320px';
+           if(mapaLeaflet) setTimeout(()=>mapaLeaflet.invalidateSize(), 300);
+       }
+    });
+
+    // --- OPORTUNIDADES (UPSELL) V41 ---
+    function abrirModalOportunidade(cliente) {
+       if(!cliente) return alert("Selecione um cliente primeiro.");
+       document.getElementById("oppNomeCliente").value = cliente;
+       document.getElementById("oppDesc").value = "";
+       document.getElementById("oppFoto").value = "";
+       safeSetDisplay("modal-overlay", "block");
+       safeSetDisplay("modal-oportunidade", "block");
+    }
+    function fecharModalOportunidade() {
+       safeSetDisplay("modal-overlay", "none");
+       safeSetDisplay("modal-oportunidade", "none");
+    }
+    async function salvarOportunidadeUI() {
+       const cli = document.getElementById("oppNomeCliente").value;
+       const desc = document.getElementById("oppDesc").value.trim();
+       const foto = document.getElementById("oppFoto");
+       if(!desc) return alert("Descreva a oportunidade.");
+       fecharModalOportunidade();
+       
+       executarComLoader("Enviando ao comercial...", async () => {
+          let urlFoto = "";
+          if(foto && foto.files[0]) {
+             const r = new FileReader(); 
+             const b64 = await new Promise(res => { r.onload = e => res(e.target.result); r.readAsDataURL(foto.files[0]); });
+             const resF = await callAPI('uploadComprovativo', { base64: b64, nomeArquivo: `Opp_${Date.now()}.jpg` });
+             if(resF.sucesso) urlFoto = resF.url;
+          }
+          const res = await callAPI('salvarOportunidadeComercial', { tecnico: usuarioAutenticado, cliente: cli, descricao: desc, fotoUrl: urlFoto });
+          if(res.erro) alert(res.erro);
+          else { playBeepSucesso(); alert("Oportunidade enviada ao Comercial com sucesso!"); }
+       });
+    }
+
+    function carregarOportunidades() {
+       callAPI('getOportunidadesComerciais').then(dados => {
+          if (dados.erro || !dados || dados.length === 0) { safeSetHTML("listaOportunidades", "Sem vendas."); return; }
+          let html = "";
+          dados.forEach(d => {
+             let cor = d.status.includes('Aprovad') ? 'var(--accent)' : (d.status.includes('Recusad') ? 'var(--danger)' : 'var(--warning)');
+             let btns = `<div style="display:flex; gap:8px; margin-top:10px;"><button class="btn-acao" style="background:var(--accent); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Orçamento Aprovado')">Aprovar</button><button class="btn-acao" style="background:var(--danger); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Recusado')">Recusar</button></div>`;
+             html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; text-align:left; position:relative; overflow:hidden;">
+                        <div style="position:absolute; top:0; left:0; bottom:0; width:4px; background:${cor};"></div>
+                        <strong style="color:var(--primary); font-size:1.1rem;">${d.cliente}</strong><br>
+                        <small style="color:var(--text-muted)">Técnico: <b>${d.tecnico}</b> | ${d.data}</small><br>
+                        <div style="margin-top:6px; font-size:0.85rem; color:var(--text);">${d.desc}</div>
+                        ${d.foto ? `<br><a href="${d.foto}" target="_blank" style="color:#38bdf8; font-size:0.8rem;">📸 Ver Foto do Local</a>` : ''}
+                        <div style="margin-top:6px;"><span class="badge-status-req" style="background:${cor}; color:#000;">${d.status}</span></div>
+                        ${btns}
+                      </div>`;
+          });
+          safeSetHTML("listaOportunidades", html);
+       });
+    }
+
+    function atualizarOportunidadeUI(linha, status) {
+       executarComLoader("A processar...", async () => {
+          await callAPI('atualizarOportunidade', { linha: linha, status: status });
+          carregarOportunidades();
+       });
+    }
+
+    // --- COORDENADAS E GPS ---
     function extrairLatLngDeUrl(url) {
        if (!url || typeof url !== 'string') return null;
        const match = url.match(/query=([-0-9.]+),([-0-9.]+)/) || url.match(/q=([-0-9.]+),([-0-9.]+)/);
@@ -687,7 +800,6 @@
        executarComLoader("A cancelar...", async () => { await callAPI('cancelarMinhaSolicitacao', { categoria: categoria, linha: linha, nome: usuarioAutenticado }); carregarMeusAjustes(usuarioAutenticado); });
     }
 
-    function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
     function toggleTema() { const el = document.documentElement, tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', tema); localStorage.setItem('ponto_tema', tema); }
     function showLoading(msg) { safeSetText('loaderMsg', msg || "A processar..."); safeSetDisplay('loaderOverlay', 'flex'); }
     function hideLoading() { safeSetDisplay('loaderOverlay', 'none'); }
@@ -796,7 +908,10 @@
       usuarioAutenticado = nome; perfilAutenticado = perfil; 
       safeSetText('nomeExibicao', nome);
       safeSetDisplay('tela-login', 'none'); safeSetDisplay('tela-app', 'block'); safeSetDisplay('btnSair', 'block');
-      if (perfil === 'Admin') { safeSetDisplay('abasAdmin', 'flex'); safeSetDisplay('areaAtribuirItinerario', 'block'); carregarAusenciasEquipe(); carregarAprovacoes(); }
+      if (perfil === 'Admin') { 
+          safeSetDisplay('abasAdmin', 'flex'); safeSetDisplay('areaAtribuirItinerario', 'block'); 
+          carregarAusenciasEquipe(); carregarAprovacoes(); carregarOportunidades();
+      }
       if(navigator.onLine) { carregarEstoque(); carregarMeusEquipamentos(); carregarMeusAjustes(nome); carregarMuralAvisos(); }
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); 
       carregarHistoricoEAtualizarBotoes(nome); carregarItinerario(true); 
@@ -815,23 +930,20 @@
       if(id === 'tab-aprovacoes') carregarAprovacoes(); 
       if(id === 'tab-estoque') carregarEstoque();
       if(id === 'tab-rotas') carregarRotasServidor();
+      if(id === 'tab-oportunidades') carregarOportunidades();
     }
 
     setInterval(() => {
       const a = new Date(); safeSetText('relogio', a.toLocaleTimeString('pt-BR')); safeSetText('data-atual', a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }));
     }, 1000);
 
-    // FUNÇÃO SEGURA PARA CONVERTER "HH:MM" EM MINUTOS (CORRIGIDO BUG DO DECIMAL)
     function horasParaMin(hStr) { 
         if(!hStr || hStr==='-' || hStr==='Erro') return 0; 
-        let str = String(hStr).replace(/'/g, '').trim();
-        if (!str.includes(':')) return 0; // Proteção extra caso venha como decimal do Excel
-        let p = str.split(':'); 
-        return parseInt(p[0]||0)*60 + parseInt(p[1]||0); 
+        let str = String(hStr).replace(/'/g, '').trim(); if (!str.includes(':')) return 0;
+        let p = str.split(':'); return parseInt(p[0]||0)*60 + parseInt(p[1]||0); 
     }
     function minParaHoras(min) { 
-        if(min<=0) return "00:00"; 
-        let h=Math.floor(min/60), m=min%60; return (h<10?"0"+h:h) + ":" + (m<10?"0"+m:m); 
+        if(min<=0) return "00:00"; let h=Math.floor(min/60), m=min%60; return (h<10?"0"+h:h) + ":" + (m<10?"0"+m:m); 
     }
 
     function getQtdPendenciasAgenda(ignorarLinha = null) {
@@ -863,26 +975,19 @@
             if(badge) { badge.innerHTML = '🟡 Em Pausa'; badge.style.background = '#78350f'; badge.style.color = '#fcd34d'; }
             if(bRetorno) bRetorno.style.display = 'block'; 
         } else if (statusGlobalPonto === 'Retorno') { 
-            if(badge) { badge.innerHTML = '🟢 Em Expediente'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7'; }
+            if(badge) { badge.innerHTML = '🟢 Em Expediente (Retorno)'; badge.style.background = '#064e3b'; badge.style.color = '#6ee7b7'; }
             if(bSaida) bSaida.style.display = 'block'; 
         }
       }
       const mbE = document.getElementById('btnEntradaMan'), mbP = document.getElementById('btnPausaMan'), mbR = document.getElementById('btnRetornoMan'), mbS = document.getElementById('btnSaidaMan');
       if(mbE) { mbE.disabled = (statusGlobalPonto !== 'Saída'); if(mbP) mbP.disabled = (statusGlobalPonto !== 'Entrada'); if(mbR) mbR.disabled = (statusGlobalPonto !== 'Pausa'); if(mbS) mbS.disabled = (statusGlobalPonto !== 'Entrada' && statusGlobalPonto !== 'Retorno'); }
-      const alertaFadiga = document.getElementById('alerta-fadiga');
-      if (alertaFadiga) {
-          if (statusGlobalPonto === 'Entrada' && tempoInicioExpediente) { 
-              let diffHoras = (new Date() - tempoInicioExpediente) / 3600000; alertaFadiga.style.display = (diffHoras > 6) ? 'block' : 'none'; 
-          } else { alertaFadiga.style.display = 'none'; }
-      }
     }
 
     function baterPontoRapido(tipo) { hapticFeedback(); baterPontoManual(tipo, true); }
 
     function baterPontoManual(tipo, isRapido = false) {
       if (tipo === 'Saída') { 
-         let p = getQtdPendenciasAgenda();
-         if (p > 0) return alert("BLOQUEIO: Você possui atendimentos em aberto na agenda. Conclua-os antes de encerrar.");
+         if (getQtdPendenciasAgenda() > 0) return alert("BLOQUEIO: Você possui atendimentos em aberto na agenda.");
          if (!confirm("Deseja encerrar o turno de hoje?")) return; 
       }
       let obs = isRapido ? "" : (document.getElementById("obsManual") ? document.getElementById("obsManual").value : "");
@@ -900,10 +1005,7 @@
         if (typeof Chart === 'undefined') return; 
         const canvasEl = document.getElementById('meuGrafico'); if(!canvasEl) return; const ctx = canvasEl.getContext('2d');
         if(chartMeuDesempenho) chartMeuDesempenho.destroy();
-        chartMeuDesempenho = new Chart(ctx, { 
-            type: 'doughnut', data: { labels: ['H. Normais', 'H. Extra'], datasets: [{ data: [minNormal, minExtra], backgroundColor: ['#0088cc', '#ef4444'], borderWidth: 0, hoverOffset: 4 }] }, 
-            options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: '#8ba2c0', font: { size: 11, weight: 'bold' } } } } } 
-        });
+        chartMeuDesempenho = new Chart(ctx, { type: 'doughnut', data: { labels: ['H. Normais', 'H. Extra'], datasets: [{ data: [minNormal, minExtra], backgroundColor: ['#0088cc', '#ef4444'], borderWidth: 0 }] }, options: { responsive: true, maintainAspectRatio: false, cutout: '75%', plugins: { legend: { position: 'right', labels: { color: '#8ba2c0', font: { size: 11 } } } } } });
     }
 
     function desenharAdminGrafico(dados) {
@@ -911,16 +1013,13 @@
         safeSetDisplay('boxAdminGrafico', 'block');
         const canvasEl = document.getElementById('adminGrafico'); if(!canvasEl) return; const ctx = canvasEl.getContext('2d');
         if(chartAdminBanco) chartAdminBanco.destroy();
-        chartAdminBanco = new Chart(ctx, { 
-            type: 'bar', data: { labels: dados.map(d => d.nome.split(' ')[0]), datasets: [ { label: 'Horas Normais', data: dados.map(d => horasParaMin(d.total)/60), backgroundColor: '#0088cc', borderRadius: 4 }, { label: 'Horas Extras', data: dados.map(d => horasParaMin(d.extra)/60), backgroundColor: '#f59e0b', borderRadius: 4 } ] }, 
-            options: { responsive: true, maintainAspectRatio: false, scales: { y: { beginAtZero: true, grid: { color: 'rgba(139,162,192,0.1)' }, ticks: { color: '#8ba2c0' } }, x: { grid: { display: false }, ticks: { color: '#8ba2c0' } } }, plugins: { legend: { labels: { color: '#8ba2c0' } } } } 
-        });
+        chartAdminBanco = new Chart(ctx, { type: 'bar', data: { labels: dados.map(d => d.nome.split(' ')[0]), datasets: [ { label: 'Normais', data: dados.map(d => horasParaMin(d.total)/60), backgroundColor: '#0088cc', borderRadius: 4 }, { label: 'Extras', data: dados.map(d => horasParaMin(d.extra)/60), backgroundColor: '#f59e0b', borderRadius: 4 } ] }, options: { responsive: true, maintainAspectRatio: false, scales: { x: { grid: { display: false } } } } });
     }
 
     async function carregarHistoricoEAtualizarBotoes(nome) {
       try {
           const dados = await callAPI('getMeuHistorico', { nomeColaborador: nome });
-          if (dados.erro) { atualizarRegraBotoes('Saída'); safeSetHTML('status-badge', '⚠️ Erro de Ligação'); return; }
+          if (dados.erro) { atualizarRegraBotoes('Saída'); return; }
           let visitasMes = 0, minExtra = 0, minTotal = 0, mesAtual = new Date().toLocaleDateString('pt-BR', {month:'2-digit', year:'numeric'}), html = "";
           if (Array.isArray(dados) && dados.length > 0) {
               [...dados].reverse().forEach(d => {
@@ -929,9 +1028,7 @@
                     if(d.tipo === 'Saída' && d.extra && d.extra !== '-') minExtra += horasParaMin(d.extra);
                     if(d.tipo === 'Saída' && d.total && d.total !== '-') minTotal += horasParaMin(d.total);
                  }
-                 let tagHtml = '<span class="tag-tipo" style="background:#1a365d; color:#fff">' + (d.tipo || '-') + '</span>';
-                 let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><small style="color:var(--accent);">Total: ' + d.total + 'h</small>' : '';
-                 html += `<tr><td data-label="Data/Hora"><strong>${d.dataHora || '-'}</strong></td><td data-label="Ação">${tagHtml}</td><td data-label="Obs">${d.obs || '-'}${infoExtra}</td></tr>`;
+                 html += `<tr><td data-label="Data">${d.dataHora || '-'}</td><td data-label="Ação"><span class="tag-tipo" style="background:#1a365d; color:#fff">${d.tipo || '-'}</span></td><td data-label="Obs">${d.obs || '-'}${d.tipo === 'Saída' && d.total !== '-' ? '<br><small style="color:var(--accent);">Total: '+d.total+'h</small>':''}</td></tr>`;
               });
           }
           safeSetHTML("tblCorpo", html || '<tr><td colspan="3" style="text-align:center;">Vazio</td></tr>');
@@ -952,7 +1049,7 @@
               }
           }
           atualizarRegraBotoes(lastPonto); carregarMeusAjustes(nome);
-      } catch (e) { atualizarRegraBotoes('Saída'); safeSetHTML('status-badge', '⚠️ Erro no Sistema'); }
+      } catch (e) { atualizarRegraBotoes('Saída'); }
     }
 
     function toggleRecorrencia() {
@@ -987,12 +1084,9 @@
         if(da > df) return alert("Data Início maior que Data Fim.");
         while(da <= df) { if (dMarcados.includes(da.getDay())) datas.push(da.toISOString().split('T')[0]); da.setDate(da.getDate() + 1); }
       }
-
       for (let dt of datas) {
-         let motivoAus = verificarTecnicoEmAusencia(tec, dt);
-         if (motivoAus) return alert(`BLOQUEIO DE ESCALA: O técnico ${tec} está cadastrado em [${motivoAus}] na data ${dt}.`);
+         let motivoAus = verificarTecnicoEmAusencia(tec, dt); if (motivoAus) return alert(`BLOQUEIO DE ESCALA: O técnico ${tec} está cadastrado em [${motivoAus}] na data ${dt}.`);
       }
-
       executarComLoader("A agendar " + datas.length + " compromisso(s)...", async () => {
          const p = datas.map(dt => ({ tecnico: tec, data: dt, cliente: cli, endereco: end, horario: hor, coordenadas: "", prioridade: pri }));
          const res = await callAPI('addItinerarioMulti', { dadosArray: p });
@@ -1003,9 +1097,7 @@
 
     function filtrarCardsAgenda() {
        const termo = (document.getElementById("filtroBuscaAgenda")?.value || "").toLowerCase();
-       document.querySelectorAll("#listaItinerario .card-itinerario").forEach(card => {
-          card.style.display = card.innerText.toLowerCase().includes(termo) ? "block" : "none";
-       });
+       document.querySelectorAll("#listaItinerario .card-itinerario").forEach(card => { card.style.display = card.innerText.toLowerCase().includes(termo) ? "block" : "none"; });
     }
 
     async function carregarItinerario(forcar = false) {
@@ -1031,28 +1123,23 @@
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="${argForcar}">✔ Forçar Remoção (Admin)</button>` : '';
         
         let endEncoded = encodeURIComponent(d.endereco || d.cliente);
-        let botoesRota = `<div class="nav-pills"><a class="nav-pill" href="https://waze.com/ul?q=${endEncoded}&navigate=yes" target="_blank">🚗 Waze</a><a class="nav-pill" href="https://www.google.com/maps/search/?api=1&query=${endEncoded}" target="_blank">🗺️ Maps</a><button type="button" class="nav-pill" onclick="abrirFichaTecnicaCliente('${d.cliente}')" style="color:var(--warning);">🔑 Ficha Técnica</button><button type="button" class="nav-pill" onclick="consultarHistoricoOSCliente('${d.cliente}')" style="color:#38bdf8;">📋 Últimas OS</button></div>`;
+        let botoesRota = `<div class="nav-pills">
+             <a class="nav-pill" href="https://waze.com/ul?q=${endEncoded}&navigate=yes" target="_blank">🚗 Waze</a>
+             <a class="nav-pill" href="https://www.google.com/maps/search/?api=1&query=${endEncoded}" target="_blank">🗺️ Maps</a>
+             <button type="button" class="nav-pill" onclick="abrirFichaTecnicaCliente('${d.cliente}')" style="color:var(--warning);">🔑 Ficha</button>
+             <button type="button" class="nav-pill" onclick="abrirModalOportunidade('${d.cliente}')" style="color:var(--accent);">💡 Nova Venda</button>
+          </div>`;
 
         let slaHtml = "", botoesGeo = "";
         if (isPerdida) { 
             botoesGeo = '<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida</span>' + btnConcluirAdmin; 
         } else if (isAndamento) {
             iniciarSlaLocal(d.linha);
-            slaHtml = `<div class="sla-timer" data-sla-linha="${d.linha}">⏱️ Em atendimento: ${obterDuracaoSlaFormatada(d.linha)}</div>`;
-            let argBase = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Base)', " + d.linha + ", '')";
-            let argProx = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Próx. Cliente)', " + d.linha + ", '')";
-            let argAusente = "checkinGeolocalizado('" + d.cliente + "', 'Cliente Ausente', " + d.linha + ", '')";
-            let argFim = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Fim de Expediente)', " + d.linha + ", '')";
-            let argPausaSla = "checkinGeolocalizado('" + d.cliente + "', 'Pausa SLA', " + d.linha + ", '')";
-            
-            botoesGeo = `<div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="${argBase}">🏢 P/ Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="${argProx}">🚶 P/ Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="${argAusente}">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="${argFim}">🏠 Fim Expediente</button></div><button class="btn-logout" style="border-color:#fbbf24; color:#fbbf24; padding:10px;" onclick="${argPausaSla}">⏸️ Pausar SLA (Espera)</button>${btnConcluirAdmin}</div>`;
+            slaHtml = `<div class="sla-timer" data-sla-linha="${d.linha}">⏱️ Atendimento: ${obterDuracaoSlaFormatada(d.linha)}</div>`;
+            botoesGeo = `<div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha}, '')">🏢 P/ Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Próx)', ${d.linha}, '')">🚶 Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha}, '')">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha}, '')">🏠 Fim Expediente</button></div><button class="btn-logout" style="border-color:#fbbf24; color:#fbbf24; padding:10px;" onclick="checkinGeolocalizado('${d.cliente}', 'Pausa SLA', ${d.linha}, '')">⏸️ Pausar SLA (Espera)</button>${btnConcluirAdmin}</div>`;
         } else {
-            if (!isHoje && perfilAutenticado !== 'Admin') { 
-                botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; 
-            } else { 
-                let argCheguei = "checkinGeolocalizado('" + d.cliente + "', 'Cheguei', " + d.linha + ", '')";
-                botoesGeo = `<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="${argCheguei}">📍 Cheguei no Local</button>${btnConcluirAdmin}`; 
-            }
+            if (!isHoje && perfilAutenticado !== 'Admin') { botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; } 
+            else { botoesGeo = `<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '')">📍 Cheguei no Local</button>${btnConcluirAdmin}`; }
         }
         
         let tagTecAdmin = (perfilAutenticado === 'Admin') ? `<small style="color:var(--warning); font-weight:bold; display:block;">👤 Técnico: ${d.tecnico}</small>` : '';
@@ -1064,31 +1151,18 @@
 
     async function checkinGeolocalizado(cliente, tipo, linhaAgenda, coordsCadastradas) {
       if (tipo === 'Forçar Remoção') { 
-          if(confirm("Remover este compromisso?")) { 
-              executarComLoader("A forçar remoção...", async () => { 
-                  await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' }); 
-                  sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); 
-              }); 
-          } 
+          if(confirm("Remover este compromisso?")) { executarComLoader("A forçar remoção...", async () => { await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Concluído' }); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); }); } 
           return; 
       }
-
       if (tipo === 'Pausa SLA') {
-         if (confirm("Deseja congelar o SLA (aguardando cliente/energia)?")) {
-            localStorage.removeItem('sla_start_' + linhaAgenda);
-            alert("SLA Pausado. Clique em 'Cheguei no Local' para retomar o contador.");
-            await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Pendente' });
-            sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); 
-         }
+         if (confirm("Congelar o SLA (aguardando cliente)?")) { localStorage.removeItem('sla_start_' + linhaAgenda); alert("SLA Pausado."); await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Pendente' }); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); }
          return;
       }
-      
-      if (tipo.includes('Fim de Expediente') && getQtdPendenciasAgenda(linhaAgenda) > 0) return alert("BLOQUEIO: Finalize os outros atendimentos da agenda antes de encerrar o expediente.");
+      if (tipo.includes('Fim') && getQtdPendenciasAgenda(linhaAgenda) > 0) return alert("BLOQUEIO: Finalize os outros atendimentos da agenda antes de encerrar o expediente.");
       
       executarComLoader("A registar check-in...", async () => {
          let locUrl = await obterLocalizacao();
          let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
-         
          if (tipo === 'Cheguei' && linhaAgenda) iniciarSlaLocal(linhaAgenda);
          if (ehBase) { processarVisita(cliente, tipo, linhaAgenda, locUrl, ""); return; }
          if (tipo.includes('Saí') || tipo === 'Cliente Ausente') { hideLoading(); prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
@@ -1109,7 +1183,6 @@
          await callAPI('registrarCheckin', { cliente: cli, acao: logAcao, observacao: "Visita Avulsa" + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
          if (acao === 'Cheguei' && statusGlobalPonto === 'Saída') await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: "Início (Avulso): " + cli + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
          if (acao.includes('Fim de Expediente')) await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + cli + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
-         
          elCli.value = ""; carregarHistoricoEAtualizarBotoes(usuarioAutenticado); exibirMsg("Registado!", false);
       });
     }
@@ -1119,8 +1192,7 @@
       let logAcao = tipo === 'Cliente Ausente' ? "Saí (Ausente)" : tipo;
       if(ehBase) logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
 
-      let batInfo = await obterInfoBateria();
-      let slaDuracao = (linhaAgenda && tipo.includes('Saí')) ? ` [SLA: ${obterDuracaoSlaFormatada(linhaAgenda)}]` : "";
+      let batInfo = await obterInfoBateria(), slaDuracao = (linhaAgenda && tipo.includes('Saí')) ? ` [SLA: ${obterDuracaoSlaFormatada(linhaAgenda)}]` : "";
       if (linhaAgenda && (tipo.includes('Saí') || tipo === 'Cliente Ausente')) localStorage.removeItem('sla_start_' + linhaAgenda);
 
       await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra + slaDuracao + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
@@ -1135,76 +1207,60 @@
     async function carregarEstoque() {
        const res = await callAPI('getEstoque');
        if(!res.erro && Array.isArray(res)) {
-           estoqueGlobal = res; 
-           let sel = document.getElementById('selMaterial'); 
-           if(sel) {
-               sel.innerHTML = '<option value="">Selecionar peça...</option>';
-               res.forEach(item => { if (item.qtd > 0) sel.innerHTML += `<option value="${item.linha}">${item.nome} (Disp: ${item.qtd})</option>`; });
-           }
+           estoqueGlobal = res; let sel = document.getElementById('selMaterial'); 
+           if(sel) { sel.innerHTML = '<option value="">Selecionar peça...</option>'; res.forEach(item => { if (item.qtd > 0) sel.innerHTML += `<option value="${item.linha}">${item.nome} (Disp: ${item.qtd})</option>`; }); }
            const tbl = document.getElementById('tblAdminEstoque');
            if (tbl) {
                let html = "";
                res.forEach(item => {
-                   let isBaixo = item.qtd <= 3;
-                   let badge = isBaixo ? `<span class="badge-status-req bg-recusado">⚠️ Estoque Baixo</span>` : `<span class="badge-status-req bg-aprovado">✅ Normal</span>`;
+                   let isBaixo = item.qtd <= 3, badge = isBaixo ? `<span class="badge-status-req bg-recusado">⚠️ Baixo</span>` : `<span class="badge-status-req bg-aprovado">✅ Normal</span>`;
                    html += `<tr><td data-label="Peça"><strong>${item.nome}</strong></td><td data-label="Saldo" style="font-weight:900; color:${isBaixo ? 'var(--danger)' : 'var(--accent)'};">${item.qtd} un.</td><td data-label="Status">${badge}</td></tr>`;
                });
-               tbl.innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Nenhum item cadastrado.</td></tr>';
+               tbl.innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>';
            }
        }
     }
 
     function adicionarOuReporEstoque() {
        const nome = document.getElementById("estNomeItem").value.trim(), qtd = parseFloat(document.getElementById("estQtdItem").value);
-       if (!nome || isNaN(qtd)) return alert("Preencha o nome da peça e a quantidade a somar.");
+       if (!nome || isNaN(qtd)) return alert("Preencha nome e quantidade.");
        executarComLoader("A atualizar estoque...", async () => {
           const res = await callAPI('atualizarItemEstoque', { nome: nome, qtd: qtd });
-          if (res.erro) alert(res.erro);
-          else { document.getElementById("estNomeItem").value = ""; document.getElementById("estQtdItem").value = ""; await carregarEstoque(); alert("Estoque atualizado!"); }
+          if (res.erro) alert(res.erro); else { document.getElementById("estNomeItem").value = ""; document.getElementById("estQtdItem").value = ""; await carregarEstoque(); alert("Estoque atualizado!"); }
        });
     }
 
     function addMaterialUI(e) {
        e.preventDefault(); hapticFeedback(); 
        const sel = document.getElementById('selMaterial'), inputQtd = document.getElementById('qtdMaterial');
-       if(!sel || !inputQtd) return;
-       const qtd = parseInt(inputQtd.value);
+       if(!sel || !inputQtd) return; const qtd = parseInt(inputQtd.value);
        if(!sel.value || isNaN(qtd) || qtd < 1) return; 
        const item = estoqueGlobal.find(i => i.linha == sel.value); 
        if(!item || qtd > item.qtd) return alert("Estoque insuficiente!");
-       materiaisUsados.push({ linha: item.linha, nome: item.nome, qtdUsada: qtd }); 
-       atualizarUI_Materiais(); sel.value = ""; inputQtd.value = "1";
+       materiaisUsados.push({ linha: item.linha, nome: item.nome, qtdUsada: qtd }); atualizarUI_Materiais(); sel.value = ""; inputQtd.value = "1";
     }
     
     function atualizarUI_Materiais() {
        const ul = document.getElementById('listaMateriaisUi'); if(!ul) return;
-       ul.innerHTML = '';
-       materiaisUsados.forEach((m, idx) => { 
-           ul.innerHTML += `<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:var(--card-bg); padding:8px; border-radius:6px; border:1px solid var(--border);"><span><strong>${m.qtdUsada}x</strong> ${m.nome}</span> <span style="color:var(--danger); cursor:pointer; font-weight:bold; font-size:1.1rem;" onclick="removeMaterial(${idx})">✖</span></li>`; 
-       });
+       ul.innerHTML = ''; materiaisUsados.forEach((m, idx) => { ul.innerHTML += `<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:var(--card-bg); padding:8px; border-radius:6px; border:1px solid var(--border);"><span><strong>${m.qtdUsada}x</strong> ${m.nome}</span> <span style="color:var(--danger); cursor:pointer;" onclick="removeMaterial(${idx})">✖</span></li>`; });
     }
     function removeMaterial(idx) { materiaisUsados.splice(idx, 1); atualizarUI_Materiais(); }
 
     function prepararModalAgenda(cliente, acao, linha) { 
         pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; 
-        let elObs = document.getElementById('txtObservacaoOS');
-        if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
+        let elObs = document.getElementById('txtObservacaoOS'); if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
         materiaisUsados = []; atualizarUI_Materiais(); 
         let showOS = (acao.includes('Saí') && acao !== 'Cliente Ausente'); 
-        safeSetDisplay('box-os', showOS ? 'block' : 'none'); safeSetDisplay('box-materiais', showOS ? 'block' : 'none'); safeSetDisplay('box-avaliacao', showOS ? 'block' : 'none');
-        safeSetDisplay('box-assinatura', (acao === 'Cliente Ausente') ? 'none' : 'block');
-        safeSetText('lblFoto', (acao === 'Cliente Ausente') ? '📸 Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)');
-        safeSetText('modalTitulo', (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar e Gerar OS');
+        safeSetDisplay('box-os', showOS ? 'block' : 'none'); safeSetDisplay('box-materiais', showOS ? 'block' : 'none'); safeSetDisplay('box-avaliacao', showOS ? 'block' : 'none'); safeSetDisplay('box-assinatura', (acao === 'Cliente Ausente') ? 'none' : 'block');
+        safeSetText('lblFoto', (acao === 'Cliente Ausente') ? '📸 Foto do Local (OBRIGATÓRIO)' : '📸 Tirar Foto (Opcional)'); safeSetText('modalTitulo', (acao === 'Cliente Ausente') ? 'Registar Ausência' : 'Finalizar e Gerar OS');
         setRating(0); safeSetDisplay('modal-overlay', 'block'); safeSetDisplay('modal-box', 'block'); limparAssinatura(); 
         let elFoto = document.getElementById('fotoVisita'); if(elFoto) elFoto.value = ""; 
     }
     
     function prepararModalAvulso(acao) { 
-        let elCli = document.getElementById('chkCliente');
-        if(!elCli || !elCli.value.trim()) return alert("Local avulso vazio."); 
+        let elCli = document.getElementById('chkCliente'); if(!elCli || !elCli.value.trim()) return alert("Local avulso vazio."); 
         pendenteCliente = elCli.value.trim(); pendenteAcao = acao; pendenteLinhaAgenda = null; 
-        let elObs = document.getElementById('txtObservacaoOS');
-        if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
+        let elObs = document.getElementById('txtObservacaoOS'); if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
         materiaisUsados = []; atualizarUI_Materiais(); 
         safeSetDisplay('box-os', 'block'); safeSetDisplay('box-materiais', 'block'); safeSetDisplay('box-avaliacao', 'block'); safeSetDisplay('box-assinatura', 'block');
         safeSetText('lblFoto', '📸 Tirar Foto (Opcional)'); safeSetText('modalTitulo', 'Finalizar e Gerar OS');
@@ -1219,29 +1275,25 @@
         const stars = container.children; for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); } 
     }
     
-    let canvas, ctx, assinando = false, isAssinaturaVazia = true;
+    let isAssinaturaVazia = true;
     function initAssinatura() {
        canvas = document.getElementById('canvasAssinatura'); if(!canvas) return; ctx = canvas.getContext('2d');
-       const startPos = (e) => { assinando = true; desenhar(e); }; 
-       const endPos = () => { assinando = false; ctx.beginPath(); };
-       const desenhar = (e) => { 
+       const startPos = (e) => { assinando = true; draw(e); }; const endPos = () => { assinando = false; ctx.beginPath(); };
+       const draw = (e) => { 
            if(!assinando) return; e.preventDefault(); isAssinaturaVazia = false;
            const rect = canvas.getBoundingClientRect(), x = (e.clientX || e.touches[0].clientX) - rect.left, y = (e.clientY || e.touches[0].clientY) - rect.top; 
            ctx.lineWidth = 2; ctx.lineCap = 'round'; ctx.lineTo(x, y); ctx.stroke(); ctx.beginPath(); ctx.moveTo(x, y); 
        };
-       canvas.addEventListener('mousedown', startPos); canvas.addEventListener('mouseup', endPos); canvas.addEventListener('mousemove', desenhar);
-       canvas.addEventListener('touchstart', startPos, {passive:false}); canvas.addEventListener('touchend', endPos); canvas.addEventListener('touchmove', desenhar, {passive:false});
+       canvas.addEventListener('mousedown', startPos); canvas.addEventListener('mouseup', endPos); canvas.addEventListener('mousemove', draw);
+       canvas.addEventListener('touchstart', startPos, {passive:false}); canvas.addEventListener('touchend', endPos); canvas.addEventListener('touchmove', draw, {passive:false});
     }
     function limparAssinatura() { if(ctx && canvas) ctx.clearRect(0, 0, canvas.width, canvas.height); isAssinaturaVazia = true; }
 
     function enviarComprovativoEFechar() {
        const fotoInput = document.getElementById('fotoVisita'); 
        let textoOS = document.getElementById('txtObservacaoOS') ? document.getElementById('txtObservacaoOS').value.trim() : "";
-       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput || !fotoInput.files || !fotoInput.files[0])) {
-           return alert("A foto do local é obrigatória para registar ausência.");
-       }
-       fecharModal();
-       localStorage.removeItem('rascunho_os_' + usuarioAutenticado);
+       if (pendenteAcao === 'Cliente Ausente' && (!fotoInput || !fotoInput.files || !fotoInput.files[0])) return alert("A foto do local é obrigatória para registar ausência.");
+       fecharModal(); localStorage.removeItem('rascunho_os_' + usuarioAutenticado);
        
        executarComLoader("A gerar OS e concluir...", async () => {
            let linksExtra = ""; let urlAssinaturaOS = "";
@@ -1268,9 +1320,7 @@
                await processarVisita(pendenteCliente, pendenteAcao, pendenteLinhaAgenda, loc, linksExtra); 
            } else { 
                await callAPI('registrarCheckin', { cliente: pendenteCliente, acao: pendenteAcao, observacao: "Visita Avulsa" + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc }); 
-               if (pendenteAcao.includes('Fim de Expediente')) {
-                   await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + pendenteCliente + " " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc }); 
-               }
+               if (pendenteAcao.includes('Fim de Expediente')) await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim Avulso: " + pendenteCliente + " " + linksExtra, nomeColaborador: usuarioAutenticado, localizacao: loc }); 
                let elCli = document.getElementById('chkCliente'); if(elCli) elCli.value = ""; 
                carregarHistoricoEAtualizarBotoes(usuarioAutenticado); 
            }
@@ -1293,14 +1343,13 @@
       executarComLoader("A enviar pedido...", async () => { 
           const res = await callAPI('solicitarCorrecao', { nome: usuarioAutenticado, tipo: elTipo.value, dataHoraCorreta: elDataHora.value, motivo: elMotivo.value }); 
           if(res.erro) alert(res.erro); 
-          else { elMotivo.value = ""; carregarMeusAjustes(usuarioAutenticado); playBeepSucesso(); alert("Pedido enviado com sucesso! Acompanhe o status na aba Perfil."); } 
+          else { elMotivo.value = ""; carregarMeusAjustes(usuarioAutenticado); playBeepSucesso(); alert("Pedido enviado com sucesso!"); } 
       });
     }
 
     async function enviarSolicitacaoAusencia() {
        const tipo = document.getElementById("ausTipo").value, dIni = document.getElementById("ausDataIni").value, dFim = document.getElementById("ausDataFim").value, motivo = document.getElementById("ausMotivo").value.trim(), fileInput = document.getElementById("ausArquivo");
-       if (!dIni || !dFim) return alert("Informe a data de início e fim.");
-       if (dIni > dFim) return alert("Data de início não pode ser maior que o fim.");
+       if (!dIni || !dFim) return alert("Informe a data de início e fim."); if (dIni > dFim) return alert("Data de início não pode ser maior que o fim.");
        executarComLoader("A enviar solicitação de ausência...", async () => {
           let urlArquivo = "";
           if (fileInput.files && fileInput.files[0]) {
@@ -1333,25 +1382,21 @@
        }
        safeSetDisplay("modal-overlay", "block"); safeSetDisplay("modal-historico-cliente", "block");
     }
-
     function fecharModalHistoricoOS() { safeSetDisplay("modal-overlay", "none"); safeSetDisplay("modal-historico-cliente", "none"); }
 
     async function carregarMeusEquipamentos() {
        const res = await callAPI('getMeusEquipamentos', { nome: usuarioAutenticado }), ul = document.getElementById("listaMeusEquipamentos"); if (!ul) return;
-       if (!res || res.erro || !Array.isArray(res) || res.length === 0) {
-          ul.innerHTML = `<li style="background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">Kit Básico: Notebook Corporativo, Patch Cord, Crimpador RJ45, Testador de Cabo de Rede, Multímetro.</li>`; return;
-       }
+       if (!res || res.erro || !Array.isArray(res) || res.length === 0) { ul.innerHTML = `<li style="background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);">Kit Padrão: Notebook, Crimpador RJ45.</li>`; return; }
        let html = "";
        res.forEach(item => { html += `<li style="display:flex; justify-content:space-between; background:var(--bg); padding:10px; border-radius:8px; border:1px solid var(--border);"><span><strong>${item.equipamento}</strong> (Patrimônio: ${item.patrimonio || 'N/A'})</span><span class="tag-tipo" style="background:#064e3b; color:#6ee7b7;">OK</span></li>`; });
        ul.innerHTML = html;
     }
-
     function abrirReporteFerramenta() {
        const item = prompt("Qual ferramenta ou EPI você deseja reportar avaria, perda ou pedir reposição?"); if (!item) return;
        const motivo = prompt("Descreva o ocorrido:"); if (!motivo) return;
        executarComLoader("A registrar chamado de ferramenta...", async () => {
           const res = await callAPI('solicitarAjusteFerramental', { tecnico: usuarioAutenticado, item: item, motivo: motivo });
-          if (res.erro) alert(res.erro); else { carregarMeusAjustes(usuarioAutenticado); alert("Chamado de ferramental enviado com sucesso!"); }
+          if (res.erro) alert(res.erro); else { carregarMeusAjustes(usuarioAutenticado); alert("Chamado enviado com sucesso!"); }
        });
     }
 
@@ -1413,19 +1458,29 @@
       });
     }
 
+    // --- NOVA FUNÇÃO COM FILTRO DE DATA (V41) ---
     function carregarVisaoGeralPonto() {
       callAPI('getTodosHistoricos').then(dados => {
          if (!dados.erro && dados.length > 0) { 
-             dadosGeralGlobais = dados; const sel = document.getElementById("filtroGeralColab"); 
-             if(sel) { sel.innerHTML = '<option value="TODOS">Todos os Colaboradores</option>'; [...new Set(dados.map(d => d.nome))].sort().forEach(c => { sel.innerHTML += `<option value="${c}">${c}</option>`; }); }
+             dadosGeralGlobais = dados; 
+             const sel = document.getElementById("filtroGeralColab"); 
+             if(sel) { sel.innerHTML = '<option value="TODOS">Todos</option>' + [...new Set(dados.map(d => d.nome))].sort().map(c => `<option value="${c}">${c}</option>`).join(''); }
              filtrarGeralPonto(); 
          } else { safeSetHTML("tblGeral", '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'); }
       });
     }
     
     function filtrarGeralPonto() {
-      let elFiltro = document.getElementById("filtroGeralColab"); if(!elFiltro) return;
+      let elFiltro = document.getElementById("filtroGeralColab"); 
+      let elFiltroData = document.getElementById("filtroDataPonto"); 
+      if(!elFiltro) return;
       let filtrados = elFiltro.value !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === elFiltro.value) : dadosGeralGlobais;
+      
+      if (elFiltroData && elFiltroData.value) {
+          let dataBr = elFiltroData.value.split('-').reverse().join('/'); // YYYY-MM-DD -> DD/MM/YYYY
+          filtrados = filtrados.filter(d => String(d.dataHora).startsWith(dataBr));
+      }
+
       if (filtrados.length === 0) { safeSetHTML("tblGeral", '<tr><td colspan="4" style="text-align:center;">Nenhum registo encontrado.</td></tr>'); return; }
       let html = ""; 
       [...filtrados].reverse().forEach(d => { 
@@ -1440,7 +1495,14 @@
       const titulo = elFiltro.value === "TODOS" ? "Relatório Geral de Ponto - Todos" : "Relatório de Ponto - " + elFiltro.value; 
       let janela = window.open('', '', 'width=900,height=700'); 
       janela.document.write(`<html><head><title>${titulo}</title><style>body { font-family: sans-serif; padding: 40px; color: #070f1e; background: #fff;} table { width: 100%; border-collapse: collapse; font-size: 13px; text-align: left; } th { background-color: #f1f5f9; padding: 12px; border-bottom: 2px solid #cbd5e1; } td { padding: 12px; border-bottom: 1px solid #e2e8f0; }</style></head><body><h2>${titulo}</h2><table><thead><tr><th>Data / Hora</th><th>Colaborador</th><th>Ação</th><th>Observações e Horas Extra</th></tr></thead><tbody>`);
+      
       let filtrados = elFiltro.value !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === elFiltro.value) : dadosGeralGlobais;
+      let elFiltroData = document.getElementById("filtroDataPonto"); 
+      if (elFiltroData && elFiltroData.value) {
+          let dataBr = elFiltroData.value.split('-').reverse().join('/');
+          filtrados = filtrados.filter(d => String(d.dataHora).startsWith(dataBr));
+      }
+
       [...filtrados].reverse().forEach(d => { 
           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? `<br><b>Total do dia: ${d.total}h</b>` : ''; 
           janela.document.write(`<tr><td><strong>${d.dataHora}</strong></td><td>${d.nome}</td><td>${d.tipo}</td><td>${d.obs || '-'}${infoExtra}</td></tr>`); 
