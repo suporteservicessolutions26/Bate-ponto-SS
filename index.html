@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=42">
+  <link rel="manifest" href="manifest.json?v=43">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=42">
-  <link rel="icon" href="./LogoSS.png?v=42" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=43">
+  <link rel="icon" href="./LogoSS.png?v=43" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos offline.')"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -48,7 +48,6 @@
     .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #1a365d; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
     .aviso-interno { background: rgba(0,136,204,0.1); padding: 16px; text-align: center; border: 1px dashed var(--primary); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: #38bdf8; cursor: pointer;}
     
-    /* MURAL DE COMUNICADOS MÚLTIPLOS */
     .mural-banner { background: linear-gradient(135deg, rgba(0,136,204,0.18), rgba(245,158,11,0.12)); border: 1px solid rgba(56,189,248,0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 10px; }
     .mural-banner h4 { font-size: 0.82rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
     .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); white-space: pre-wrap; }
@@ -129,7 +128,7 @@
 <body>
 
   <script>
-    const VERSAO_ATUAL = '42';
+    const VERSAO_ATUAL = '43';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) caches.keys().then(n => { for (let k of n) caches.delete(k); }); 
       if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => { for(let a of r) a.unregister(); });
@@ -259,7 +258,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=42" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=43" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="O seu utilizador" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="A sua palavra-passe" />
@@ -275,14 +274,14 @@
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
       
-      <!-- BARRA RESTRITA (ADMIN VÊ TUDO / VENDEDOR VÊ APENAS VENDAS) -->
+      <!-- BARRA RESTRITA (RENDERIZADA DINAMICAMENTE SEGUNDO O PERFIL) -->
       <div class="tabs" id="abasRestritas" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
-        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
-        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
-        <button class="tab-btn" id="btnTabVendas" style="display:none;" onclick="abrirAba('tab-oportunidades', this); hapticFeedback()">💡 Vendas</button>
-        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-avisos', this); hapticFeedback()">📢 Avisos</button>
-        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
-        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
+        <button class="tab-btn" id="btnTabAdminPonto" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
+        <button class="tab-btn" id="btnTabAdminPedidos" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
+        <button class="tab-btn" id="btnTabVendas" onclick="abrirAba('tab-oportunidades', this); hapticFeedback()">💡 Vendas</button>
+        <button class="tab-btn" id="btnTabAdminAvisos" onclick="abrirAba('tab-avisos', this); hapticFeedback()">📢 Avisos</button>
+        <button class="tab-btn" id="btnTabAdminEstoque" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
+        <button class="tab-btn" id="btnTabAdminFrota" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
       </div>
 
       <!-- AGENDA -->
@@ -291,7 +290,7 @@
           <div id="relogio">00:00:00</div>
           <div id="data-atual">Carregando data...</div>
           <div id="status-badge" class="status-badge">Buscando status...</div><br>
-          <div style="margin-top:0;">👤 <span id="nomeExibicao"></span> <small id="tagPerfilExibicao" style="color:var(--warning); font-weight:bold;"></small></div>
+          <div style="margin-top:0;">👤 <span id="nomeExibicao"></span> <span id="tagPerfilExibicao" style="color:var(--warning); font-weight:800; font-size:0.85rem;"></span></div>
           
           <div id="acoes-rapidas" style="display:none; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
              <button id="btnPausaRapida" class="btn-acao" style="background:var(--warning); color:#000;" onclick="baterPontoRapido('Pausa')">⏸ Pausa Almoço</button>
@@ -500,7 +499,7 @@
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
              <div>
                 <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">💡 Funil de Oportunidades (Comercial)</h3>
-                <p style="font-size:0.75rem; color:var(--text-muted);">Acesso permitido apenas para Vendedores e Administradores.</p>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Acesso exclusivo para Vendedores e Administradores.</p>
              </div>
              <button class="btn-logout" onclick="carregarOportunidades(); hapticFeedback()">🔄 Atualizar</button>
           </div>
@@ -508,7 +507,7 @@
         </div>
       </div>
 
-      <!-- NOVA ABA: GERENCIADOR DE AVISOS (EXCLUSIVO ADMIN) -->
+      <!-- ABA: GERENCIADOR DE AVISOS (EXCLUSIVO ADMIN) -->
       <div id="tab-avisos" class="tab-content">
         <div class="box" style="border-color:#38bdf8;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;" id="tituloFormAviso">📢 Criar Novo Aviso</h3>
@@ -702,13 +701,14 @@
     let currentRating = 0, tempoInicioExpediente = null, filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
 
-    // --- VERIFICADOR DE PERMISSÃO (RBAC: ADMIN e VENDEDOR) ---
+    // --- VERIFICADOR FLEXÍVEL DE PERMISSÃO (ACEITA QUALQUER VARIAÇÃO) ---
     function isAdmin() {
-       return String(perfilAutenticado).toLowerCase() === 'admin';
+       const p = String(perfilAutenticado || "").trim().toLowerCase();
+       return p === 'admin' || p === 'administrador' || p === 'supervisao' || p === 'supervisão';
     }
     function podeAcessarVendas() {
-       const p = String(perfilAutenticado).toLowerCase();
-       return p === 'admin' || p === 'vendedor';
+       const p = String(perfilAutenticado || "").trim().toLowerCase();
+       return isAdmin() || p === 'vendedor' || p === 'vendedora' || p === 'vendas' || p === 'comercial';
     }
 
     // --- MODO TELÃO NOC ---
@@ -734,7 +734,7 @@
        }
     });
 
-    // --- MURAL DE AVISOS DINÂMICO E GERENCIADOR ADMIN (V42) ---
+    // --- MURAL DE AVISOS DINÂMICO E GERENCIADOR ADMIN ---
     async function carregarMuralAvisos() {
        const res = await callAPI('getMuralAvisos');
        const container = document.getElementById('containerMuralAtivo');
@@ -902,16 +902,17 @@
 
     function carregarOportunidades() {
        if (!podeAcessarVendas()) {
-          safeSetHTML("listaOportunidades", "Acesso restrito a Vendedores e Administradores.");
+          safeSetHTML("listaOportunidades", "🔒 Acesso restrito a usuários com permissão de Vendedor ou Admin.");
           return;
        }
-       callAPI('getOportunidadesComerciais').then(dados => {
-          if (dados.erro || !dados || dados.length === 0) { safeSetHTML("listaOportunidades", "Nenhuma oportunidade registrada até o momento."); return; }
+       callAPI('getOportunidadesComerciais', { solicitante: usuarioAutenticado }).then(dados => {
+          if (dados.erro) { safeSetHTML("listaOportunidades", dados.erro); return; }
+          if (!dados || dados.length === 0) { safeSetHTML("listaOportunidades", "Nenhuma oportunidade registrada até o momento."); return; }
           let html = "";
           dados.forEach(d => {
-             let cor = d.status.includes('Aprovad') ? 'var(--accent)' : (d.status.includes('Recusad') ? 'var(--danger)' : 'var(--warning)');
+             let cor = d.status.includes('Fechad') || d.status.includes('Aprovad') ? 'var(--accent)' : (d.status.includes('Recusad') ? 'var(--danger)' : 'var(--warning)');
              let btns = `<div style="display:flex; gap:8px; margin-top:10px;">
-                           <button class="btn-acao" style="background:var(--primary); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Em Negociação')">💬 Em Negociação</button>
+                           <button class="btn-acao" style="background:var(--primary); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Em Negociação')">💬 Negociando</button>
                            <button class="btn-acao" style="background:var(--accent); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Venda Fechada')">✅ Venda Fechada</button>
                            <button class="btn-acao" style="background:var(--danger); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Recusado')">✖ Recusar</button>
                          </div>`;
@@ -932,7 +933,8 @@
     function atualizarOportunidadeUI(linha, status) {
        if (!podeAcessarVendas()) return alert("Sem permissão.");
        executarComLoader("A atualizar funil...", async () => {
-          await callAPI('atualizarOportunidade', { linha: linha, status: status });
+          const r = await callAPI('atualizarOportunidade', { linha: linha, status: status, solicitante: usuarioAutenticado });
+          if (r && r.erro) alert(r.erro);
           carregarOportunidades();
        });
     }
@@ -1088,14 +1090,28 @@
       });
     }
 
-    window.onload = () => {
+    window.onload = async () => {
       if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
       const arrClientes = Object.keys(baseClientes); 
       configAutocomplete(document.getElementById("itiCliente"), arrClientes); configAutocomplete(document.getElementById("chkCliente"), arrClientes); configAutocomplete(document.getElementById("rotaDestino"), arrClientes);
       atualizarBadgeOffline();
-      let uNome = localStorage.getItem('ponto_auth_nome'), uPerfil = localStorage.getItem('ponto_auth_perfil');
-      if (uNome && uPerfil) entrarNoSistema(uNome, uPerfil);
       initAssinatura();
+
+      let uNome = localStorage.getItem('ponto_auth_nome');
+      let uPerfil = localStorage.getItem('ponto_auth_perfil');
+      if (uNome) {
+         // Entra imediatamente e revalida o perfil real na planilha em segundo plano
+         entrarNoSistema(uNome, uPerfil || 'Normal');
+         if (navigator.onLine) {
+            const check = await callAPI('obterPerfilAtual', { nome: uNome });
+            if (check && check.perfil && check.perfil !== perfilAutenticado) {
+               localStorage.setItem('ponto_auth_perfil', check.perfil);
+               perfilAutenticado = check.perfil;
+               safeSetText('tagPerfilExibicao', `[Perfil: ${perfilAutenticado}]`);
+               aplicarPermissoesAbas();
+            }
+         }
+      }
     };
 
     function fazerLogin() {
@@ -1108,34 +1124,34 @@
       });
     }
 
-    // --- CONFIGURAÇÃO VISUAL DE PERMISSÕES (ADMIN vs VENDEDOR vs NORMAL) ---
+    // --- APLICAÇÃO EXPLICITA DE PERMISSÕES POR ID ---
     function aplicarPermissoesAbas() {
       const barraRestrita = document.getElementById('abasRestritas');
+      const idsExclusivosAdmin = ['btnTabAdminPonto', 'btnTabAdminPedidos', 'btnTabAdminAvisos', 'btnTabAdminEstoque', 'btnTabAdminFrota'];
       const btnVendas = document.getElementById('btnTabVendas');
-      const botoesAdmin = document.querySelectorAll('.btn-only-admin');
 
       if (isAdmin()) {
          if (barraRestrita) barraRestrita.style.display = 'flex';
          if (btnVendas) btnVendas.style.display = 'inline-block';
-         botoesAdmin.forEach(b => b.style.display = 'inline-block');
+         idsExclusivosAdmin.forEach(id => safeSetDisplay(id, 'inline-block'));
          safeSetDisplay('areaAtribuirItinerario', 'block');
       } else if (podeAcessarVendas()) {
-         // Perfil Vendedor: vê a barra restrita apenas com o botão de Vendas
          if (barraRestrita) barraRestrita.style.display = 'flex';
          if (btnVendas) btnVendas.style.display = 'inline-block';
-         botoesAdmin.forEach(b => b.style.display = 'none');
+         idsExclusivosAdmin.forEach(id => safeSetDisplay(id, 'none'));
          safeSetDisplay('areaAtribuirItinerario', 'none');
       } else {
-         // Perfil Técnico Normal
          if (barraRestrita) barraRestrita.style.display = 'none';
+         if (btnVendas) btnVendas.style.display = 'none';
+         idsExclusivosAdmin.forEach(id => safeSetDisplay(id, 'none'));
          safeSetDisplay('areaAtribuirItinerario', 'none');
       }
     }
 
     function entrarNoSistema(nome, perfil) {
-      usuarioAutenticado = nome; perfilAutenticado = perfil; 
+      usuarioAutenticado = nome; perfilAutenticado = perfil || 'Normal'; 
       safeSetText('nomeExibicao', nome);
-      safeSetText('tagPerfilExibicao', perfil && perfil !== 'Normal' ? `(${perfil})` : '');
+      safeSetText('tagPerfilExibicao', `[Perfil: ${perfilAutenticado}]`);
       safeSetDisplay('tela-login', 'none'); safeSetDisplay('tela-app', 'block'); safeSetDisplay('btnSair', 'block');
       
       aplicarPermissoesAbas();
@@ -1153,13 +1169,12 @@
     function logout() { localStorage.clear(); sessionStorage.clear(); location.reload(); }
 
     function abrirAba(id, btn) {
-      // Bloqueio de segurança por perfil antes de trocar de aba
       const abasExclusivasAdmin = ['tab-admin-ponto', 'tab-aprovacoes', 'tab-avisos', 'tab-estoque', 'tab-rotas'];
       if (abasExclusivasAdmin.includes(id) && !isAdmin()) {
-         return alert("Acesso restrito ao Administrador.");
+         return alert("🔒 Acesso restrito ao Administrador.");
       }
       if (id === 'tab-oportunidades' && !podeAcessarVendas()) {
-         return alert("Acesso permitido apenas para usuários com permissão de Vendedor ou Administrador.");
+         return alert("🔒 Acesso permitido apenas para Vendedores e Administradores.");
       }
 
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
@@ -1180,7 +1195,6 @@
       const a = new Date(); safeSetText('relogio', a.toLocaleTimeString('pt-BR')); safeSetText('data-atual', a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }));
     }, 1000);
 
-    // Atualiza o mural a cada 60s para sumir automaticamente se algum aviso expirar
     setInterval(() => { if(navigator.onLine && usuarioAutenticado) carregarMuralAvisos(); }, 60000);
 
     function horasParaMin(hStr) { 
