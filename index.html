@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=44">
+  <link rel="manifest" href="manifest.json?v=45">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=44">
-  <link rel="icon" href="./LogoSS.png?v=44" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=45">
+  <link rel="icon" href="./LogoSS.png?v=45" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos offline.')"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -48,9 +48,14 @@
     .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #1a365d; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
     .aviso-interno { background: rgba(0,136,204,0.1); padding: 16px; text-align: center; border: 1px dashed var(--primary); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: #38bdf8; cursor: pointer;}
     
-    .mural-banner { background: linear-gradient(135deg, rgba(0,136,204,0.18), rgba(245,158,11,0.12)); border: 1px solid rgba(56,189,248,0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 10px; }
-    .mural-banner h4 { font-size: 0.82rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+    /* ESTILOS DE AVISOS POR NÍVEL DE URGÊNCIA (V45) */
+    .mural-banner { background: linear-gradient(135deg, rgba(0,136,204,0.18), rgba(13,30,54,0.9)); border: 1px solid rgba(56,189,248,0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 10px; }
+    .mural-banner h4 { font-size: 0.82rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
     .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); white-space: pre-wrap; }
+    .mural-banner.urg-atencao { background: linear-gradient(135deg, rgba(245,158,11,0.22), rgba(13,30,54,0.9)); border-color: rgba(245,158,11,0.5); border-left: 5px solid var(--warning); }
+    .mural-banner.urg-atencao h4 { color: #fbbf24; }
+    .mural-banner.urg-critica { background: linear-gradient(135deg, rgba(239,68,68,0.28), rgba(13,30,54,0.95)); border-color: rgba(239,68,68,0.7); border-left: 5px solid var(--danger); animation: pulseRed 2s infinite; }
+    .mural-banner.urg-critica h4 { color: #fca5a5; }
     
     #mapaEquipa { width: 100%; height: 320px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 16px; z-index: 1; }
     .leaflet-popup-content-wrapper { background: #0d1e36; color: #f0f6fc; border: 1px solid #38bdf8; border-radius: 10px; }
@@ -59,7 +64,7 @@
     
     .nav-pills { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
     .nav-pill { font-size: 0.76rem; font-weight: 700; padding: 6px 10px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; }
-    .nav-pill:active { transform: scale(0.95); background: var(--primary); color: #fff; }
+    .nav-pill:active, .nav-pill.ativo-filtro { transform: scale(0.97); background: var(--primary); color: #fff; border-color: var(--primary); }
     .sla-timer { display: inline-block; margin-top: 8px; padding: 6px 12px; border-radius: 8px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; font-weight: 800; font-size: 0.85rem; font-family: monospace; }
     .template-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; scrollbar-width: none; }
     .template-chips::-webkit-scrollbar { display: none; }
@@ -114,7 +119,7 @@
 
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.4); } 70% { box-shadow: 0 0 0 8px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
+    @keyframes pulseRed { 0% { box-shadow: 0 0 0 0 rgba(239,68,68,0.45); } 70% { box-shadow: 0 0 0 10px rgba(239,68,68,0); } 100% { box-shadow: 0 0 0 0 rgba(239,68,68,0); } }
 
     @media (max-width: 640px) {
       .form-row { grid-template-columns: 1fr; } table, th, td, tr, tbody { display: block; width: 100%; } thead { display: none; }
@@ -128,7 +133,7 @@
 <body>
 
   <script>
-    const VERSAO_ATUAL = '44';
+    const VERSAO_ATUAL = '45';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) caches.keys().then(n => { for (let k of n) caches.delete(k); }); 
       if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => { for(let a of r) a.unregister(); });
@@ -201,13 +206,15 @@
      <button class="btn btn-logout" style="margin-top:16px;" onclick="fecharModalHistoricoOS()">Fechar</button>
   </div>
 
-  <!-- MODAL OPORTUNIDADE DE VENDA / UPSELL (BLOQUEADO PARA QUEM NÃO É VENDEDOR/ADMIN) -->
+  <!-- MODAL OPORTUNIDADE DE VENDA / UPSELL (V45 - COM VALOR ESTIMADO) -->
   <div id="modal-oportunidade" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
      <h3 style="color:var(--warning); margin-bottom:6px;">💡 Reportar Venda / Oportunidade</h3>
      <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Exclusivo para Vendedores e Administradores.</p>
      <input type="hidden" id="oppNomeCliente" />
      <label>O que o cliente precisa?</label>
      <textarea id="oppDesc" rows="3" placeholder="Ex: Nobreak não aguenta carga, precisa de um de 2000VA..."></textarea>
+     <label>💰 Valor Estimado do Orçamento (R$) (Opcional)</label>
+     <input type="number" id="oppValor" step="0.01" min="0" placeholder="Ex: 1500.00" />
      <label>📸 Foto do Local/Equipamento (Recomendado)</label>
      <input type="file" id="oppFoto" accept="image/*" capture="environment" />
      <div style="display:flex; gap:10px; margin-top:14px;">
@@ -258,7 +265,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=44" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=45" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="O seu utilizador" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="A sua palavra-passe" />
@@ -280,6 +287,7 @@
         <button class="tab-btn" id="btnTabAdminPedidos" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
         <button class="tab-btn" id="btnTabVendas" onclick="abrirAba('tab-oportunidades', this); hapticFeedback()">💡 Vendas</button>
         <button class="tab-btn" id="btnTabAdminAvisos" onclick="abrirAba('tab-avisos', this); hapticFeedback()">📢 Avisos</button>
+        <button class="tab-btn" id="btnTabAdminUsuarios" onclick="abrirAba('tab-usuarios', this); hapticFeedback()">🔐 Acessos</button>
         <button class="tab-btn" id="btnTabAdminEstoque" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
         <button class="tab-btn" id="btnTabAdminFrota" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
       </div>
@@ -355,7 +363,6 @@
           <div style="display:flex; gap:8px; margin-bottom:12px;">
              <button type="button" class="btn-logout" style="flex:1; color:#38bdf8; border-color:var(--border); padding:8px;" onclick="consultarHistoricoOSCliente(document.getElementById('chkCliente').value.trim())">📋 Últimas OS</button>
              <button type="button" class="btn-logout" style="flex:1; color:var(--warning); border-color:var(--border); padding:8px;" onclick="abrirFichaTecnicaCliente(document.getElementById('chkCliente').value.trim())">🔑 Ficha</button>
-             <!-- BOTÃO NOVA VENDA OCULTO PARA QUEM NÃO TEM PERMISSÃO DE VENDEDOR/ADMIN -->
              <button type="button" id="btnNovaVendaAvulso" class="btn-logout" style="flex:1; display:none; color:var(--accent); border-color:var(--border); padding:8px;" onclick="abrirModalOportunidade(document.getElementById('chkCliente').value.trim())">💡 Nova Venda</button>
           </div>
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
@@ -494,21 +501,46 @@
         </div>
       </div>
       
-      <!-- OPORTUNIDADES COMERCIAIS / UPSELL (ACESSO: VENDEDOR & ADMIN) -->
+      <!-- 1. OPORTUNIDADES COMERCIAIS / UPSELL (V45 - COM ORÇAMENTO, COMISSÃO, FILTROS E WHATSAPP) -->
       <div id="tab-oportunidades" class="tab-content">
         <div class="box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
              <div>
                 <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">💡 Funil de Oportunidades (Comercial)</h3>
-                <p style="font-size:0.75rem; color:var(--text-muted);">Acesso exclusivo para Vendedores e Administradores.</p>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Gestão de Orçamentos, Propostas e Comissões.</p>
              </div>
              <button class="btn-logout" onclick="carregarOportunidades(); hapticFeedback()">🔄 Atualizar</button>
           </div>
+
+          <!-- PAINEL DE MÉTRICAS COMERCIAIS DO MÊS -->
+          <div class="metrics" style="margin-bottom:16px;">
+             <div class="card-metric">
+                <div class="label">Total Vendido (Mês)</div>
+                <div class="val" id="lblTotalVendidoMes" style="color:var(--accent); font-size:1.25rem;">R$ 0,00</div>
+             </div>
+             <div class="card-metric">
+                <div class="label">Comissão Estimada (<span id="lblPercComissao">5</span>%)</div>
+                <div class="val" id="lblComissaoMes" style="color:var(--warning); font-size:1.25rem;">R$ 0,00</div>
+             </div>
+             <div class="card-metric">
+                <div class="label">Vendas Fechadas</div>
+                <div class="val" id="lblQtdVendasFechadas" style="color:#38bdf8; font-size:1.25rem;">0</div>
+             </div>
+          </div>
+
+          <!-- FILTROS RÁPIDOS POR STATUS COMERCIAL -->
+          <div class="nav-pills" style="margin-bottom:16px; justify-content:center;">
+             <button type="button" class="nav-pill ativo-filtro" id="fltOppTodos" onclick="filtrarStatusOportunidade('TODOS', this)">📋 Todos</button>
+             <button type="button" class="nav-pill" id="fltOppPendente" onclick="filtrarStatusOportunidade('Pendente', this)">⏳ Pendentes</button>
+             <button type="button" class="nav-pill" id="fltOppNegociacao" onclick="filtrarStatusOportunidade('Em Negociação', this)">💬 Em Negociação</button>
+             <button type="button" class="nav-pill" id="fltOppFechada" onclick="filtrarStatusOportunidade('Venda Fechada', this)">✅ Venda Fechada</button>
+          </div>
+
           <div id="listaOportunidades" style="color: var(--text-muted); text-align: center;">A carregar funil de vendas...</div>
         </div>
       </div>
 
-      <!-- ABA: GERENCIADOR DE AVISOS (EXCLUSIVO ADMIN) -->
+      <!-- 2. ABA: GERENCIADOR DE AVISOS (V45 - DIRECIONADO, URGÊNCIA E CONFIRMAÇÃO DE LEITURA) -->
       <div id="tab-avisos" class="tab-content">
         <div class="box" style="border-color:#38bdf8;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;" id="tituloFormAviso">📢 Criar Novo Aviso</h3>
@@ -518,8 +550,30 @@
           <input type="text" id="avisoTituloInput" placeholder="Ex: Manutenção Programada / Fechamento de Ponto" />
           
           <label>Mensagem do Comunicado</label>
-          <textarea id="avisoMensagemInput" rows="3" placeholder="Digite o texto que aparecerá no topo do app para toda a equipe..."></textarea>
+          <textarea id="avisoMensagemInput" rows="3" placeholder="Digite o texto que aparecerá no topo do app..."></textarea>
           
+          <div class="form-row" style="display:flex; gap:10px; margin-bottom:14px; flex-wrap:wrap;">
+             <div style="flex:1; min-width:180px;">
+                <label>🎯 Destinatário</label>
+                <select id="avisoDestinatarioInput" style="margin-bottom:0;">
+                   <option value="TODOS">👥 Todos da Equipe</option>
+                   <option value="VENDEDORES">💡 Apenas Vendedores / Comercial</option>
+                   <option value="Northon Duarte">👤 Técnico: Northon Duarte</option>
+                   <option value="Victor Rodrigues">👤 Técnico: Victor Rodrigues</option>
+                   <option value="Alef Silva">👤 Técnico: Alef Silva</option>
+                   <option value="Kaio medeiros">👤 Técnico: Kaio Medeiros</option>
+                </select>
+             </div>
+             <div style="flex:1; min-width:160px;">
+                <label>🎨 Nível de Urgência</label>
+                <select id="avisoUrgenciaInput" style="margin-bottom:0;">
+                   <option value="Normal">🔵 Informativo (Azul)</option>
+                   <option value="Atenção">🟡 Atenção (Amarelo)</option>
+                   <option value="Crítica">🔴 Urgente / Crítico (Piscando)</option>
+                </select>
+             </div>
+          </div>
+
           <div class="form-row" style="display:flex; gap:10px; margin-bottom:14px;">
              <div style="flex:2;">
                 <label>Expirar Automaticamente em (Opcional)</label>
@@ -549,10 +603,53 @@
 
         <div class="box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-             <h3 style="margin: 0; font-size: 1.05rem; color: var(--text);">Histórico e Controle de Avisos</h3>
+             <h3 style="margin: 0; font-size: 1.05rem; color: var(--text);">Histórico e Controle de Leitura</h3>
              <button class="btn-logout" onclick="carregarListaAvisosAdmin(); hapticFeedback()">🔄</button>
           </div>
           <div id="listaAvisosAdmin" style="color:var(--text-muted); text-align:center;">A carregar avisos...</div>
+        </div>
+      </div>
+
+      <!-- 3. ABA: GESTÃO DE ACESSOS E PERFIS DE USUÁRIOS (V45 - EXCLUSIVO ADMIN) -->
+      <div id="tab-usuarios" class="tab-content">
+        <div class="box" style="border-color:var(--warning);">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">➕ Cadastrar Novo Colaborador</h3>
+          <div class="form-row" style="display:flex; gap:10px; flex-wrap:wrap;">
+             <div style="flex:1; min-width:180px;">
+                <label>Nome Completo</label>
+                <input type="text" id="novoUsuNome" placeholder="Ex: Lucas Ferreira" />
+             </div>
+             <div style="flex:1; min-width:140px;">
+                <label>Login de Acesso</label>
+                <input type="text" id="novoUsuLogin" placeholder="Ex: lucas" autocomplete="off" />
+             </div>
+          </div>
+          <div class="form-row" style="display:flex; gap:10px; flex-wrap:wrap;">
+             <div style="flex:1; min-width:140px;">
+                <label>Senha Inicial</label>
+                <input type="text" id="novoUsuSenha" placeholder="Ex: 123456" autocomplete="off" />
+             </div>
+             <div style="flex:1; min-width:160px;">
+                <label>Perfil / Cargo</label>
+                <select id="novoUsuPerfil">
+                   <option value="Normal">🔧 Técnico (Normal)</option>
+                   <option value="Vendedor">💡 Vendedor / Comercial</option>
+                   <option value="Admin">👑 Administrador</option>
+                </select>
+             </div>
+          </div>
+          <button class="btn" style="background:var(--warning); color:#000;" onclick="criarUsuarioPainel()">💾 Criar Usuário e Aba de Ponto</button>
+        </div>
+
+        <div class="box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+             <div>
+                <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">👥 Gerenciar Perfis de Usuários</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Altere o cargo com 1 clique diretamente pelo App.</p>
+             </div>
+             <button class="btn-logout" onclick="carregarUsuariosAdmin(); hapticFeedback()">🔄 Atualizar</button>
+          </div>
+          <div id="listaUsuariosAdmin" style="color:var(--text-muted); text-align:center;">A carregar lista de usuários...</div>
         </div>
       </div>
 
@@ -631,9 +728,10 @@
 
   <script>
     // =========================================================================
-    // COLOQUE O SEU LINK AQUI NESTA LINHA ABAIXO ANTES DE GUARDAR!
+    // LINK DA SUA API DO GOOGLE APPS SCRIPT
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
+    const TAXA_COMISSAO_PADRAO = 0.05; // 5% de comissão estimada
 
     const baseClientes = {
       "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013" },
@@ -698,6 +796,7 @@
     let chartMeuDesempenho = null, chartAdminBanco = null, mapaLeaflet = null, camadaPinos = null;
     let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
     let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [], ultimoBancoConsolidado = [], cacheTodosAvisos = [];
+    let todasOportunidades = [], filtroStatusOppAtual = "TODOS";
     let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
     let currentRating = 0, tempoInicioExpediente = null, filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
@@ -735,22 +834,57 @@
        }
     });
 
-    // --- MURAL DE AVISOS DINÂMICO E GERENCIADOR ADMIN ---
+    // =========================================================================
+    // 2. MURAL DE AVISOS DIRECIONADOS, URGÊNCIA E CONFIRMAÇÃO DE LEITURA (V45)
+    // =========================================================================
     async function carregarMuralAvisos() {
-       const res = await callAPI('getMuralAvisos');
+       if (!usuarioAutenticado) return;
+       const res = await callAPI('getMuralAvisos', { nome: usuarioAutenticado, perfil: perfilAutenticado });
        const container = document.getElementById('containerMuralAtivo');
        if (!container) return;
 
        if (Array.isArray(res) && res.length > 0) {
-          container.innerHTML = res.map(av => `
-             <div class="mural-banner">
-                <h4><span>📢 ${av.titulo || 'Comunicado da Supervisão'}</span> <small>${av.expiraEm ? '⏳ Expira: ' + av.expiraEm.replace('T',' ') : ''}</small></h4>
-                <p>${av.mensagem}</p>
-             </div>
-          `).join('');
+          container.innerHTML = res.map(av => {
+             let urgClass = "";
+             let iconeUrg = "📢";
+             if (av.urgencia === "Atenção") { urgClass = "urg-atencao"; iconeUrg = "⚠️"; }
+             else if (av.urgencia === "Crítica") { urgClass = "urg-critica"; iconeUrg = "🚨"; }
+
+             let tagDest = (av.destinatario && av.destinatario !== "TODOS") ? `<span style="background:rgba(255,255,255,0.12); padding:2px 8px; border-radius:6px; font-size:0.7rem;">🎯 Para: ${av.destinatario}</span>` : '';
+
+             let btnCiente = av.jaLidoPorMim
+                ? `<span style="color:var(--accent); font-size:0.78rem; font-weight:800; display:inline-flex; align-items:center; gap:4px;">✅ Leitura Confirmada</span>`
+                : `<button class="nav-pill" style="background:var(--accent); color:#fff; border:none; padding:6px 12px;" onclick="confirmarLeituraAvisoUI('${av.id}')">👍 Estou Ciente</button>`;
+
+             return `
+                <div class="mural-banner ${urgClass}">
+                   <h4>
+                      <span>${iconeUrg} ${av.titulo || 'Comunicado da Supervisão'} ${tagDest}</span>
+                      <small>${av.expiraEm ? '⏳ Expira: ' + av.expiraEm.replace('T',' ') : ''}</small>
+                   </h4>
+                   <p>${av.mensagem}</p>
+                   <div style="margin-top:10px; display:flex; justify-content:flex-end; align-items:center;">
+                      ${btnCiente}
+                   </div>
+                </div>
+             `;
+          }).join('');
        } else {
           container.innerHTML = "";
        }
+    }
+
+    function confirmarLeituraAvisoUI(idAviso) {
+       hapticFeedback();
+       executarComLoader("Confirmando leitura...", async () => {
+          const res = await callAPI('confirmarLeituraAviso', { id: idAviso, nome: usuarioAutenticado });
+          if (res.erro) alert(res.erro);
+          else {
+             playBeepSucesso();
+             await carregarMuralAvisos();
+             if (isAdmin()) carregarListaAvisosAdmin();
+          }
+       });
     }
 
     function definirTempoAvisoHoras(horas) {
@@ -766,6 +900,8 @@
        document.getElementById('avisoMensagemInput').value = "";
        document.getElementById('avisoExpiraInput').value = "";
        document.getElementById('avisoStatusInput').value = "Ativo";
+       if (document.getElementById('avisoDestinatarioInput')) document.getElementById('avisoDestinatarioInput').value = "TODOS";
+       if (document.getElementById('avisoUrgenciaInput')) document.getElementById('avisoUrgenciaInput').value = "Normal";
        safeSetText('tituloFormAviso', '📢 Criar Novo Aviso');
        safeSetDisplay('btnCancelarEdicaoAviso', 'none');
     }
@@ -777,6 +913,8 @@
        const msg = document.getElementById('avisoMensagemInput').value.trim();
        const expira = document.getElementById('avisoExpiraInput').value;
        const status = document.getElementById('avisoStatusInput').value;
+       const destinatario = document.getElementById('avisoDestinatarioInput') ? document.getElementById('avisoDestinatarioInput').value : "TODOS";
+       const urgencia = document.getElementById('avisoUrgenciaInput') ? document.getElementById('avisoUrgenciaInput').value : "Normal";
 
        if (!titulo || !msg) return alert("Preencha o título e a mensagem do aviso.");
 
@@ -787,7 +925,9 @@
              mensagem: msg,
              expiraEm: expira,
              autor: usuarioAutenticado,
-             status: status
+             status: status,
+             destinatario: destinatario,
+             urgencia: urgencia
           });
           if (res.erro) alert(res.erro);
           else {
@@ -818,14 +958,22 @@
 
           let proxStatus = a.status === 'Ativo' ? 'Inativo' : 'Ativo';
           let txtBotaoToggle = a.status === 'Ativo' ? '⏸️ Desativar' : '▶️ Ativar';
+          let corUrg = a.urgencia === 'Crítica' ? 'var(--danger)' : (a.urgencia === 'Atenção' ? 'var(--warning)' : '#38bdf8');
+          let leitoresStr = a.lidoPor ? `<span style="color:var(--accent); font-weight:700;">${a.lidoPor}</span>` : `<span style="color:var(--text-muted);">Ninguém confirmou ainda</span>`;
 
           return `
-             <div style="background:var(--bg); border:1px solid var(--border); padding:14px; border-radius:12px; margin-bottom:10px; text-align:left;">
-                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
-                   <strong style="color:#38bdf8; font-size:1rem;">${a.titulo}</strong>
+             <div style="background:var(--bg); border:1px solid var(--border); border-left:4px solid ${corUrg}; padding:14px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px; flex-wrap:wrap;">
+                   <strong style="color:${corUrg}; font-size:1rem;">${a.titulo}</strong>
                    <span class="badge-status-req ${badgeClass}">${textoSt}</span>
                 </div>
+                <div style="margin-top:4px; font-size:0.75rem; color:var(--text-muted);">
+                   🎯 <b>Para:</b> ${a.destinatario || 'TODOS'} | 🎨 <b>Urgência:</b> ${a.urgencia || 'Normal'}
+                </div>
                 <p style="font-size:0.88rem; color:var(--text); margin:8px 0; white-space:pre-wrap;">${a.mensagem}</p>
+                <div style="background:var(--card-bg); padding:8px 10px; border-radius:8px; border:1px dashed var(--border); font-size:0.78rem; margin-bottom:8px;">
+                   ☑️ <b>Cientes / Confirmaram leitura:</b> ${leitoresStr}
+                </div>
                 <small style="color:var(--text-muted); display:block;">Criado por ${a.autor} em ${a.criadoEm} ${a.expiraEm ? ' | Expira: <b>' + a.expiraEm.replace('T',' ') + '</b>' : ' | <b>Sem expiração</b>'}</small>
                 <div style="display:flex; gap:8px; margin-top:10px;">
                    <button class="btn-logout" style="flex:1; border-color:#38bdf8; color:#38bdf8; padding:6px;" onclick="prepararEdicaoAviso(${idx})">✏️ Editar</button>
@@ -845,6 +993,8 @@
        document.getElementById('avisoMensagemInput').value = a.mensagem;
        document.getElementById('avisoExpiraInput').value = a.expiraEm || "";
        document.getElementById('avisoStatusInput').value = a.status || "Ativo";
+       if (document.getElementById('avisoDestinatarioInput')) document.getElementById('avisoDestinatarioInput').value = a.destinatario || "TODOS";
+       if (document.getElementById('avisoUrgenciaInput')) document.getElementById('avisoUrgenciaInput').value = a.urgencia || "Normal";
        safeSetText('tituloFormAviso', '✏️ Editando Aviso');
        safeSetDisplay('btnCancelarEdicaoAviso', 'block');
        window.scrollTo({ top: 0, behavior: 'smooth' });
@@ -867,7 +1017,9 @@
        });
     }
 
-    // --- OPORTUNIDADES (UPSELL) COM BLOQUEIO TOTAL DE ABERTURA E ENVIO ---
+    // =========================================================================
+    // 1. OPORTUNIDADES (UPSELL) COM ORÇAMENTO, COMISSÃO, FILTROS E WHATSAPP (V45)
+    // =========================================================================
     function abrirModalOportunidade(cliente) {
        if (!podeAcessarVendas()) {
           return alert("🔒 Acesso negado: Apenas usuários com permissão de Vendedor ou Administrador podem registrar oportunidades de venda.");
@@ -875,6 +1027,7 @@
        if(!cliente) return alert("Selecione um cliente primeiro.");
        document.getElementById("oppNomeCliente").value = cliente;
        document.getElementById("oppDesc").value = "";
+       if(document.getElementById("oppValor")) document.getElementById("oppValor").value = "";
        document.getElementById("oppFoto").value = "";
        safeSetDisplay("modal-overlay", "block");
        safeSetDisplay("modal-oportunidade", "block");
@@ -890,6 +1043,7 @@
        }
        const cli = document.getElementById("oppNomeCliente").value;
        const desc = document.getElementById("oppDesc").value.trim();
+       const valOrc = document.getElementById("oppValor") ? document.getElementById("oppValor").value : "0";
        const foto = document.getElementById("oppFoto");
        if(!desc) return alert("Descreva a oportunidade.");
        fecharModalOportunidade();
@@ -902,10 +1056,18 @@
              const resF = await callAPI('uploadComprovativo', { base64: b64, nomeArquivo: `Opp_${Date.now()}.jpg` });
              if(resF.sucesso) urlFoto = resF.url;
           }
-          const res = await callAPI('salvarOportunidadeComercial', { tecnico: usuarioAutenticado, cliente: cli, descricao: desc, fotoUrl: urlFoto });
+          const res = await callAPI('salvarOportunidadeComercial', { tecnico: usuarioAutenticado, cliente: cli, descricao: desc, fotoUrl: urlFoto, valor: valOrc });
           if(res.erro) alert(res.erro);
-          else { playBeepSucesso(); alert("Oportunidade enviada ao Comercial com sucesso!"); }
+          else { playBeepSucesso(); alert("Oportunidade enviada ao Comercial com sucesso!"); carregarOportunidades(); }
        });
+    }
+
+    function filtrarStatusOportunidade(statusFiltro, btnEl) {
+       hapticFeedback();
+       filtroStatusOppAtual = statusFiltro;
+       document.querySelectorAll('#tab-oportunidades .nav-pill').forEach(b => b.classList.remove('ativo-filtro'));
+       if (btnEl) btnEl.classList.add('ativo-filtro');
+       renderizarOportunidadesFiltradas();
     }
 
     function carregarOportunidades() {
@@ -915,35 +1077,232 @@
        }
        callAPI('getOportunidadesComerciais', { solicitante: usuarioAutenticado }).then(dados => {
           if (dados.erro) { safeSetHTML("listaOportunidades", dados.erro); return; }
-          if (!dados || dados.length === 0) { safeSetHTML("listaOportunidades", "Nenhuma oportunidade registrada até o momento."); return; }
-          let html = "";
-          dados.forEach(d => {
-             let cor = d.status.includes('Fechad') || d.status.includes('Aprovad') ? 'var(--accent)' : (d.status.includes('Recusad') ? 'var(--danger)' : 'var(--warning)');
-             let btns = `<div style="display:flex; gap:8px; margin-top:10px;">
-                           <button class="btn-acao" style="background:var(--primary); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Em Negociação')">💬 Negociando</button>
-                           <button class="btn-acao" style="background:var(--accent); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Venda Fechada')">✅ Venda Fechada</button>
-                           <button class="btn-acao" style="background:var(--danger); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Recusado')">✖ Recusar</button>
-                         </div>`;
-             html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; text-align:left; position:relative; overflow:hidden;">
-                        <div style="position:absolute; top:0; left:0; bottom:0; width:4px; background:${cor};"></div>
-                        <strong style="color:var(--primary); font-size:1.1rem;">${d.cliente}</strong><br>
-                        <small style="color:var(--text-muted)">Indicado por: <b>${d.tecnico}</b> | ${d.data}</small><br>
-                        <div style="margin-top:6px; font-size:0.85rem; color:var(--text);">${d.desc}</div>
-                        ${d.foto ? `<br><a href="${d.foto}" target="_blank" style="color:#38bdf8; font-size:0.8rem;">📸 Ver Foto do Local</a>` : ''}
-                        <div style="margin-top:6px;"><span class="badge-status-req" style="background:${cor}; color:#000;">${d.status}</span></div>
-                        ${btns}
-                      </div>`;
-          });
-          safeSetHTML("listaOportunidades", html);
+          todasOportunidades = Array.isArray(dados) ? dados : [];
+          calcularMetricasVendasMes();
+          renderizarOportunidadesFiltradas();
        });
     }
 
-    function atualizarOportunidadeUI(linha, status) {
+    function calcularMetricasVendasMes() {
+       const mesAtual = new Date().toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' });
+       let totalVendido = 0;
+       let qtdFechadas = 0;
+
+       todasOportunidades.forEach(d => {
+          let st = String(d.status || "");
+          let ehMesAtual = !d.data || String(d.data).includes(mesAtual);
+          if ((st.includes('Fechad') || st.includes('Aprovad')) && ehMesAtual) {
+             totalVendido += parseFloat(d.valor || 0);
+             qtdFechadas++;
+          }
+       });
+
+       let comissao = totalVendido * TAXA_COMISSAO_PADRAO;
+       safeSetText("lblTotalVendidoMes", brl(totalVendido));
+       safeSetText("lblComissaoMes", brl(comissao));
+       safeSetText("lblQtdVendasFechadas", qtdFechadas);
+    }
+
+    function renderizarOportunidadesFiltradas() {
+       const filtradas = todasOportunidades.filter(d => {
+          if (filtroStatusOppAtual === "TODOS") return true;
+          if (filtroStatusOppAtual === "Pendente") return String(d.status).toLowerCase().includes('pendente');
+          return String(d.status).toLowerCase().includes(filtroStatusOppAtual.toLowerCase());
+       });
+
+       if (filtradas.length === 0) {
+          safeSetHTML("listaOportunidades", "Nenhuma oportunidade encontrada para este filtro.");
+          return;
+       }
+
+       let html = "";
+       filtradas.forEach(d => {
+          let cor = d.status.includes('Fechad') || d.status.includes('Aprovad') ? 'var(--accent)' : (d.status.includes('Recusad') ? 'var(--danger)' : (d.status.includes('Negocia') ? 'var(--primary)' : 'var(--warning)'));
+          let valorFormatado = (parseFloat(d.valor) || 0).toFixed(2);
+          let descEscapada = String(d.desc || "").replace(/'/g, "\\'").replace(/\n/g, " ");
+          let cliEscapado = String(d.cliente || "").replace(/'/g, "\\'");
+
+          let blocoOrcamento = `
+             <div style="display:flex; gap:8px; align-items:center; margin-top:10px; background:var(--bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
+                <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">💰 Orçamento (R$):</span>
+                <input type="number" id="inpValOpp_${d.linha}" step="0.01" min="0" value="${valorFormatado}" style="margin:0; padding:6px 10px; flex:1; font-weight:800; color:var(--accent);" />
+                <button class="nav-pill" style="background:var(--primary); color:#fff; border:none; padding:8px 10px;" onclick="salvarValorOrcamentoUI(${d.linha}, '${d.status}')">💾 Salvar R$</button>
+             </div>
+          `;
+
+          let btns = `
+             <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
+                <button class="btn-acao" style="background:var(--primary); flex:1; font-size:0.78rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Em Negociação')">💬 Negociando</button>
+                <button class="btn-acao" style="background:var(--accent); flex:1; font-size:0.78rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Venda Fechada')">✅ Venda Fechada</button>
+                <button class="btn-acao" style="background:var(--danger); flex:1; font-size:0.78rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Recusado')">✖ Recusar</button>
+             </div>
+             <button class="btn-logout" style="width:100%; margin-top:8px; border-color:#10b981; color:#10b981; font-weight:800; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="enviarPropostaWhatsAppCliente('${cliEscapado}', '${descEscapada}', ${d.linha})">
+                📲 Enviar Proposta no WhatsApp do Cliente
+             </button>
+          `;
+
+          html += `
+             <div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; text-align:left; position:relative; overflow:hidden;">
+                <div style="position:absolute; top:0; left:0; bottom:0; width:4px; background:${cor};"></div>
+                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
+                   <div>
+                      <strong style="color:var(--primary); font-size:1.1rem;">${d.cliente}</strong><br>
+                      <small style="color:var(--text-muted)">Indicado por: <b>${d.tecnico}</b> | ${d.data}</small>
+                   </div>
+                   <span class="badge-status-req" style="background:${cor}; color:#000;">${d.status}</span>
+                </div>
+                <div style="margin-top:8px; font-size:0.88rem; color:var(--text);">${d.desc}</div>
+                ${d.foto ? `<div style="margin-top:6px;"><a href="${d.foto}" target="_blank" style="color:#38bdf8; font-size:0.8rem;">📸 Ver Foto do Local</a></div>` : ''}
+                ${blocoOrcamento}
+                ${btns}
+             </div>
+          `;
+       });
+       safeSetHTML("listaOportunidades", html);
+    }
+
+    function salvarValorOrcamentoUI(linha, statusAtual) {
+       const inp = document.getElementById('inpValOpp_' + linha);
+       const val = inp ? inp.value : 0;
+       atualizarOportunidadeUI(linha, statusAtual, val);
+    }
+
+    function atualizarOportunidadeUI(linha, status, valorExplicito) {
        if (!podeAcessarVendas()) return alert("Sem permissão.");
+       const inp = document.getElementById('inpValOpp_' + linha);
+       const valFinal = (valorExplicito !== undefined) ? valorExplicito : (inp ? inp.value : "");
        executarComLoader("A atualizar funil...", async () => {
-          const r = await callAPI('atualizarOportunidade', { linha: linha, status: status, solicitante: usuarioAutenticado });
+          const r = await callAPI('atualizarOportunidade', { linha: linha, status: status, valor: valFinal, solicitante: usuarioAutenticado });
           if (r && r.erro) alert(r.erro);
+          else playBeepSucesso();
           carregarOportunidades();
+       });
+    }
+
+    async function enviarPropostaWhatsAppCliente(cliente, descricao, linha) {
+       hapticFeedback();
+       const inpVal = document.getElementById('inpValOpp_' + linha);
+       const valorOrc = inpVal && parseFloat(inpVal.value) > 0 ? brl(parseFloat(inpVal.value)) : "sob consulta";
+
+       showLoading("Buscando contato na Ficha Técnica...");
+       const ficha = await callAPI('getFichaCliente', { cliente: cliente, tecnico: usuarioAutenticado });
+       hideLoading();
+
+       let foneLimpo = "";
+       if (ficha && ficha.contato) {
+          let digitos = String(ficha.contato).replace(/\D/g, '');
+          if (digitos.length >= 10) {
+             foneLimpo = digitos.startsWith('55') ? digitos : '55' + digitos;
+          }
+       }
+
+       const msgComercial = `Olá *${cliente}*, tudo bem?\n\nDurante a nossa última visita técnica da *Services & Solutions*, identificamos uma oportunidade importante de melhoria na sua infraestrutura:\n\n🔧 *Diagnóstico:* ${descricao}\n💰 *Investimento Estimado:* ${valorOrc}\n\nPodemos agendar a aprovação ou conversar sobre essa proposta?`;
+       const urlWa = foneLimpo
+          ? `https://api.whatsapp.com/send?phone=${foneLimpo}&text=${encodeURIComponent(msgComercial)}`
+          : `https://api.whatsapp.com/send?text=${encodeURIComponent(msgComercial)}`;
+
+       if (!foneLimpo) {
+          alert("⚠️ Nenhum número de telefone válido foi encontrado na Ficha Técnica deste cliente. O WhatsApp será aberto para você selecionar o contato manualmente.");
+       }
+       window.open(urlWa, '_blank');
+    }
+
+    // =========================================================================
+    // 3. GESTÃO DE ACESSOS E PERFIS DE USUÁRIOS DIRETO PELO APP (V45)
+    // =========================================================================
+    async function carregarUsuariosAdmin() {
+       if (!isAdmin()) return;
+       const div = document.getElementById('listaUsuariosAdmin');
+       if (!div) return;
+       const res = await callAPI('getUsuariosAdmin', { solicitante: usuarioAutenticado });
+       if (!res || res.erro || !Array.isArray(res)) {
+          div.innerHTML = res && res.erro ? res.erro : "Erro ao carregar usuários.";
+          return;
+       }
+       if (res.length === 0) {
+          div.innerHTML = "Nenhum usuário cadastrado.";
+          return;
+       }
+
+       // Atualiza também os seletores de técnicos do app dinamicamente
+       atualizarSeletoresTecnicosDinamicos(res);
+
+       div.innerHTML = res.map(u => {
+          let corBadge = u.perfil === 'Admin' ? 'var(--danger)' : (u.perfil === 'Vendedor' ? 'var(--warning)' : 'var(--primary)');
+          return `
+             <div style="background:var(--bg); border:1px solid var(--border); border-left:4px solid ${corBadge}; padding:14px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; text-align:left;">
+                <div>
+                   <strong style="font-size:1rem; color:var(--text);">👤 ${u.nome}</strong><br>
+                   <small style="color:var(--text-muted);">Login: <b>${u.login}</b></small>
+                </div>
+                <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
+                   <button type="button" class="nav-pill ${u.perfil === 'Normal' ? 'ativo-filtro' : ''}" onclick="alterarCargoUsuarioUI(${u.linha}, 'Normal', '${u.nome}')">🔧 Normal</button>
+                   <button type="button" class="nav-pill ${u.perfil === 'Vendedor' ? 'ativo-filtro' : ''}" onclick="alterarCargoUsuarioUI(${u.linha}, 'Vendedor', '${u.nome}')">💡 Vendedor</button>
+                   <button type="button" class="nav-pill ${u.perfil === 'Admin' ? 'ativo-filtro' : ''}" onclick="alterarCargoUsuarioUI(${u.linha}, 'Admin', '${u.nome}')">👑 Admin</button>
+                </div>
+             </div>
+          `;
+       }).join('');
+    }
+
+    function atualizarSeletoresTecnicosDinamicos(listaUsuarios) {
+       const destSel = document.getElementById('avisoDestinatarioInput');
+       if (destSel && Array.isArray(listaUsuarios)) {
+          const valAtual = destSel.value;
+          let html = `<option value="TODOS">👥 Todos da Equipe</option><option value="VENDEDORES">💡 Apenas Vendedores / Comercial</option>`;
+          listaUsuarios.forEach(u => {
+             html += `<option value="${u.nome}">👤 Técnico: ${u.nome}</option>`;
+          });
+          destSel.innerHTML = html;
+          if (valAtual) destSel.value = valAtual;
+       }
+    }
+
+    function alterarCargoUsuarioUI(linha, novoPerfil, nomeColab) {
+       if (!isAdmin()) return alert("Apenas o Admin pode alterar cargos.");
+       hapticFeedback();
+       executarComLoader(`Alterando perfil de ${nomeColab} para ${novoPerfil}...`, async () => {
+          const res = await callAPI('atualizarPerfilUsuario', { linha: linha, novoPerfil: novoPerfil, solicitante: usuarioAutenticado });
+          if (res.erro) alert(res.erro);
+          else {
+             playBeepSucesso();
+             if (nomeColab.toLowerCase() === usuarioAutenticado.toLowerCase()) {
+                perfilAutenticado = novoPerfil;
+                localStorage.setItem('ponto_auth_perfil', novoPerfil);
+                safeSetText('tagPerfilExibicao', `[Perfil: ${perfilAutenticado}]`);
+                aplicarPermissoesAbas();
+             }
+             await carregarUsuariosAdmin();
+          }
+       });
+    }
+
+    function criarUsuarioPainel() {
+       if (!isAdmin()) return alert("Apenas o Admin pode cadastrar usuários.");
+       const nome = document.getElementById('novoUsuNome').value.trim();
+       const login = document.getElementById('novoUsuLogin').value.trim();
+       const senha = document.getElementById('novoUsuSenha').value.trim();
+       const perfil = document.getElementById('novoUsuPerfil').value;
+
+       if (!nome || !login || !senha) return alert("Preencha o Nome Completo, Login e Senha Inicial.");
+
+       executarComLoader("Cadastrando colaborador e criando folha de ponto...", async () => {
+          const res = await callAPI('criarNovoUsuarioAdmin', {
+             nome: nome,
+             login: login,
+             senha: senha,
+             perfil: perfil,
+             solicitante: usuarioAutenticado
+          });
+          if (res.erro) alert(res.erro);
+          else {
+             playBeepSucesso();
+             document.getElementById('novoUsuNome').value = "";
+             document.getElementById('novoUsuLogin').value = "";
+             document.getElementById('novoUsuSenha').value = "";
+             await carregarUsuariosAdmin();
+             alert(`Colaborador ${nome} cadastrado com sucesso!`);
+          }
        });
     }
 
@@ -1129,10 +1488,10 @@
       });
     }
 
-    // --- APLICAÇÃO EXPLICITA DE PERMISSÕES (OCULTA BOTÕES E ABAS DE VENDA PARA TÉCNICOS NORMAIS) ---
+    // --- APLICAÇÃO EXPLICITA DE PERMISSÕES (INCLUINDO GESTÃO DE ACESSOS V45) ---
     function aplicarPermissoesAbas() {
       const barraRestrita = document.getElementById('abasRestritas');
-      const idsExclusivosAdmin = ['btnTabAdminPonto', 'btnTabAdminPedidos', 'btnTabAdminAvisos', 'btnTabAdminEstoque', 'btnTabAdminFrota'];
+      const idsExclusivosAdmin = ['btnTabAdminPonto', 'btnTabAdminPedidos', 'btnTabAdminAvisos', 'btnTabAdminUsuarios', 'btnTabAdminEstoque', 'btnTabAdminFrota'];
       const btnVendas = document.getElementById('btnTabVendas');
       const btnNovaVendaAvulso = document.getElementById('btnNovaVendaAvulso');
 
@@ -1167,7 +1526,7 @@
       aplicarPermissoesAbas();
 
       if (isAdmin()) { 
-          carregarAusenciasEquipe(); carregarAprovacoes(); carregarOportunidades(); carregarListaAvisosAdmin();
+          carregarAusenciasEquipe(); carregarAprovacoes(); carregarOportunidades(); carregarListaAvisosAdmin(); carregarUsuariosAdmin();
       } else if (podeAcessarVendas()) {
           carregarOportunidades();
       }
@@ -1179,7 +1538,7 @@
     function logout() { localStorage.clear(); sessionStorage.clear(); location.reload(); }
 
     function abrirAba(id, btn) {
-      const abasExclusivasAdmin = ['tab-admin-ponto', 'tab-aprovacoes', 'tab-avisos', 'tab-estoque', 'tab-rotas'];
+      const abasExclusivasAdmin = ['tab-admin-ponto', 'tab-aprovacoes', 'tab-avisos', 'tab-usuarios', 'tab-estoque', 'tab-rotas'];
       if (abasExclusivasAdmin.includes(id) && !isAdmin()) {
          return alert("🔒 Acesso restrito ao Administrador.");
       }
@@ -1196,6 +1555,7 @@
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto(); 
       if(id === 'tab-aprovacoes') carregarAprovacoes(); 
       if(id === 'tab-avisos') carregarListaAvisosAdmin();
+      if(id === 'tab-usuarios') carregarUsuariosAdmin();
       if(id === 'tab-estoque') carregarEstoque();
       if(id === 'tab-rotas') carregarRotasServidor();
       if(id === 'tab-oportunidades') carregarOportunidades();
@@ -1393,7 +1753,6 @@
         let btnConcluirAdmin = isAdmin() ? `<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="${argForcar}">✔ Forçar Remoção (Admin)</button>` : '';
         
         let endEncoded = encodeURIComponent(d.endereco || d.cliente);
-        // O botão "💡 Nova Venda" só é renderizado se o usuário tiver permissão de Vendedor ou Admin
         let btnNovaVendaCard = podeAcessarVendas() ? `<button type="button" class="nav-pill" onclick="abrirModalOportunidade('${d.cliente}')" style="color:var(--accent);">💡 Nova Venda</button>` : '';
         let botoesRota = `<div class="nav-pills">
              <a class="nav-pill" href="https://waze.com/ul?q=${endEncoded}&navigate=yes" target="_blank">🚗 Waze</a>
@@ -1806,7 +2165,7 @@
       });
     }
 
-    const brl = v => 'R$ ' + v.toFixed(2).replace('.', ',');
+    const brl = v => 'R$ ' + Number(v || 0).toFixed(2).replace('.', ',');
     const DIAS = ["Domingo", "Segunda-feira", "Terça-feira", "Quarta-feira", "Quinta-feira", "Sexta-feira", "Sábado"];
     function preencherDia() { 
         let elData = document.getElementById("rotaData"), elDia = document.getElementById("rotaDia"); if (!elData || !elDia || !elData.value) return; 
