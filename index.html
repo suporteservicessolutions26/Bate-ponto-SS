@@ -7,12 +7,17 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=37">
+  <link rel="manifest" href="manifest.json?v=38">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=37">
-  <link rel="icon" href="./LogoSS.png?v=37" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=38">
+  <link rel="icon" href="./LogoSS.png?v=38" type="image/png">
   
+  <!-- Chart.js -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
+  
+  <!-- Leaflet.js (Mapa Interativo Gratuito) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="console.warn('Mapa offline.')"></script>
 
   <style>
     :root { 
@@ -85,6 +90,12 @@
     .mural-banner h4 { font-size: 0.8rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; }
     .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); }
 
+    /* MAPA INTERATIVO DA EQUIPA */
+    #mapaEquipa { width: 100%; height: 320px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 16px; z-index: 1; }
+    .leaflet-popup-content-wrapper { background: #0d1e36; color: #f0f6fc; border: 1px solid #38bdf8; border-radius: 10px; }
+    .leaflet-popup-tip { background: #0d1e36; }
+    .pin-custom { display: flex; align-items: center; justify-content: center; width: 34px; height: 34px; border-radius: 50%; color: #fff; font-weight: 900; font-size: 0.78rem; border: 2px solid #fff; box-shadow: 0 3px 10px rgba(0,0,0,0.6); }
+
     /* NAVEGAÇÃO RÁPIDA, CHIPS DE TEXTO E SLA */
     .nav-pills { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
     .nav-pill { font-size: 0.76rem; font-weight: 700; padding: 6px 10px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; }
@@ -100,7 +111,7 @@
 
     .tabs { display: flex; background: var(--card-bg); padding: 6px; border-radius: 12px; margin-bottom: 20px; gap: 6px; border: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
-    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 16px; font-size: 0.9rem; font-weight: 700; cursor: pointer; flex: 1; border-radius: 8px; transition: 0.3s; white-space: nowrap; }
+    .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 14px; font-size: 0.88rem; font-weight: 700; cursor: pointer; flex: 1; border-radius: 8px; transition: 0.3s; white-space: nowrap; }
     .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(0, 136, 204, 0.3); }
     #abasAdmin { background: rgba(245, 158, 11, 0.1); border-color: rgba(245, 158, 11, 0.2); }
     #abasAdmin .tab-btn.active { background: var(--warning); color: #000; box-shadow: 0 4px 10px rgba(245, 158, 11, 0.3); }
@@ -192,7 +203,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '37';
+    const VERSAO_ATUAL = '38';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -325,7 +336,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=37" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=38" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -334,15 +345,16 @@
 
     <!-- TELA APP -->
     <div id="tela-app" style="display: none;">
+      <!-- BARRA PRINCIPAL LIBERADA PARA TODOS OS TÉCNICOS (INCLUI MAPA/RADAR) -->
       <div class="tabs">
         <button class="tab-btn active" id="btnAbaAgenda" onclick="abrirAba('tab-itinerario', this); hapticFeedback()">📅 Agenda</button>
         <button class="tab-btn" onclick="abrirAba('tab-form', this); hapticFeedback()">➕ Avulso</button>
+        <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Mapa Equipe</button>
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
       
       <!-- ABA EXCLUSIVA DO ADMIN -->
       <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
-        <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Radar</button>
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
         <button class="tab-btn" onclick="abrirAba('tab-banco', this); hapticFeedback()">📈 Banco</button>
         <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
@@ -552,23 +564,31 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN ================= -->
-
-      <!-- ADMIN: RADAR COM RESUMO EXECUTIVO -->
+      <!-- ABA COMPARTILHADA: MAPA AO VIVO E RADAR DA EQUIPE -->
       <div id="tab-radar" class="tab-content">
         <div class="box">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-             <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">Radar GPS da Equipa</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
+             <div>
+                <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">🗺️ Mapa & Localização da Equipe</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Veja onde cada técnico registrou presença recentemente.</p>
+             </div>
              <button class="btn-logout" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar</button>
           </div>
-          <div class="metrics" style="margin-bottom:16px;">
+
+          <div class="metrics" style="margin-bottom:14px;">
              <div class="card-metric"><div class="label">Ativos / Campo</div><div class="val" id="radAtivos" style="color:var(--accent);">0</div></div>
              <div class="card-metric"><div class="label">Em Pausa</div><div class="val" id="radPausa" style="color:var(--warning);">0</div></div>
              <div class="card-metric"><div class="label">Fora / Fim</div><div class="val" id="radFora" style="color:var(--danger);">0</div></div>
           </div>
+
+          <!-- CONTENTOR DO MAPA INTERATIVO -->
+          <div id="mapaEquipa"></div>
+
           <div id="areaRadar">A procurar posições...</div>
         </div>
       </div>
+
+      <!-- ================= ADMIN ================= -->
 
       <!-- ADMIN: GERAL -->
       <div id="tab-admin-ponto" class="tab-content">
@@ -724,7 +744,6 @@
       "YouData": { end: "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904" }
     };
 
-    // --- FEEDBACK SONORO SUTIL (WEB AUDIO API) ---
     function playBeepSucesso() {
        try {
           const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
@@ -740,7 +759,6 @@
        } catch(e) {}
     }
 
-    // --- TEMPLATES RÁPIDOS E RASCUNHO AUTOMÁTICO DE OS ---
     function inserirTemplateOS(texto) {
        hapticFeedback();
        const el = document.getElementById('txtObservacaoOS');
@@ -775,12 +793,32 @@
     function safeSetDisplay(id, displayType) { let el = document.getElementById(id); if (el) el.style.display = displayType; }
 
     let chartMeuDesempenho = null, chartAdminBanco = null;
+    let mapaLeaflet = null, camadaPinos = null;
     let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
     let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [], ultimoBancoConsolidado = [];
     let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
     let currentRating = 0, tempoInicioExpediente = null;
     let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
+
+    // --- EXTRAÇÃO DE COORDENADAS DOS LINKS DO GOOGLE MAPS ---
+    function extrairLatLngDeUrl(url) {
+       if (!url || typeof url !== 'string') return null;
+       const match = url.match(/query=([-0-9.]+),([-0-9.]+)/) || url.match(/q=([-0-9.]+),([-0-9.]+)/);
+       if (match && match.length >= 3) {
+          const lat = parseFloat(match[1]);
+          const lng = parseFloat(match[2]);
+          if (!isNaN(lat) && !isNaN(lng)) return [lat, lng];
+       }
+       return null;
+    }
+
+    function focarTecnicoNoMapa(lat, lng, nome) {
+       if (!mapaLeaflet) return;
+       hapticFeedback();
+       mapaLeaflet.setView([lat, lng], 16, { animate: true });
+       window.scrollTo({ top: 120, behavior: 'smooth' });
+    }
 
     // --- CRONÔMETRO SLA DE ATENDIMENTO AO VIVO ---
     function iniciarSlaLocal(linha) {
@@ -2059,30 +2097,85 @@
        link.click();
     }
 
+    // --- MAPA INTERATIVO DA EQUIPA + RADAR ---
+    function inicializarMapaSeNecessario() {
+       if (typeof L === 'undefined') return;
+       if (!mapaLeaflet) {
+          mapaLeaflet = L.map('mapaEquipa').setView([-22.85, -43.30], 10);
+          L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+             attribution: '&copy; OpenStreetMap'
+          }).addTo(mapaLeaflet);
+          camadaPinos = L.layerGroup().addTo(mapaLeaflet);
+       }
+       setTimeout(() => { mapaLeaflet.invalidateSize(); }, 250);
+    }
+
     function carregarRadar(forcar = false) {
+      inicializarMapaSeNecessario();
       if(forcar) showLoading("A procurar posições...");
       callAPI('getRadarEquipa').then(dados => {
          hideLoading(); 
-         if (dados.erro || dados.length === 0) { 
+         if (dados.erro || !Array.isArray(dados) || dados.length === 0) { 
              safeSetHTML("areaRadar", "Sem localizações."); 
              return; 
          }
+         if (camadaPinos) camadaPinos.clearLayers();
+         let bounds = [];
          let ativos = 0, pausa = 0, fora = 0;
          let html = ""; 
+
          dados.forEach(d => { 
              let ac = String(d.acao || "");
-             let cor = 'var(--primary)';
+             let corHex = '#0088cc';
              if (ac === 'Entrada' || ac === 'Retorno' || ac === 'Cheguei' || ac.includes('Início')) {
-                 ativos++; cor = 'var(--accent)';
+                 ativos++; corHex = '#10b981';
              } else if (ac === 'Pausa') {
-                 pausa++; cor = 'var(--warning)';
+                 pausa++; corHex = '#f59e0b';
              } else {
-                 fora++; cor = 'var(--danger)';
+                 fora++; corHex = '#ef4444';
              }
-             let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) ? '<a href="' + d.localizacao + '" target="_blank" style="color:var(--primary); font-size:0.8rem; border:1px solid var(--primary); padding:4px 8px; border-radius:6px; text-decoration:none;">🧭 Ver no Mapa</a>' : '<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>';
+
              let horaR = d.dataHora.split(' ')[1] || d.dataHora;
-             html += '<div class="card-radar" style="border-left-color: ' + cor + '"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">' + d.nome + '</strong><small style="color:' + cor + '; font-weight:bold;">' + d.acao + '</small></div><div style="color:#38bdf8; margin-top:4px; font-weight:600;">' + d.cliente + '</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">Último registo: ' + horaR + '</small>' + linkMapa + '</div></div>'; 
+             let coords = extrairLatLngDeUrl(d.localizacao);
+
+             // Se houver coordenada válida, plota o pino personalizado no Mapa
+             if (coords && camadaPinos && typeof L !== 'undefined') {
+                 bounds.push(coords);
+                 let iniciais = d.nome.split(' ').map(n => n[0]).join('').substring(0, 2).toUpperCase();
+                 let icone = L.divIcon({
+                    className: '',
+                    html: `<div class="pin-custom" style="background:${corHex};">${iniciais}</div>`,
+                    iconSize: [34, 34],
+                    iconAnchor: [17, 17]
+                 });
+                 let marker = L.marker(coords, { icon: icone }).addTo(camadaPinos);
+                 marker.bindPopup(`
+                    <div style="font-size:0.85rem; line-height:1.4;">
+                       <strong style="color:#38bdf8; font-size:0.95rem;">👤 ${d.nome}</strong><br>
+                       <b>Status:</b> ${d.acao}<br>
+                       <b>Local:</b> ${d.cliente}<br>
+                       <b>Horário:</b> ${horaR}
+                    </div>
+                 `);
+             }
+
+             let btnFocarMapa = coords ? `<button type="button" class="nav-pill" style="border-color:#38bdf8; color:#38bdf8;" onclick="focarTecnicoNoMapa(${coords[0]}, ${coords[1]}, '${d.nome}')">🎯 Focar no Mapa</button>` : '';
+             let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) ? `<a href="${d.localizacao}" target="_blank" class="nav-pill">🧭 Abrir GPS</a>` : '<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>';
+
+             html += `<div class="card-radar" style="border-left-color: ${corHex}">
+                        <div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">${d.nome}</strong><small style="color:${corHex}; font-weight:bold;">${d.acao}</small></div>
+                        <div style="color:#38bdf8; margin-top:4px; font-weight:600;">📍 ${d.cliente}</div>
+                        <div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center; flex-wrap:wrap; gap:8px;">
+                           <small style="color:var(--text-muted);">Último registo: ${horaR}</small>
+                           <div style="display:flex; gap:6px;">${btnFocarMapa}${linkMapa}</div>
+                        </div>
+                      </div>`; 
          }); 
+
+         if (bounds.length > 0 && mapaLeaflet) {
+             mapaLeaflet.fitBounds(bounds, { padding: [35, 35], maxZoom: 15 });
+         }
+
          safeSetText("radAtivos", ativos);
          safeSetText("radPausa", pausa);
          safeSetText("radFora", fora);
