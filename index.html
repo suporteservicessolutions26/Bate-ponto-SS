@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=41">
+  <link rel="manifest" href="manifest.json?v=42">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=41">
-  <link rel="icon" href="./LogoSS.png?v=41" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=42">
+  <link rel="icon" href="./LogoSS.png?v=42" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos offline.')"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -47,9 +47,11 @@
     #data-atual { color: var(--text-muted); font-size: 1rem; text-transform: capitalize; font-weight: 500; margin-bottom: 15px; }
     .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #1a365d; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
     .aviso-interno { background: rgba(0,136,204,0.1); padding: 16px; text-align: center; border: 1px dashed var(--primary); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: #38bdf8; cursor: pointer;}
-    .mural-banner { background: linear-gradient(135deg, rgba(0,136,204,0.18), rgba(245,158,11,0.12)); border: 1px solid rgba(56,189,248,0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; display: none; }
-    .mural-banner h4 { font-size: 0.8rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; }
-    .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+    
+    /* MURAL DE COMUNICADOS MÚLTIPLOS */
+    .mural-banner { background: linear-gradient(135deg, rgba(0,136,204,0.18), rgba(245,158,11,0.12)); border: 1px solid rgba(56,189,248,0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 10px; }
+    .mural-banner h4 { font-size: 0.82rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; }
+    .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); white-space: pre-wrap; }
     
     #mapaEquipa { width: 100%; height: 320px; border-radius: 14px; border: 1px solid var(--border); margin-bottom: 16px; z-index: 1; }
     .leaflet-popup-content-wrapper { background: #0d1e36; color: #f0f6fc; border: 1px solid #38bdf8; border-radius: 10px; }
@@ -72,8 +74,8 @@
     .tabs::-webkit-scrollbar { display: none; }
     .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 14px; font-size: 0.88rem; font-weight: 700; cursor: pointer; flex: 1; border-radius: 8px; transition: 0.3s; white-space: nowrap; }
     .tab-btn.active { background: var(--primary); color: #fff; box-shadow: 0 4px 10px rgba(0,136,204,0.3); }
-    #abasAdmin { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); }
-    #abasAdmin .tab-btn.active { background: var(--warning); color: #000; box-shadow: 0 4px 10px rgba(245,158,11,0.3); }
+    #abasRestritas { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.2); }
+    #abasRestritas .tab-btn.active { background: var(--warning); color: #000; box-shadow: 0 4px 10px rgba(245,158,11,0.3); }
     .tab-content { display: none; } .tab-content.active { display: block; animation: fadeIn 0.4s ease; }
     
     table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 0.85rem; text-align: left; }
@@ -127,7 +129,7 @@
 <body>
 
   <script>
-    const VERSAO_ATUAL = '41';
+    const VERSAO_ATUAL = '42';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) caches.keys().then(n => { for (let k of n) caches.delete(k); }); 
       if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => { for(let a of r) a.unregister(); });
@@ -200,10 +202,10 @@
      <button class="btn btn-logout" style="margin-top:16px;" onclick="fecharModalHistoricoOS()">Fechar</button>
   </div>
 
-  <!-- MODAL OPORTUNIDADE DE VENDA / UPSELL (V41) -->
+  <!-- MODAL OPORTUNIDADE DE VENDA / UPSELL -->
   <div id="modal-oportunidade" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
      <h3 style="color:var(--warning); margin-bottom:6px;">💡 Reportar Venda / Oportunidade</h3>
-     <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Identificou a necessidade de uma peça ou melhoria? Avise o comercial.</p>
+     <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Identificou a necessidade de uma peça ou melhoria? Avise o setor comercial.</p>
      <input type="hidden" id="oppNomeCliente" />
      <label>O que o cliente precisa?</label>
      <textarea id="oppDesc" rows="3" placeholder="Ex: Nobreak não aguenta carga, precisa de um de 2000VA..."></textarea>
@@ -252,14 +254,12 @@
 
     <div id="badgeOffline">☁️ Modo Offline Ativo: <span id="qtdOffline">0</span> pendente(s)</div>
 
-    <div id="muralComunicados" class="mural-banner">
-       <h4><span>📢 Comunicado da Supervisão</span> <small id="muralData"></small></h4>
-       <p id="muralTexto"></p>
-    </div>
+    <!-- CONTENTOR DE MÚLTIPLOS AVISOS ATIVOS -->
+    <div id="containerMuralAtivo"></div>
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=41" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=42" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="O seu utilizador" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="A sua palavra-passe" />
@@ -275,12 +275,14 @@
         <button class="tab-btn" onclick="abrirAba('tab-hist', this); hapticFeedback()">📊 Perfil</button>
       </div>
       
-      <div class="tabs" id="abasAdmin" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
-        <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
-        <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
-        <button class="tab-btn" onclick="abrirAba('tab-oportunidades', this); hapticFeedback()">💡 Vendas</button>
-        <button class="tab-btn" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
-        <button class="tab-btn" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
+      <!-- BARRA RESTRITA (ADMIN VÊ TUDO / VENDEDOR VÊ APENAS VENDAS) -->
+      <div class="tabs" id="abasRestritas" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
+        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
+        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
+        <button class="tab-btn" id="btnTabVendas" style="display:none;" onclick="abrirAba('tab-oportunidades', this); hapticFeedback()">💡 Vendas</button>
+        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-avisos', this); hapticFeedback()">📢 Avisos</button>
+        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
+        <button class="tab-btn btn-only-admin" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
       </div>
 
       <!-- AGENDA -->
@@ -289,7 +291,7 @@
           <div id="relogio">00:00:00</div>
           <div id="data-atual">Carregando data...</div>
           <div id="status-badge" class="status-badge">Buscando status...</div><br>
-          <div style="margin-top:0;">👤 <span id="nomeExibicao"></span></div>
+          <div style="margin-top:0;">👤 <span id="nomeExibicao"></span> <small id="tagPerfilExibicao" style="color:var(--warning); font-weight:bold;"></small></div>
           
           <div id="acoes-rapidas" style="display:none; justify-content: center; gap: 12px; margin-top: 24px; flex-wrap: wrap;">
              <button id="btnPausaRapida" class="btn-acao" style="background:var(--warning); color:#000;" onclick="baterPontoRapido('Pausa')">⏸ Pausa Almoço</button>
@@ -303,8 +305,7 @@
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-             <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">Painel de Comando (Admin)</h3>
-             <button class="btn-logout" style="border-color:#38bdf8; color:#38bdf8;" onclick="publicarAvisoMuralPrompt()">📢 Publicar Aviso</button>
+             <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">Atribuir Visita (Admin)</h3>
           </div>
           <div class="form-row" style="margin-bottom:12px; display:flex; gap:12px;">
              <div style="flex:1; background:var(--bg); padding:14px; border-radius:10px; border:1px solid var(--border);">
@@ -389,7 +390,6 @@
           <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar Pedido</button>
         </div>
 
-        <!-- SOLICITAÇÃO DE AUSÊNCIAS -->
         <div class="box" style="border-color: #38bdf8;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Solicitar Férias, Folga ou Atestado</h3>
           <label>Tipo de Ausência</label>
@@ -449,7 +449,6 @@
              <div><h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">🗺️ Mapa da Equipe</h3></div>
              <div style="display:flex; gap:8px;">
                 <button class="btn-logout" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar</button>
-                <!-- BOTÃO MODO TELÃO NOC -->
                 <button class="btn-logout" style="border-color:var(--accent); color:var(--accent);" onclick="ativarModoNOC()" title="Ativar ecrã inteiro na TV">🖥️ Telão</button>
              </div>
           </div>
@@ -463,15 +462,14 @@
         </div>
       </div>
 
-      <!-- ================= ADMIN ================= -->
+      <!-- ================= ÁREA RESTRITA (ADMIN & VENDEDOR) ================= -->
 
-      <!-- GERAL PONTO -->
+      <!-- GERAL PONTO & BANCO (EXCLUSIVO ADMIN) -->
       <div id="tab-admin-ponto" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap: wrap; gap: 10px;">
             <h3 style="margin: 0; font-size: 1.1rem; color: var(--accent);">Visão Geral da Operação</h3>
             <div style="display:flex; gap:10px; align-items:center;">
-               <!-- FILTRO DE DATA (V41) -->
                <input type="date" id="filtroDataPonto" onchange="filtrarGeralPonto()" style="margin:0; padding:8px; width:130px; border-radius:8px;" title="Filtrar por dia específico" />
                <select id="filtroGeralColab" style="margin:0; padding:8px 12px; width:auto; border-color:var(--danger);" onchange="filtrarGeralPonto()"><option value="TODOS">Todos</option></select>
                <button class="btn-acao" style="background:#dc2626; margin:0; padding:8px 16px;" onclick="exportarGeralPDF()">📄 PDF</button>
@@ -481,16 +479,80 @@
             <table><thead><tr><th>Data/Hora</th><th>Colaborador</th><th>Ação</th><th>Resumo</th></tr></thead><tbody id="tblGeral"></tbody></table>
           </div>
         </div>
+
+        <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
+          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--primary);">Fechamento Mensal (Banco de Horas)</h3>
+          <div style="display:flex; gap:10px; margin-bottom: 20px;">
+             <input type="text" id="mesFiltro" placeholder="MM/YYYY" maxlength="7" style="margin:0; flex:2;" />
+             <button class="btn" style="flex:1; margin:0; background: var(--primary);" onclick="carregarBancoHoras()">Consolidar</button>
+             <button class="btn-logout" style="margin:0; border-color:var(--accent); color:var(--accent);" onclick="exportarBancoCSV()" title="Baixar CSV">📥 CSV</button>
+          </div>
+          <div class="box" style="padding:15px; margin-bottom:20px; display:none;" id="boxAdminGrafico"><div class="chart-container" style="height: 220px;"><canvas id="adminGrafico"></canvas></div></div>
+          <div class="box" style="padding:0; overflow:hidden;">
+            <table><thead><tr><th>Colaborador</th><th>Total Mensal</th><th>Horas Extras</th></tr></thead><tbody id="tblBanco"><tr><td colspan="3" style="text-align:center; padding:20px;">Insira o mês e clique em Consolidar.</td></tr></tbody></table>
+          </div>
+        </div>
       </div>
       
-      <!-- OPORTUNIDADES COMERCIAIS / UPSELL (V41) -->
+      <!-- OPORTUNIDADES COMERCIAIS / UPSELL (ACESSO: VENDEDOR & ADMIN) -->
       <div id="tab-oportunidades" class="tab-content">
         <div class="box">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-             <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">💡 Oportunidades de Venda (Upsell)</h3>
-             <button class="btn-logout" onclick="carregarOportunidades(); hapticFeedback()">🔄</button>
+             <div>
+                <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">💡 Funil de Oportunidades (Comercial)</h3>
+                <p style="font-size:0.75rem; color:var(--text-muted);">Acesso permitido apenas para Vendedores e Administradores.</p>
+             </div>
+             <button class="btn-logout" onclick="carregarOportunidades(); hapticFeedback()">🔄 Atualizar</button>
           </div>
           <div id="listaOportunidades" style="color: var(--text-muted); text-align: center;">A carregar funil de vendas...</div>
+        </div>
+      </div>
+
+      <!-- NOVA ABA: GERENCIADOR DE AVISOS (EXCLUSIVO ADMIN) -->
+      <div id="tab-avisos" class="tab-content">
+        <div class="box" style="border-color:#38bdf8;">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;" id="tituloFormAviso">📢 Criar Novo Aviso</h3>
+          <input type="hidden" id="avisoIdEdicao" value="" />
+          
+          <label>Título do Aviso</label>
+          <input type="text" id="avisoTituloInput" placeholder="Ex: Manutenção Programada / Fechamento de Ponto" />
+          
+          <label>Mensagem do Comunicado</label>
+          <textarea id="avisoMensagemInput" rows="3" placeholder="Digite o texto que aparecerá no topo do app para toda a equipe..."></textarea>
+          
+          <div class="form-row" style="display:flex; gap:10px; margin-bottom:14px;">
+             <div style="flex:2;">
+                <label>Expirar Automaticamente em (Opcional)</label>
+                <input type="datetime-local" id="avisoExpiraInput" style="margin-bottom:0;" />
+             </div>
+             <div style="flex:1;">
+                <label>Status</label>
+                <select id="avisoStatusInput" style="margin-bottom:0;">
+                   <option value="Ativo">Ativo</option>
+                   <option value="Inativo">Inativo</option>
+                </select>
+             </div>
+          </div>
+
+          <div style="display:flex; gap:8px; margin-bottom:14px; flex-wrap:wrap;">
+             <button type="button" class="nav-pill" onclick="definirTempoAvisoHoras(2)">⏱️ +2 Horas</button>
+             <button type="button" class="nav-pill" onclick="definirTempoAvisoHoras(24)">⏱️ +24 Horas</button>
+             <button type="button" class="nav-pill" onclick="definirTempoAvisoHoras(168)">⏱️ +7 Dias</button>
+             <button type="button" class="nav-pill" onclick="document.getElementById('avisoExpiraInput').value=''">♾️ Sem Prazo</button>
+          </div>
+
+          <div style="display:flex; gap:10px;">
+             <button type="button" class="btn btn-logout" id="btnCancelarEdicaoAviso" style="flex:1; display:none;" onclick="limparFormularioAviso()">Cancelar Edição</button>
+             <button type="button" class="btn" style="flex:2; background:var(--primary);" onclick="salvarAvisoPainel()">💾 Salvar Aviso</button>
+          </div>
+        </div>
+
+        <div class="box">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+             <h3 style="margin: 0; font-size: 1.05rem; color: var(--text);">Histórico e Controle de Avisos</h3>
+             <button class="btn-logout" onclick="carregarListaAvisosAdmin(); hapticFeedback()">🔄</button>
+          </div>
+          <div id="listaAvisosAdmin" style="color:var(--text-muted); text-align:center;">A carregar avisos...</div>
         </div>
       </div>
 
@@ -635,10 +697,19 @@
 
     let chartMeuDesempenho = null, chartAdminBanco = null, mapaLeaflet = null, camadaPinos = null;
     let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
-    let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [], ultimoBancoConsolidado = [];
+    let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [], ultimoBancoConsolidado = [], cacheTodosAvisos = [];
     let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
     let currentRating = 0, tempoInicioExpediente = null, filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
+
+    // --- VERIFICADOR DE PERMISSÃO (RBAC: ADMIN e VENDEDOR) ---
+    function isAdmin() {
+       return String(perfilAutenticado).toLowerCase() === 'admin';
+    }
+    function podeAcessarVendas() {
+       const p = String(perfilAutenticado).toLowerCase();
+       return p === 'admin' || p === 'vendedor';
+    }
 
     // --- MODO TELÃO NOC ---
     function ativarModoNOC() {
@@ -656,14 +727,146 @@
     document.addEventListener("fullscreenchange", function() {
        if (!document.fullscreenElement) {
            document.querySelector('header').style.display = 'flex';
-           document.querySelectorAll('.tabs').forEach(t => t.style.display = 'flex');
+           aplicarPermissoesAbas();
            document.getElementById('radMetricsBox').style.display = 'grid';
            document.getElementById('mapaEquipa').style.height = '320px';
            if(mapaLeaflet) setTimeout(()=>mapaLeaflet.invalidateSize(), 300);
        }
     });
 
-    // --- OPORTUNIDADES (UPSELL) V41 ---
+    // --- MURAL DE AVISOS DINÂMICO E GERENCIADOR ADMIN (V42) ---
+    async function carregarMuralAvisos() {
+       const res = await callAPI('getMuralAvisos');
+       const container = document.getElementById('containerMuralAtivo');
+       if (!container) return;
+
+       if (Array.isArray(res) && res.length > 0) {
+          container.innerHTML = res.map(av => `
+             <div class="mural-banner">
+                <h4><span>📢 ${av.titulo || 'Comunicado da Supervisão'}</span> <small>${av.expiraEm ? '⏳ Expira: ' + av.expiraEm.replace('T',' ') : ''}</small></h4>
+                <p>${av.mensagem}</p>
+             </div>
+          `).join('');
+       } else {
+          container.innerHTML = "";
+       }
+    }
+
+    function definirTempoAvisoHoras(horas) {
+       const dt = new Date(Date.now() + horas * 3600000);
+       const pad = n => String(n).padStart(2, '0');
+       const isoLocal = `${dt.getFullYear()}-${pad(dt.getMonth()+1)}-${pad(dt.getDate())}T${pad(dt.getHours())}:${pad(dt.getMinutes())}`;
+       document.getElementById('avisoExpiraInput').value = isoLocal;
+    }
+
+    function limparFormularioAviso() {
+       document.getElementById('avisoIdEdicao').value = "";
+       document.getElementById('avisoTituloInput').value = "";
+       document.getElementById('avisoMensagemInput').value = "";
+       document.getElementById('avisoExpiraInput').value = "";
+       document.getElementById('avisoStatusInput').value = "Ativo";
+       safeSetText('tituloFormAviso', '📢 Criar Novo Aviso');
+       safeSetDisplay('btnCancelarEdicaoAviso', 'none');
+    }
+
+    function salvarAvisoPainel() {
+       if (!isAdmin()) return alert("Apenas o Admin pode gerir avisos.");
+       const id = document.getElementById('avisoIdEdicao').value;
+       const titulo = document.getElementById('avisoTituloInput').value.trim();
+       const msg = document.getElementById('avisoMensagemInput').value.trim();
+       const expira = document.getElementById('avisoExpiraInput').value;
+       const status = document.getElementById('avisoStatusInput').value;
+
+       if (!titulo || !msg) return alert("Preencha o título e a mensagem do aviso.");
+
+       executarComLoader("A guardar aviso...", async () => {
+          const res = await callAPI('salvarAvisoAdmin', {
+             id: id,
+             titulo: titulo,
+             mensagem: msg,
+             expiraEm: expira,
+             autor: usuarioAutenticado,
+             status: status
+          });
+          if (res.erro) alert(res.erro);
+          else {
+             playBeepSucesso();
+             limparFormularioAviso();
+             await carregarListaAvisosAdmin();
+             await carregarMuralAvisos();
+             alert("Aviso salvo com sucesso!");
+          }
+       });
+    }
+
+    async function carregarListaAvisosAdmin() {
+       if (!isAdmin()) return;
+       const lista = await callAPI('getTodosAvisosAdmin');
+       const div = document.getElementById('listaAvisosAdmin');
+       if (!div) return;
+       if (!Array.isArray(lista) || lista.length === 0) {
+          cacheTodosAvisos = [];
+          div.innerHTML = "Nenhum aviso criado.";
+          return;
+       }
+       cacheTodosAvisos = lista;
+       div.innerHTML = lista.map((a, idx) => {
+          let badgeClass = 'bg-aprovado', textoSt = '🟢 Ativo';
+          if (a.status !== 'Ativo') { badgeClass = 'bg-recusado'; textoSt = '🔴 Inativo'; }
+          else if (a.expirado) { badgeClass = 'bg-pendente'; textoSt = '⌛ Expirado'; }
+
+          let proxStatus = a.status === 'Ativo' ? 'Inativo' : 'Ativo';
+          let txtBotaoToggle = a.status === 'Ativo' ? '⏸️ Desativar' : '▶️ Ativar';
+
+          return `
+             <div style="background:var(--bg); border:1px solid var(--border); padding:14px; border-radius:12px; margin-bottom:10px; text-align:left;">
+                <div style="display:flex; justify-content:space-between; align-items:center; gap:8px;">
+                   <strong style="color:#38bdf8; font-size:1rem;">${a.titulo}</strong>
+                   <span class="badge-status-req ${badgeClass}">${textoSt}</span>
+                </div>
+                <p style="font-size:0.88rem; color:var(--text); margin:8px 0; white-space:pre-wrap;">${a.mensagem}</p>
+                <small style="color:var(--text-muted); display:block;">Criado por ${a.autor} em ${a.criadoEm} ${a.expiraEm ? ' | Expira: <b>' + a.expiraEm.replace('T',' ') + '</b>' : ' | <b>Sem expiração</b>'}</small>
+                <div style="display:flex; gap:8px; margin-top:10px;">
+                   <button class="btn-logout" style="flex:1; border-color:#38bdf8; color:#38bdf8; padding:6px;" onclick="prepararEdicaoAviso(${idx})">✏️ Editar</button>
+                   <button class="btn-logout" style="flex:1; border-color:var(--warning); color:var(--warning); padding:6px;" onclick="alternarStatusAvisoUI('${a.id}', '${proxStatus}')">${txtBotaoToggle}</button>
+                   <button class="btn-logout" style="border-color:var(--danger); color:var(--danger); padding:6px 10px;" onclick="excluirAvisoUI('${a.id}')">🗑️</button>
+                </div>
+             </div>
+          `;
+       }).join('');
+    }
+
+    function prepararEdicaoAviso(idx) {
+       const a = cacheTodosAvisos[idx];
+       if (!a) return;
+       document.getElementById('avisoIdEdicao').value = a.id;
+       document.getElementById('avisoTituloInput').value = a.titulo;
+       document.getElementById('avisoMensagemInput').value = a.mensagem;
+       document.getElementById('avisoExpiraInput').value = a.expiraEm || "";
+       document.getElementById('avisoStatusInput').value = a.status || "Ativo";
+       safeSetText('tituloFormAviso', '✏️ Editando Aviso');
+       safeSetDisplay('btnCancelarEdicaoAviso', 'block');
+       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function alternarStatusAvisoUI(id, novoStatus) {
+       executarComLoader("Atualizando status...", async () => {
+          await callAPI('alterarStatusAviso', { id: id, novoStatus: novoStatus });
+          await carregarListaAvisosAdmin();
+          await carregarMuralAvisos();
+       });
+    }
+
+    function excluirAvisoUI(id) {
+       if (!confirm("Excluir permanentemente este aviso?")) return;
+       executarComLoader("Excluindo aviso...", async () => {
+          await callAPI('excluirAvisoAdmin', { id: id });
+          await carregarListaAvisosAdmin();
+          await carregarMuralAvisos();
+       });
+    }
+
+    // --- OPORTUNIDADES (UPSELL) COM BLOQUEIO POR PERFIL ---
     function abrirModalOportunidade(cliente) {
        if(!cliente) return alert("Selecione um cliente primeiro.");
        document.getElementById("oppNomeCliente").value = cliente;
@@ -698,16 +901,24 @@
     }
 
     function carregarOportunidades() {
+       if (!podeAcessarVendas()) {
+          safeSetHTML("listaOportunidades", "Acesso restrito a Vendedores e Administradores.");
+          return;
+       }
        callAPI('getOportunidadesComerciais').then(dados => {
-          if (dados.erro || !dados || dados.length === 0) { safeSetHTML("listaOportunidades", "Sem vendas."); return; }
+          if (dados.erro || !dados || dados.length === 0) { safeSetHTML("listaOportunidades", "Nenhuma oportunidade registrada até o momento."); return; }
           let html = "";
           dados.forEach(d => {
              let cor = d.status.includes('Aprovad') ? 'var(--accent)' : (d.status.includes('Recusad') ? 'var(--danger)' : 'var(--warning)');
-             let btns = `<div style="display:flex; gap:8px; margin-top:10px;"><button class="btn-acao" style="background:var(--accent); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Orçamento Aprovado')">Aprovar</button><button class="btn-acao" style="background:var(--danger); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Recusado')">Recusar</button></div>`;
+             let btns = `<div style="display:flex; gap:8px; margin-top:10px;">
+                           <button class="btn-acao" style="background:var(--primary); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Em Negociação')">💬 Em Negociação</button>
+                           <button class="btn-acao" style="background:var(--accent); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Venda Fechada')">✅ Venda Fechada</button>
+                           <button class="btn-acao" style="background:var(--danger); flex:1; font-size:0.8rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Recusado')">✖ Recusar</button>
+                         </div>`;
              html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; text-align:left; position:relative; overflow:hidden;">
                         <div style="position:absolute; top:0; left:0; bottom:0; width:4px; background:${cor};"></div>
                         <strong style="color:var(--primary); font-size:1.1rem;">${d.cliente}</strong><br>
-                        <small style="color:var(--text-muted)">Técnico: <b>${d.tecnico}</b> | ${d.data}</small><br>
+                        <small style="color:var(--text-muted)">Indicado por: <b>${d.tecnico}</b> | ${d.data}</small><br>
                         <div style="margin-top:6px; font-size:0.85rem; color:var(--text);">${d.desc}</div>
                         ${d.foto ? `<br><a href="${d.foto}" target="_blank" style="color:#38bdf8; font-size:0.8rem;">📸 Ver Foto do Local</a>` : ''}
                         <div style="margin-top:6px;"><span class="badge-status-req" style="background:${cor}; color:#000;">${d.status}</span></div>
@@ -719,7 +930,8 @@
     }
 
     function atualizarOportunidadeUI(linha, status) {
-       executarComLoader("A processar...", async () => {
+       if (!podeAcessarVendas()) return alert("Sem permissão.");
+       executarComLoader("A atualizar funil...", async () => {
           await callAPI('atualizarOportunidade', { linha: linha, status: status });
           carregarOportunidades();
        });
@@ -749,15 +961,6 @@
           const l = el.getAttribute('data-sla-linha'); iniciarSlaLocal(l); el.innerText = "⏱️ Atendimento: " + obterDuracaoSlaFormatada(l);
        });
     }, 1000);
-
-    async function carregarMuralAvisos() {
-       const res = await callAPI('getMuralAvisos'), banner = document.getElementById('muralComunicados'); if (!banner) return;
-       if (res && res.texto && res.texto.trim() !== "") { safeSetText('muralTexto', res.texto); safeSetText('muralData', res.data || ''); banner.style.display = 'block'; } else banner.style.display = 'none';
-    }
-    function publicarAvisoMuralPrompt() {
-       const txt = prompt("Digite o comunicado para a equipa:"); if (txt === null) return;
-       executarComLoader("A atualizar...", async () => { await callAPI('salvarMuralAvisos', { texto: txt.trim(), autor: usuarioAutenticado }); await carregarMuralAvisos(); alert("Atualizado!"); });
-    }
 
     async function acionarSOSPlantao() {
        hapticFeedback(); const motivo = prompt("Descreva a urgência / bloqueio em campo:"); if (!motivo) return;
@@ -800,6 +1003,7 @@
        executarComLoader("A cancelar...", async () => { await callAPI('cancelarMinhaSolicitacao', { categoria: categoria, linha: linha, nome: usuarioAutenticado }); carregarMeusAjustes(usuarioAutenticado); });
     }
 
+    function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
     function toggleTema() { const el = document.documentElement, tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', tema); localStorage.setItem('ponto_tema', tema); }
     function showLoading(msg) { safeSetText('loaderMsg', msg || "A processar..."); safeSetDisplay('loaderOverlay', 'flex'); }
     function hideLoading() { safeSetDisplay('loaderOverlay', 'none'); }
@@ -904,13 +1108,42 @@
       });
     }
 
+    // --- CONFIGURAÇÃO VISUAL DE PERMISSÕES (ADMIN vs VENDEDOR vs NORMAL) ---
+    function aplicarPermissoesAbas() {
+      const barraRestrita = document.getElementById('abasRestritas');
+      const btnVendas = document.getElementById('btnTabVendas');
+      const botoesAdmin = document.querySelectorAll('.btn-only-admin');
+
+      if (isAdmin()) {
+         if (barraRestrita) barraRestrita.style.display = 'flex';
+         if (btnVendas) btnVendas.style.display = 'inline-block';
+         botoesAdmin.forEach(b => b.style.display = 'inline-block');
+         safeSetDisplay('areaAtribuirItinerario', 'block');
+      } else if (podeAcessarVendas()) {
+         // Perfil Vendedor: vê a barra restrita apenas com o botão de Vendas
+         if (barraRestrita) barraRestrita.style.display = 'flex';
+         if (btnVendas) btnVendas.style.display = 'inline-block';
+         botoesAdmin.forEach(b => b.style.display = 'none');
+         safeSetDisplay('areaAtribuirItinerario', 'none');
+      } else {
+         // Perfil Técnico Normal
+         if (barraRestrita) barraRestrita.style.display = 'none';
+         safeSetDisplay('areaAtribuirItinerario', 'none');
+      }
+    }
+
     function entrarNoSistema(nome, perfil) {
       usuarioAutenticado = nome; perfilAutenticado = perfil; 
       safeSetText('nomeExibicao', nome);
+      safeSetText('tagPerfilExibicao', perfil && perfil !== 'Normal' ? `(${perfil})` : '');
       safeSetDisplay('tela-login', 'none'); safeSetDisplay('tela-app', 'block'); safeSetDisplay('btnSair', 'block');
-      if (perfil === 'Admin') { 
-          safeSetDisplay('abasAdmin', 'flex'); safeSetDisplay('areaAtribuirItinerario', 'block'); 
-          carregarAusenciasEquipe(); carregarAprovacoes(); carregarOportunidades();
+      
+      aplicarPermissoesAbas();
+
+      if (isAdmin()) { 
+          carregarAusenciasEquipe(); carregarAprovacoes(); carregarOportunidades(); carregarListaAvisosAdmin();
+      } else if (podeAcessarVendas()) {
+          carregarOportunidades();
       }
       if(navigator.onLine) { carregarEstoque(); carregarMeusEquipamentos(); carregarMeusAjustes(nome); carregarMuralAvisos(); }
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); 
@@ -920,14 +1153,24 @@
     function logout() { localStorage.clear(); sessionStorage.clear(); location.reload(); }
 
     function abrirAba(id, btn) {
+      // Bloqueio de segurança por perfil antes de trocar de aba
+      const abasExclusivasAdmin = ['tab-admin-ponto', 'tab-aprovacoes', 'tab-avisos', 'tab-estoque', 'tab-rotas'];
+      if (abasExclusivasAdmin.includes(id) && !isAdmin()) {
+         return alert("Acesso restrito ao Administrador.");
+      }
+      if (id === 'tab-oportunidades' && !podeAcessarVendas()) {
+         return alert("Acesso permitido apenas para usuários com permissão de Vendedor ou Administrador.");
+      }
+
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
       document.querySelectorAll('.tab-btn').forEach(e => e.classList.remove('active'));
       let abaAlvo = document.getElementById(id); if(abaAlvo) abaAlvo.classList.add('active'); if(btn) btn.classList.add('active');
+      
       if(id === 'tab-hist') carregarMeusAjustes(usuarioAutenticado);
       if(id === 'tab-radar') carregarRadar(); 
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto(); 
-      if(id === 'tab-banco') carregarBancoHoras(); 
       if(id === 'tab-aprovacoes') carregarAprovacoes(); 
+      if(id === 'tab-avisos') carregarListaAvisosAdmin();
       if(id === 'tab-estoque') carregarEstoque();
       if(id === 'tab-rotas') carregarRotasServidor();
       if(id === 'tab-oportunidades') carregarOportunidades();
@@ -936,6 +1179,9 @@
     setInterval(() => {
       const a = new Date(); safeSetText('relogio', a.toLocaleTimeString('pt-BR')); safeSetText('data-atual', a.toLocaleDateString('pt-BR', { weekday: 'long', day: '2-digit', month: 'long', year: 'numeric' }));
     }, 1000);
+
+    // Atualiza o mural a cada 60s para sumir automaticamente se algum aviso expirar
+    setInterval(() => { if(navigator.onLine && usuarioAutenticado) carregarMuralAvisos(); }, 60000);
 
     function horasParaMin(hStr) { 
         if(!hStr || hStr==='-' || hStr==='Erro') return 0; 
@@ -1102,7 +1348,7 @@
 
     async function carregarItinerario(forcar = false) {
       if(forcar) showLoading("A atualizar agenda...");
-      const nomeBusca = perfilAutenticado === 'Admin' ? 'Admin' : usuarioAutenticado;
+      const nomeBusca = isAdmin() ? 'Admin' : usuarioAutenticado;
       const dados = await callAPI('getItinerario', { nome: nomeBusca });
       if(forcar) hideLoading();
       if (dados.erro || !dados || dados.length === 0) { safeSetHTML("listaItinerario", "Sua agenda está livre."); return; }
@@ -1120,7 +1366,7 @@
         let classPriori = d.prioridade === 'Crítica' ? 'p-critica' : (d.prioridade === 'Alta' ? 'p-alta' : 'p-normal');
         let prioridadeHtml = '<span class="prioridade-badge ' + classPriori + '">' + (d.prioridade || 'Normal') + '</span>';
         let argForcar = "checkinGeolocalizado('" + d.cliente + "', 'Forçar Remoção', " + d.linha + ", '')";
-        let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? `<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="${argForcar}">✔ Forçar Remoção (Admin)</button>` : '';
+        let btnConcluirAdmin = isAdmin() ? `<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="${argForcar}">✔ Forçar Remoção (Admin)</button>` : '';
         
         let endEncoded = encodeURIComponent(d.endereco || d.cliente);
         let botoesRota = `<div class="nav-pills">
@@ -1138,11 +1384,11 @@
             slaHtml = `<div class="sla-timer" data-sla-linha="${d.linha}">⏱️ Atendimento: ${obterDuracaoSlaFormatada(d.linha)}</div>`;
             botoesGeo = `<div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha}, '')">🏢 P/ Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Próx)', ${d.linha}, '')">🚶 Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha}, '')">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha}, '')">🏠 Fim Expediente</button></div><button class="btn-logout" style="border-color:#fbbf24; color:#fbbf24; padding:10px;" onclick="checkinGeolocalizado('${d.cliente}', 'Pausa SLA', ${d.linha}, '')">⏸️ Pausar SLA (Espera)</button>${btnConcluirAdmin}</div>`;
         } else {
-            if (!isHoje && perfilAutenticado !== 'Admin') { botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; } 
+            if (!isHoje && !isAdmin()) { botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; } 
             else { botoesGeo = `<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '')">📍 Cheguei no Local</button>${btnConcluirAdmin}`; }
         }
         
-        let tagTecAdmin = (perfilAutenticado === 'Admin') ? `<small style="color:var(--warning); font-weight:bold; display:block;">👤 Técnico: ${d.tecnico}</small>` : '';
+        let tagTecAdmin = isAdmin() ? `<small style="color:var(--warning); font-weight:bold; display:block;">👤 Técnico: ${d.tecnico}</small>` : '';
         let blocoInfo = `<div style="margin-top:14px; padding-top:12px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;"><small style="color:var(--text-muted); font-weight:bold;">🕒 ${d.data} às ${d.horario}</small>${botoesGeo}</div>`;
         html += `<div class="card-itinerario ${corClasse}">${prioridadeHtml}${tagTecAdmin}<strong style="font-size:1.2rem; color:#38bdf8;">${d.cliente}</strong><br><small style="color:var(--text-muted);">📍 ${d.endereco}</small>${botoesRota}${slaHtml}${blocoInfo}</div>`;
       });
@@ -1275,7 +1521,7 @@
         const stars = container.children; for(let i=0; i<5; i++) { if(i<v) stars[i].classList.add('ativo'); else stars[i].classList.remove('ativo'); } 
     }
     
-    let isAssinaturaVazia = true;
+    let canvas, ctx, assinando = false, isAssinaturaVazia = true;
     function initAssinatura() {
        canvas = document.getElementById('canvasAssinatura'); if(!canvas) return; ctx = canvas.getContext('2d');
        const startPos = (e) => { assinando = true; draw(e); }; const endPos = () => { assinando = false; ctx.beginPath(); };
@@ -1458,7 +1704,6 @@
       });
     }
 
-    // --- NOVA FUNÇÃO COM FILTRO DE DATA (V41) ---
     function carregarVisaoGeralPonto() {
       callAPI('getTodosHistoricos').then(dados => {
          if (!dados.erro && dados.length > 0) { 
@@ -1477,7 +1722,7 @@
       let filtrados = elFiltro.value !== "TODOS" ? dadosGeralGlobais.filter(d => d.nome === elFiltro.value) : dadosGeralGlobais;
       
       if (elFiltroData && elFiltroData.value) {
-          let dataBr = elFiltroData.value.split('-').reverse().join('/'); // YYYY-MM-DD -> DD/MM/YYYY
+          let dataBr = elFiltroData.value.split('-').reverse().join('/');
           filtrados = filtrados.filter(d => String(d.dataHora).startsWith(dataBr));
       }
 
@@ -1531,7 +1776,7 @@
       if (acao === 'Recusado') { motivoRecusa = prompt("Informe o motivo da recusa para o colaborador visualizar:"); if (motivoRecusa === null) return; }
       executarComLoader("A processar julgamento...", async () => { 
           const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo, motivoRecusa: motivoRecusa }); 
-          if(res.erro) alert(res.erro); else { exibirMsg("Registado!", false); carregarAprovacoes(); if (perfilAutenticado === 'Admin') carregarAusenciasEquipe(); } 
+          if(res.erro) alert(res.erro); else { exibirMsg("Registado!", false); carregarAprovacoes(); if (isAdmin()) carregarAusenciasEquipe(); } 
       });
     }
 
