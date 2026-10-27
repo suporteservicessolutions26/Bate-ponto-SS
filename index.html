@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=35">
+  <link rel="manifest" href="manifest.json?v=36">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=35">
-  <link rel="icon" href="./LogoSS.png?v=35" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=36">
+  <link rel="icon" href="./LogoSS.png?v=36" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -80,6 +80,16 @@
     .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #1a365d; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
     .aviso-interno { background: rgba(0, 136, 204, 0.1); padding: 16px; text-align: center; border: 1px dashed var(--primary); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: #38bdf8; cursor: pointer;}
     
+    /* MURAL DE COMUNICADOS */
+    .mural-banner { background: linear-gradient(135deg, rgba(0, 136, 204, 0.18), rgba(245, 158, 11, 0.12)); border: 1px solid rgba(56, 189, 248, 0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 16px; display: none; }
+    .mural-banner h4 { font-size: 0.8rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; }
+    .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); }
+
+    /* NAVEGAÇÃO RÁPIDA E SLA */
+    .nav-pills { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .nav-pill { font-size: 0.76rem; font-weight: 700; padding: 6px 10px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; }
+    .sla-timer { display: inline-block; margin-top: 8px; padding: 6px 12px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; font-weight: 800; font-size: 0.85rem; font-family: monospace; }
+
     .tabs { display: flex; background: var(--card-bg); padding: 6px; border-radius: 12px; margin-bottom: 20px; gap: 6px; border: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
     .tab-btn { background: transparent; border: none; color: var(--text-muted); padding: 12px 16px; font-size: 0.9rem; font-weight: 700; cursor: pointer; flex: 1; border-radius: 8px; transition: 0.3s; white-space: nowrap; }
@@ -95,7 +105,6 @@
     td { padding: 16px 12px; border-bottom: 1px solid var(--border); }
     .tag-tipo { font-size: 0.75rem; padding: 4px 10px; border-radius: 6px; font-weight: 800; display: inline-block; text-transform: uppercase; }
     
-    /* ESTILOS DOS CARDS DE SOLICITAÇÕES DO COLABORADOR */
     .req-card { background: var(--bg); border: 1px solid var(--border); border-radius: 12px; padding: 14px; margin-bottom: 10px; display: flex; justify-content: space-between; align-items: center; gap: 12px; position: relative; overflow: hidden; }
     .req-card::before { content: ''; position: absolute; left: 0; top: 0; bottom: 0; width: 4px; background: var(--primary); }
     .req-card.st-aprovado::before { background: var(--accent); }
@@ -173,7 +182,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '35';
+    const VERSAO_ATUAL = '36';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -244,13 +253,33 @@
      <button class="btn btn-logout" style="margin-top:16px;" onclick="fecharModalHistoricoOS()">Fechar</button>
   </div>
 
+  <!-- MODAL: COFRE / FICHA TÉCNICA DO CLIENTE -->
+  <div id="modal-ficha-cliente" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
+     <h3 style="color:#38bdf8; margin-bottom:6px;" id="fichaCliTitulo">🔑 Ficha Técnica</h3>
+     <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Informações confidenciais de infraestrutura e contato local.</p>
+     <input type="hidden" id="fichaNomeCliente" />
+     <label>Responsável Local / Telefone</label>
+     <input type="text" id="fichaContato" placeholder="Ex: Sr. Carlos (21) 99999-0000" />
+     <label>IP Gerência / Gateway / VPN</label>
+     <input type="text" id="fichaIP" placeholder="Ex: 192.168.10.1 | Porta 8443" />
+     <label>Wi-Fi / Senha Rack / Credenciais</label>
+     <input type="text" id="fichaCredenciais" placeholder="Ex: SSID: Corp_SS | Chave Rack: Gaveta 2" />
+     <label>Notas Técnicas Fixas</label>
+     <textarea id="fichaNotas" rows="3" placeholder="Ex: Servidor fica no 2º andar; exigir acompanhamento..."></textarea>
+     <div style="display:flex; gap:10px; margin-top:10px;">
+        <button class="btn btn-logout" style="flex:1;" onclick="fecharModalFichaCliente()">Fechar</button>
+        <button class="btn" style="flex:2; background:var(--primary);" onclick="salvarFichaClienteUI()">💾 Salvar Ficha</button>
+     </div>
+  </div>
+
   <div class="container">
     <header>
       <div>
         <h2>Portal Services & Solutions</h2>
         <p style="color:var(--text-muted); font-size:0.85rem;" id="subHeader">Faça login para continuar</p>
       </div>
-      <div style="display:flex; gap:12px; align-items:center;">
+      <div style="display:flex; gap:10px; align-items:center;">
+         <button class="btn-logout" style="font-size:1.1rem; padding:6px 10px; border-color:rgba(239,68,68,0.4); color:#fca5a5;" onclick="acionarSOSPlantao()" title="SOS Supervisão">🚨 SOS</button>
          <button class="btn-logout" style="font-size:1.3rem; padding:6px 10px; border:none;" onclick="toggleTema(); hapticFeedback()">🌓</button>
          <button id="btnForceReload" class="btn-logout" style="font-size:1.1rem; padding:6px 10px;" onclick="forcarAtualizacaoSistema()" title="Forçar Atualização">🔄</button>
          <button id="btnSair" class="btn-logout" style="display:none;" onclick="logout()">Sair</button>
@@ -259,13 +288,19 @@
 
     <div id="badgeOffline">☁️ Modo Offline Ativo: <span id="qtdOffline">0</span> pendente(s)</div>
 
+    <!-- MURAL DE COMUNICADOS DA SUPERVISÃO -->
+    <div id="muralComunicados" class="mural-banner">
+       <h4><span>📢 Comunicado da Supervisão</span> <small id="muralData"></small></h4>
+       <p id="muralTexto"></p>
+    </div>
+
     <div id="alerta-fadiga" class="aviso-interno" style="display:none; background:rgba(239, 68, 68, 0.1); border-color:rgba(239, 68, 68, 0.3); color:#fca5a5;">
       ⚠️ <strong>ALERTA DE FADIGA:</strong> Mais de 6 horas sem registo de pausa.
     </div>
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=35" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=36" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -286,6 +321,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
         <button class="tab-btn" onclick="abrirAba('tab-banco', this); hapticFeedback()">📈 Banco</button>
         <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos</button>
+        <button class="tab-btn" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
       </div>
 
@@ -308,7 +344,10 @@
         </div>
 
         <div class="box" id="areaAtribuirItinerario" style="display:none; border-color: var(--warning);">
-          <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--warning);">Atribuir Compromisso (Admin)</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+             <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">Painel de Comando (Admin)</h3>
+             <button class="btn-logout" style="border-color:#38bdf8; color:#38bdf8;" onclick="publicarAvisoMuralPrompt()">📢 Publicar Aviso</button>
+          </div>
           <div class="form-row" style="margin-bottom:12px; display:flex; gap:12px;">
              <div style="flex:1; background:var(--bg); padding:14px; border-radius:10px; border:1px solid var(--border);">
                <label style="display:flex; align-items:center; gap:8px; cursor:pointer; margin:0;"><input type="checkbox" id="itiRecorrente" onchange="toggleRecorrencia()" style="width:20px; height:20px; margin:0;"> Recorrente</label>
@@ -357,10 +396,11 @@
         </div>
 
         <div style="margin-top:20px;">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; gap:10px;">
              <h3 style="margin: 0; font-size: 1.2rem; color: #fcd34d;">Fila de Visitas</h3>
-             <button class="btn-logout" style="background:var(--card-bg); font-weight:700; box-shadow:0 2px 6px rgba(0,0,0,0.1);" onclick="carregarItinerario(true); hapticFeedback()">🔄 Atualizar</button>
+             <button class="btn-logout" style="background:var(--card-bg); font-weight:700;" onclick="carregarItinerario(true); hapticFeedback()">🔄 Atualizar</button>
           </div>
+          <input type="text" id="filtroBuscaAgenda" placeholder="🔍 Filtrar visita por cliente, endereço ou técnico..." oninput="filtrarCardsAgenda()" style="margin-bottom:14px; padding:11px 14px; font-size:0.9rem;" />
           <div id="listaItinerario" style="text-align: center; color: var(--text-muted);">A carregar agenda...</div>
         </div>
       </div>
@@ -383,7 +423,10 @@
           <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: #38bdf8;">Visita Avulsa (Emergência)</h3>
           <label>Nome do Cliente / Local</label>
           <div class="input-wrapper"><input type="text" id="chkCliente" placeholder="Pesquisar cliente..." autocomplete="off" /></div>
-          <button type="button" class="btn-logout" style="width:100%; margin-bottom:12px; color:#38bdf8; border-color:var(--border);" onclick="consultarHistoricoOSCliente(document.getElementById('chkCliente').value.trim())">📋 Ver Histórico de OS deste Cliente</button>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:12px;">
+             <button type="button" class="btn-logout" style="color:#38bdf8; border-color:var(--border);" onclick="consultarHistoricoOSCliente(document.getElementById('chkCliente').value.trim())">📋 Últimas OS</button>
+             <button type="button" class="btn-logout" style="color:var(--warning); border-color:var(--border);" onclick="abrirFichaTecnicaCliente(document.getElementById('chkCliente').value.trim())">🔑 Ficha Técnica</button>
+          </div>
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
             <button class="btn btn-acao" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
             <div style="display:grid; grid-template-columns: 1fr 1fr; gap:12px;">
@@ -404,7 +447,7 @@
           <button class="btn" style="background: var(--warning); color: #000;" onclick="enviarSolicitacao()">Enviar Pedido</button>
         </div>
 
-        <!-- MÓDULO: SOLICITAÇÃO DE AUSÊNCIAS (FÉRIAS, FOLGA, ATESTADO) -->
+        <!-- MÓDULO: SOLICITAÇÃO DE AUSÊNCIAS -->
         <div class="box" style="border-color: #38bdf8;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Solicitar Férias, Folga ou Atestado</h3>
           <label>Tipo de Ausência</label>
@@ -451,12 +494,12 @@
             </div>
         </div>
 
-        <!-- NOVO PAINEL: ACOMPANHAMENTO DE SOLICITAÇÕES DO COLABORADOR -->
+        <!-- PAINEL: ACOMPANHAMENTO DE SOLICITAÇÕES DO COLABORADOR -->
         <div class="box" style="border-color: var(--primary);">
           <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:12px;">
              <div>
                 <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">🔔 Minhas Solicitações & Status</h3>
-                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Acompanhe seus pedidos de ponto, folgas, férias e ferramentas.</p>
+                <p style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">Acompanhe ou cancele pedidos ainda pendentes.</p>
              </div>
              <button class="btn-logout" onclick="carregarMeusAjustes(usuarioAutenticado); hapticFeedback()">🔄</button>
           </div>
@@ -515,9 +558,10 @@
       <div id="tab-banco" class="tab-content">
         <div class="box" style="padding: 10px 0; background: transparent; border: none; box-shadow:none;">
           <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: var(--primary);">Fechamento Mensal e Gráficos</h3>
-          <div style="display:flex; gap:12px; margin-bottom: 20px;">
+          <div style="display:flex; gap:10px; margin-bottom: 20px;">
              <input type="text" id="mesFiltro" placeholder="MM/YYYY" maxlength="7" style="margin:0; flex:2;" />
              <button class="btn" style="flex:1; margin:0; background: var(--primary);" onclick="carregarBancoHoras()">Consolidar</button>
+             <button class="btn-logout" style="margin:0; border-color:var(--accent); color:var(--accent);" onclick="exportarBancoCSV()" title="Baixar Planilha CSV">📥 CSV</button>
           </div>
           
           <div class="box" style="padding:15px; margin-bottom:20px; display:none;" id="boxAdminGrafico">
@@ -536,6 +580,24 @@
         <div class="box">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">Pendentes de Aprovação</h3>
           <div id="listaAprovacoes" style="color: var(--text-muted); text-align: center;">Carregando...</div>
+        </div>
+      </div>
+
+      <!-- ADMIN: GESTÃO DE ESTOQUE E ALERTAS -->
+      <div id="tab-estoque" class="tab-content">
+        <div class="box">
+          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">📦 Controle de Estoque & Reposição</h3>
+          <div class="form-row" style="display:flex; gap:10px; margin-bottom:10px;">
+             <input type="text" id="estNomeItem" placeholder="Nome da Peça / Material" style="flex:2; margin-bottom:0;" />
+             <input type="number" id="estQtdItem" placeholder="Qtd (+)" style="flex:1; margin-bottom:0;" />
+          </div>
+          <button class="btn" style="background:var(--accent);" onclick="adicionarOuReporEstoque()">➕ Adicionar / Repor no Estoque</button>
+        </div>
+        <div class="box" style="padding:0; overflow:hidden;">
+          <table>
+             <thead><tr><th>Material / Peça</th><th>Saldo Atual</th><th>Status</th></tr></thead>
+             <tbody id="tblAdminEstoque"><tr><td colspan="3" style="text-align:center; padding:16px;">A carregar estoque...</td></tr></tbody>
+          </table>
         </div>
       </div>
 
@@ -596,7 +658,6 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
-    // Base de Clientes
     const baseClientes = {
       "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013" },
       "Audicone Contadores": { end: "Não localizamos, contatar supervisão." },
@@ -641,12 +702,108 @@
        return "";
     }
 
-    // --- FUNÇÕES DE SEGURANÇA ---
     function safeSetText(id, text) { let el = document.getElementById(id); if (el) el.innerText = text; }
     function safeSetHTML(id, html) { let el = document.getElementById(id); if (el) el.innerHTML = html; }
     function safeSetDisplay(id, displayType) { let el = document.getElementById(id); if (el) el.style.display = displayType; }
 
-    // --- FUNÇÃO ATIVA DE CARREGAR STATUS DAS SOLICITAÇÕES DO COLABORADOR ---
+    let chartMeuDesempenho = null, chartAdminBanco = null;
+    let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
+    let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [], ultimoBancoConsolidado = [];
+    let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
+    let currentRating = 0, tempoInicioExpediente = null;
+    let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
+    let estoqueGlobal = [], materiaisUsados = [];
+
+    // --- CRONÔMETRO SLA DE ATENDIMENTO AO VIVO ---
+    function iniciarSlaLocal(linha) {
+       if (!localStorage.getItem('sla_start_' + linha)) {
+          localStorage.setItem('sla_start_' + linha, Date.now());
+       }
+    }
+    function obterDuracaoSlaFormatada(linha) {
+       const ini = localStorage.getItem('sla_start_' + linha);
+       if (!ini) return "";
+       const diff = Math.max(0, Math.floor((Date.now() - parseInt(ini, 10)) / 1000));
+       const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+       const m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0');
+       const s = String(diff % 60).padStart(2, '0');
+       return `${h}:${m}:${s}`;
+    }
+    setInterval(() => {
+       document.querySelectorAll('[data-sla-linha]').forEach(el => {
+          const l = el.getAttribute('data-sla-linha');
+          iniciarSlaLocal(l);
+          el.innerText = "⏱️ Em atendimento: " + obterDuracaoSlaFormatada(l);
+       });
+    }, 1000);
+
+    // --- MURAL DE COMUNICADOS ---
+    async function carregarMuralAvisos() {
+       const res = await callAPI('getMuralAvisos');
+       const banner = document.getElementById('muralComunicados');
+       if (!banner) return;
+       if (res && res.texto && res.texto.trim() !== "") {
+          safeSetText('muralTexto', res.texto);
+          safeSetText('muralData', res.data || '');
+          banner.style.display = 'block';
+       } else {
+          banner.style.display = 'none';
+       }
+    }
+    function publicarAvisoMuralPrompt() {
+       const txt = prompt("Digite o comunicado para toda a equipe (ou deixe vazio para apagar o aviso atual):");
+       if (txt === null) return;
+       executarComLoader("A atualizar Mural de Avisos...", async () => {
+          await callAPI('salvarMuralAvisos', { texto: txt.trim(), autor: usuarioAutenticado });
+          await carregarMuralAvisos();
+          alert("Mural atualizado com sucesso!");
+       });
+    }
+
+    // --- BOTÃO SOS / PLANTÃO SUPERVISÃO ---
+    async function acionarSOSPlantao() {
+       hapticFeedback();
+       const motivo = prompt("Descreva rapidamente a urgência / bloqueio em campo:");
+       if (!motivo) return;
+       let loc = await obterLocalizacao();
+       const msg = `🚨 *ALERTA SOS DE CAMPO*\n👤 *Técnico:* ${usuarioAutenticado || 'Não logado'}\n⚠️ *Ocorrência:* ${motivo}\n📍 *Localização:* ${loc}`;
+       window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(msg), "_blank");
+    }
+
+    // --- FICHA TÉCNICA / COFRE DO CLIENTE ---
+    async function abrirFichaTecnicaCliente(nomeCliente) {
+       if (!nomeCliente) return alert("Selecione ou digite o nome do cliente primeiro.");
+       showLoading("Carregando Ficha Técnica...");
+       const res = await callAPI('getFichaCliente', { cliente: nomeCliente });
+       hideLoading();
+       safeSetText("fichaCliTitulo", "🔑 Ficha: " + nomeCliente);
+       document.getElementById("fichaNomeCliente").value = nomeCliente;
+       document.getElementById("fichaContato").value = (res && res.contato) ? res.contato : "";
+       document.getElementById("fichaIP").value = (res && res.ip) ? res.ip : "";
+       document.getElementById("fichaCredenciais").value = (res && res.credenciais) ? res.credenciais : "";
+       document.getElementById("fichaNotas").value = (res && res.notas) ? res.notas : "";
+       safeSetDisplay("modal-overlay", "block");
+       safeSetDisplay("modal-ficha-cliente", "block");
+    }
+    function fecharModalFichaCliente() {
+       safeSetDisplay("modal-overlay", "none");
+       safeSetDisplay("modal-ficha-cliente", "none");
+    }
+    function salvarFichaClienteUI() {
+       const cli = document.getElementById("fichaNomeCliente").value;
+       const contato = document.getElementById("fichaContato").value.trim();
+       const ip = document.getElementById("fichaIP").value.trim();
+       const cred = document.getElementById("fichaCredenciais").value.trim();
+       const notas = document.getElementById("fichaNotas").value.trim();
+       fecharModalFichaCliente();
+       executarComLoader("A guardar ficha técnica...", async () => {
+          const res = await callAPI('salvarFichaCliente', { cliente: cli, contato: contato, ip: ip, credenciais: cred, notas: notas });
+          if (res.erro) alert(res.erro);
+          else alert("Ficha Técnica de " + cli + " atualizada!");
+       });
+    }
+
+    // --- SOLICITAÇÕES DO COLABORADOR + BOTÃO CANCELAR ---
     async function carregarMeusAjustes(nome) { 
       const colab = nome || usuarioAutenticado;
       if (!colab) return;
@@ -680,6 +837,7 @@
         let catLabel = item.categoria ? `<small style="color:#38bdf8; font-weight:700; text-transform:uppercase; font-size:0.68rem; display:block; margin-bottom:2px;">${item.categoria}</small>` : '';
         let motivoHtml = item.motivo && item.motivo !== '-' ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">💬 ${item.motivo}</div>` : '';
         let linkAnexo = item.comprovante ? `<a href="${item.comprovante}" target="_blank" style="display:inline-block; margin-top:4px; font-size:0.75rem; color:#38bdf8; text-decoration:underline;">📎 Ver Comprovante</a>` : '';
+        let btnCancelar = (st === 'Pendente' && item.linha) ? `<button class="btn-logout" style="padding:4px 8px; font-size:0.7rem; border-color:var(--danger); color:var(--danger); margin-top:6px;" onclick="cancelarSolicitacaoUI('${item.categoria}', ${item.linha})">🗑️ Cancelar</button>` : '';
 
         html += `
           <div class="req-card ${cardClass}">
@@ -690,8 +848,9 @@
               ${motivoHtml}
               ${linkAnexo}
             </div>
-            <div>
+            <div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end;">
               <span class="badge-status-req ${badgeClass}">${icon} ${st}</span>
+              ${btnCancelar}
             </div>
           </div>`;
       });
@@ -699,7 +858,15 @@
       div.innerHTML = html;
     }
 
-    // --- FUNÇÕES BÁSICAS ---
+    function cancelarSolicitacaoUI(categoria, linha) {
+       if (!confirm("Deseja realmente cancelar esta solicitação pendente?")) return;
+       executarComLoader("A cancelar solicitação...", async () => {
+          const res = await callAPI('cancelarMinhaSolicitacao', { categoria: categoria, linha: linha, nome: usuarioAutenticado });
+          if (res.erro) alert(res.erro);
+          else carregarMeusAjustes(usuarioAutenticado);
+       });
+    }
+
     function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
 
     function toggleTema() {
@@ -738,14 +905,6 @@
        try { await task(); } catch(e) { console.error(e); alert("Erro técnico: " + e.message); }
        hideLoading();
     }
-
-    let chartMeuDesempenho = null, chartAdminBanco = null;
-    let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
-    let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [];
-    let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
-    let currentRating = 0, tempoInicioExpediente = null;
-    let filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
-    let estoqueGlobal = [], materiaisUsados = [];
 
     function configAutocomplete(inp, arr) {
       if(!inp) return;
@@ -949,6 +1108,7 @@
           carregarEstoque();
           carregarMeusEquipamentos();
           carregarMeusAjustes(nome);
+          carregarMuralAvisos();
       }
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); 
       carregarHistoricoEAtualizarBotoes(nome); 
@@ -969,6 +1129,7 @@
       if(id === 'tab-admin-ponto') carregarVisaoGeralPonto(); 
       if(id === 'tab-banco') carregarBancoHoras(); 
       if(id === 'tab-aprovacoes') carregarAprovacoes(); 
+      if(id === 'tab-estoque') carregarEstoque();
       if(id === 'tab-rotas') carregarRotasServidor();
     }
 
@@ -1266,6 +1427,13 @@
       });
     }
 
+    function filtrarCardsAgenda() {
+       const termo = (document.getElementById("filtroBuscaAgenda")?.value || "").toLowerCase();
+       document.querySelectorAll("#listaItinerario .card-itinerario").forEach(card => {
+          card.style.display = card.innerText.toLowerCase().includes(termo) ? "block" : "none";
+       });
+    }
+
     async function carregarItinerario(forcar = false) {
       if(forcar) showLoading("A atualizar agenda...");
       const nomeBusca = perfilAutenticado === 'Admin' ? 'Admin' : usuarioAutenticado;
@@ -1300,10 +1468,22 @@
         let argForcar = "checkinGeolocalizado('" + d.cliente + "', 'Forçar Remoção', " + d.linha + ", '" + (d.coordenadas||"") + "')";
         let btnConcluirAdmin = (perfilAutenticado === 'Admin') ? '<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="' + argForcar + '">✔ Forçar Remoção (Admin)</button>' : '';
         
+        let endEncoded = encodeURIComponent(d.endereco || d.cliente);
+        let botoesRota = `
+          <div class="nav-pills">
+             <a class="nav-pill" href="https://waze.com/ul?q=${endEncoded}&navigate=yes" target="_blank">🚗 Waze</a>
+             <a class="nav-pill" href="https://www.google.com/maps/search/?api=1&query=${endEncoded}" target="_blank">🗺️ Maps</a>
+             <button type="button" class="nav-pill" onclick="abrirFichaTecnicaCliente('${d.cliente}')" style="color:var(--warning);">🔑 Ficha Técnica</button>
+             <button type="button" class="nav-pill" onclick="consultarHistoricoOSCliente('${d.cliente}')" style="color:#38bdf8;">📋 Últimas OS</button>
+          </div>`;
+
+        let slaHtml = "";
         let botoesGeo = "";
         if (isPerdida) { 
             botoesGeo = '<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida</span>' + btnConcluirAdmin; 
         } else if (isAndamento) {
+            iniciarSlaLocal(d.linha);
+            slaHtml = `<div class="sla-timer" data-sla-linha="${d.linha}">⏱️ Em atendimento: ${obterDuracaoSlaFormatada(d.linha)}</div>`;
             let argBase = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Base)', " + d.linha + ", '" + (d.coordenadas||"") + "')";
             let argProx = "checkinGeolocalizado('" + d.cliente + "', 'Saí (Indo para Próx. Cliente)', " + d.linha + ", '" + (d.coordenadas||"") + "')";
             let argAusente = "checkinGeolocalizado('" + d.cliente + "', 'Cliente Ausente', " + d.linha + ", '" + (d.coordenadas||"") + "')";
@@ -1324,10 +1504,9 @@
             }
         }
         
-        let btnHistOS = `<button type="button" class="btn-logout" style="width:100%; margin-top:8px; border-color:var(--border); color:#38bdf8;" onclick="consultarHistoricoOSCliente('${d.cliente}')">📋 Ver Últimas OS deste Cliente</button>`;
-
-        let blocoInfo = '<div style="margin-top:16px; padding-top:14px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;"><small style="color:var(--text-muted); font-weight:bold;">🕒 ' + d.data + ' às ' + d.horario + ' - <span style="color:var(--text);">' + d.status + '</span></small>' + botoesGeo + btnHistOS + '</div>';
-        html += '<div class="card-itinerario ' + corClasse + '">' + prioridadeHtml + '<strong style="font-size:1.2rem; color:#38bdf8;">' + d.cliente + '</strong><br><small style="color:var(--text-muted);">📍 ' + d.endereco + '</small>' + blocoInfo + '</div>';
+        let tagTecAdmin = (perfilAutenticado === 'Admin') ? `<small style="color:var(--warning); font-weight:bold; display:block;">👤 Técnico: ${d.tecnico}</small>` : '';
+        let blocoInfo = '<div style="margin-top:14px; padding-top:12px; border-top:1px dashed var(--border); display:flex; flex-direction:column; gap:10px;"><small style="color:var(--text-muted); font-weight:bold;">🕒 ' + d.data + ' às ' + d.horario + ' - <span style="color:var(--text);">' + d.status + '</span></small>' + botoesGeo + '</div>';
+        html += '<div class="card-itinerario ' + corClasse + '">' + prioridadeHtml + tagTecAdmin + '<strong style="font-size:1.2rem; color:#38bdf8;">' + d.cliente + '</strong><br><small style="color:var(--text-muted);">📍 ' + d.endereco + '</small>' + botoesRota + slaHtml + blocoInfo + '</div>';
       });
       safeSetHTML("listaItinerario", html || '<div style="text-align:center; color:var(--text-muted); font-weight:500;">Agenda livre.</div>');
     }
@@ -1353,6 +1532,8 @@
          let cLimpo = cliente.toLowerCase();
          let ehBase = cLimpo.includes('base') || cLimpo.includes('interno');
          
+         if (tipo === 'Cheguei' && linhaAgenda) iniciarSlaLocal(linhaAgenda);
+
          if (ehBase) { 
              processarVisita(cliente, tipo, linhaAgenda, locUrl, ""); 
              return; 
@@ -1409,7 +1590,12 @@
       if(ehBase) logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
 
       let batInfo = await obterInfoBateria();
-      await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
+      let slaDuracao = (linhaAgenda && tipo.includes('Saí')) ? ` [SLA: ${obterDuracaoSlaFormatada(linhaAgenda)}]` : "";
+      if (linhaAgenda && (tipo.includes('Saí') || tipo === 'Cliente Ausente')) {
+         localStorage.removeItem('sla_start_' + linhaAgenda);
+      }
+
+      await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra + slaDuracao + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
       
       if (tipo === 'Cheguei' && statusGlobalPonto === 'Saída') {
           await callAPI('registrarPonto', { tipoRegistro: 'Entrada', observacao: "Início: " + cliente + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
@@ -1418,7 +1604,7 @@
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Em Andamento' });
       }
       if (tipo.includes('Fim de Expediente')) {
-          await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim: " + cliente + " " + linksExtra + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
+          await callAPI('registrarPonto', { tipoRegistro: 'Saída', observacao: "Fim: " + cliente + " " + linksExtra + slaDuracao + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
       }
       if ((tipo.includes('Saí') || tipo === 'Cliente Ausente') && linhaAgenda) {
           await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: (tipo === 'Cliente Ausente' ? 'Perdida' : 'Concluído') });
@@ -1430,15 +1616,51 @@
       exibirMsg("Concluído!", false);
     }
 
+    // --- GESTÃO DE ESTOQUE COMPLETA + ALERTA DE ESTOQUE BAIXO ---
     async function carregarEstoque() {
        const res = await callAPI('getEstoque');
-       if(!res.erro) {
+       if(!res.erro && Array.isArray(res)) {
            estoqueGlobal = res; 
            let sel = document.getElementById('selMaterial'); 
-           if(!sel) return;
-           sel.innerHTML = '<option value="">Selecionar peça...</option>';
-           res.forEach(item => { sel.innerHTML += '<option value="' + item.linha + '">' + item.nome + ' (Disp: ' + item.qtd + ')</option>'; });
+           if(sel) {
+               sel.innerHTML = '<option value="">Selecionar peça...</option>';
+               res.forEach(item => { 
+                   if (item.qtd > 0) sel.innerHTML += '<option value="' + item.linha + '">' + item.nome + ' (Disp: ' + item.qtd + ')</option>'; 
+               });
+           }
+           const tbl = document.getElementById('tblAdminEstoque');
+           if (tbl) {
+               let html = "";
+               res.forEach(item => {
+                   let isBaixo = item.qtd <= 3;
+                   let badge = isBaixo 
+                       ? `<span class="badge-status-req bg-recusado">⚠️ Estoque Baixo</span>`
+                       : `<span class="badge-status-req bg-aprovado">✅ Normal</span>`;
+                   html += `<tr>
+                              <td data-label="Peça"><strong>${item.nome}</strong></td>
+                              <td data-label="Saldo" style="font-weight:900; color:${isBaixo ? 'var(--danger)' : 'var(--accent)'};">${item.qtd} un.</td>
+                              <td data-label="Status">${badge}</td>
+                            </tr>`;
+               });
+               tbl.innerHTML = html || '<tr><td colspan="3" style="text-align:center;">Nenhum item cadastrado.</td></tr>';
+           }
        }
+    }
+
+    function adicionarOuReporEstoque() {
+       const nome = document.getElementById("estNomeItem").value.trim();
+       const qtd = parseFloat(document.getElementById("estQtdItem").value);
+       if (!nome || isNaN(qtd)) return alert("Preencha o nome da peça e a quantidade a somar.");
+       executarComLoader("A atualizar estoque...", async () => {
+          const res = await callAPI('atualizarItemEstoque', { nome: nome, qtd: qtd });
+          if (res.erro) alert(res.erro);
+          else {
+             document.getElementById("estNomeItem").value = "";
+             document.getElementById("estQtdItem").value = "";
+             await carregarEstoque();
+             alert("Estoque atualizado!");
+          }
+       });
     }
 
     function addMaterialUI(e) {
@@ -1735,10 +1957,12 @@
       executarComLoader("A consolidar horas...", async () => {
          const dados = await callAPI('getResumoMensal', { mesAno: mesAno });
          if(dados.erro || !dados || dados.length === 0) { 
+             ultimoBancoConsolidado = [];
              safeSetHTML("tblBanco", '<tr><td colspan="3" style="text-align:center;">Sem registros.</td></tr>'); 
              safeSetDisplay('boxAdminGrafico', 'none'); 
              return; 
          }
+         ultimoBancoConsolidado = dados;
          let html = ""; 
          dados.forEach(d => { 
              html += '<tr><td data-label="Nome"><strong>' + d.nome + '</strong></td><td data-label="Total" style="color:var(--primary); font-weight:bold;">' + d.total + 'h</td><td data-label="Extra" style="color:var(--warning); font-weight:bold;">' + d.extra + 'h</td></tr>'; 
@@ -1746,6 +1970,17 @@
          safeSetHTML("tblBanco", html);
          desenharAdminGrafico(dados);
       });
+    }
+
+    function exportarBancoCSV() {
+       if (!ultimoBancoConsolidado || ultimoBancoConsolidado.length === 0) return alert("Consolide um mês primeiro antes de exportar.");
+       let csv = "Colaborador;Total Mensal;Horas Extras\n";
+       ultimoBancoConsolidado.forEach(d => { csv += `${d.nome};${d.total};${d.extra}\n`; });
+       const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+       const link = document.createElement("a");
+       link.href = URL.createObjectURL(blob);
+       link.download = `Banco_Horas_${document.getElementById('mesFiltro').value.replace('/','-')}.csv`;
+       link.click();
     }
 
     function carregarRadar(forcar = false) {
@@ -1810,7 +2045,7 @@
           let infoExtra = (d.tipo === 'Saída' && d.total !== '-') ? '<br><b>Total do dia: ' + d.total + 'h</b>' : ''; 
           janela.document.write('<tr><td><strong>' + d.dataHora + '</strong></td><td>' + d.nome + '</td><td>' + d.tipo + '</td><td>' + (d.obs || '-') + infoExtra + '</td></tr>'); 
       });
-      janela.document.write('</tbody></table><script>window.onload=function(){setTimeout(function(){window.print();window.close();},500);}<\/script></body></html>'); 
+      janela.document.write('</tbody></table><script>window.onload=function(){window.print();window.close();};<\/script></body></html>'); 
       janela.document.close();
     }
 
@@ -1837,8 +2072,13 @@
     }
 
     function julgar(linha, acao, nome, tipo, dataCorreta, motivo) {
+      let motivoRecusa = "";
+      if (acao === 'Recusado') {
+         motivoRecusa = prompt("Informe o motivo da recusa para o colaborador visualizar:");
+         if (motivoRecusa === null) return;
+      }
       executarComLoader("A processar julgamento...", async () => { 
-          const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo }); 
+          const res = await callAPI('julgarSolicitacao', { linha: linha, acao: acao, nome: nome, tipo: tipo, dataCorreta: dataCorreta, motivo: motivo, motivoRecusa: motivoRecusa }); 
           if(res.erro) alert(res.erro); 
           else { 
               exibirMsg("Registado!", false); 
