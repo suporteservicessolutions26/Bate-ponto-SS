@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=36">
+  <link rel="manifest" href="manifest.json?v=37">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=36">
-  <link rel="icon" href="./LogoSS.png?v=36" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=37">
+  <link rel="icon" href="./LogoSS.png?v=37" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos bloqueados, prosseguindo.')"></script>
 
@@ -85,10 +85,18 @@
     .mural-banner h4 { font-size: 0.8rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; }
     .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); }
 
-    /* NAVEGAÇÃO RÁPIDA E SLA */
+    /* NAVEGAÇÃO RÁPIDA, CHIPS DE TEXTO E SLA */
     .nav-pills { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
     .nav-pill { font-size: 0.76rem; font-weight: 700; padding: 6px 10px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; }
+    .nav-pill:active { transform: scale(0.95); background: var(--primary); color: #fff; }
     .sla-timer { display: inline-block; margin-top: 8px; padding: 6px 12px; border-radius: 8px; background: rgba(245, 158, 11, 0.15); border: 1px solid rgba(245, 158, 11, 0.4); color: #fbbf24; font-weight: 800; font-size: 0.85rem; font-family: monospace; }
+    
+    .template-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; scrollbar-width: none; }
+    .template-chips::-webkit-scrollbar { display: none; }
+    .chip-os { background: var(--bg); border: 1px solid var(--border); color: #38bdf8; padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; cursor: pointer; }
+    .chip-os:active { background: var(--primary); color: #fff; }
+
+    .badge-notif { background: var(--danger); color: #fff; font-size: 0.7rem; font-weight: 900; padding: 2px 6px; border-radius: 10px; margin-left: 4px; display: none; }
 
     .tabs { display: flex; background: var(--card-bg); padding: 6px; border-radius: 12px; margin-bottom: 20px; gap: 6px; border: 1px solid var(--border); overflow-x: auto; white-space: nowrap; scrollbar-width: none; }
     .tabs::-webkit-scrollbar { display: none; }
@@ -115,6 +123,8 @@
     .bg-aprovado { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
     .bg-recusado { background: rgba(239, 68, 68, 0.15); color: #f87171; border: 1px solid rgba(239, 68, 68, 0.3); }
     .bg-pendente { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+    .card-radar { background: var(--bg); border: 1px solid var(--border); border-left: 5px solid var(--primary); padding: 14px; border-radius: 12px; margin-bottom: 12px; }
 
     #badgeOffline { display:none; background:var(--warning); color:#000; text-align:center; padding:12px; border-radius:12px; font-weight:800; font-size:0.9rem; margin-bottom:16px; animation: slideDown 0.3s ease; }
 
@@ -182,7 +192,7 @@
 
   <!-- LIMPEZA TOTAL DE CACHE -->
   <script>
-    const VERSAO_ATUAL = '36';
+    const VERSAO_ATUAL = '37';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) { 
           caches.keys().then(names => {
@@ -206,8 +216,14 @@
      <h3 style="color:var(--primary); margin-bottom:15px; font-size:1.3rem; font-weight:800;" id="modalTitulo">Finalizar Atendimento</h3>
      
      <div id="box-os" style="margin-bottom:15px; text-align:left;">
-        <label>Relatório Técnico</label>
-        <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados..."></textarea>
+        <label>Relatório Técnico (Toque rápido ou digite)</label>
+        <div class="template-chips">
+           <span class="chip-os" onclick="inserirTemplateOS('Manutenção preventiva realizada com sucesso. Equipamentos testados e operacionais.')">⚡ Preventiva OK</span>
+           <span class="chip-os" onclick="inserirTemplateOS('Substituição de Patch Cord / Conector RJ45 e reorganização do ponto de rede.')">🔌 Cabeamento/RJ45</span>
+           <span class="chip-os" onclick="inserirTemplateOS('Verificação de link, reboot no Firewall/Router e testes de latência normalizados.')">🌐 Rede/Firewall</span>
+           <span class="chip-os" onclick="inserirTemplateOS('Suporte local ao utilizador, configuração de perfil M365 / Active Directory e impressoras.')">💻 Estação/AD</span>
+        </div>
+        <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados..." oninput="salvarRascunhoOS(this.value)"></textarea>
      </div>
 
      <div id="box-materiais" style="margin-bottom:15px; text-align:left; background: var(--bg); padding: 14px; border-radius: 12px; border: 1px solid var(--border); display: none;">
@@ -253,17 +269,26 @@
      <button class="btn btn-logout" style="margin-top:16px;" onclick="fecharModalHistoricoOS()">Fechar</button>
   </div>
 
-  <!-- MODAL: COFRE / FICHA TÉCNICA DO CLIENTE -->
+  <!-- MODAL: COFRE / FICHA TÉCNICA DO CLIENTE COM BOTÕES DE COPIAR -->
   <div id="modal-ficha-cliente" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
      <h3 style="color:#38bdf8; margin-bottom:6px;" id="fichaCliTitulo">🔑 Ficha Técnica</h3>
      <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Informações confidenciais de infraestrutura e contato local.</p>
      <input type="hidden" id="fichaNomeCliente" />
      <label>Responsável Local / Telefone</label>
      <input type="text" id="fichaContato" placeholder="Ex: Sr. Carlos (21) 99999-0000" />
-     <label>IP Gerência / Gateway / VPN</label>
+     
+     <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label>IP Gerência / Gateway / VPN</label>
+        <span style="font-size:0.72rem; color:#38bdf8; cursor:pointer; font-weight:bold;" onclick="copiarCampoFicha('fichaIP')">📋 Copiar IP</span>
+     </div>
      <input type="text" id="fichaIP" placeholder="Ex: 192.168.10.1 | Porta 8443" />
-     <label>Wi-Fi / Senha Rack / Credenciais</label>
+     
+     <div style="display:flex; justify-content:space-between; align-items:center;">
+        <label>Wi-Fi / Senha Rack / Credenciais</label>
+        <span style="font-size:0.72rem; color:#38bdf8; cursor:pointer; font-weight:bold;" onclick="copiarCampoFicha('fichaCredenciais')">📋 Copiar Senha</span>
+     </div>
      <input type="text" id="fichaCredenciais" placeholder="Ex: SSID: Corp_SS | Chave Rack: Gaveta 2" />
+     
      <label>Notas Técnicas Fixas</label>
      <textarea id="fichaNotas" rows="3" placeholder="Ex: Servidor fica no 2º andar; exigir acompanhamento..."></textarea>
      <div style="display:flex; gap:10px; margin-top:10px;">
@@ -300,7 +325,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div class="logo-container"><img src="./LogoSS.png?v=36" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div class="logo-container"><img src="./LogoSS.png?v=37" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="Seu usuário" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="Sua senha" />
@@ -320,7 +345,7 @@
         <button class="tab-btn" onclick="abrirAba('tab-radar', this); hapticFeedback()">📍 Radar</button>
         <button class="tab-btn" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
         <button class="tab-btn" onclick="abrirAba('tab-banco', this); hapticFeedback()">📈 Banco</button>
-        <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos</button>
+        <button class="tab-btn" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
         <button class="tab-btn" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
         <button class="tab-btn" onclick="abrirAba('tab-rotas', this); hapticFeedback()">🚗 Frota</button>
       </div>
@@ -529,11 +554,18 @@
 
       <!-- ================= ADMIN ================= -->
 
-      <!-- ADMIN: RADAR -->
+      <!-- ADMIN: RADAR COM RESUMO EXECUTIVO -->
       <div id="tab-radar" class="tab-content">
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">Radar GPS da Equipa</h3>
-          <button class="btn-logout" style="width:100%; margin-bottom:16px;" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar Radar</button>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+             <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">Radar GPS da Equipa</h3>
+             <button class="btn-logout" onclick="carregarRadar(true); hapticFeedback()">🔄 Atualizar</button>
+          </div>
+          <div class="metrics" style="margin-bottom:16px;">
+             <div class="card-metric"><div class="label">Ativos / Campo</div><div class="val" id="radAtivos" style="color:var(--accent);">0</div></div>
+             <div class="card-metric"><div class="label">Em Pausa</div><div class="val" id="radPausa" style="color:var(--warning);">0</div></div>
+             <div class="card-metric"><div class="label">Fora / Fim</div><div class="val" id="radFora" style="color:var(--danger);">0</div></div>
+          </div>
           <div id="areaRadar">A procurar posições...</div>
         </div>
       </div>
@@ -691,6 +723,42 @@
       "Suporte": { end: "" },
       "YouData": { end: "Downtown Bloco 4 - Av. das Américas, 500 - Sala 308 - Barra da Tijuca, Rio de Janeiro - RJ, 22640-904" }
     };
+
+    // --- FEEDBACK SONORO SUTIL (WEB AUDIO API) ---
+    function playBeepSucesso() {
+       try {
+          const ctxAudio = new (window.AudioContext || window.webkitAudioContext)();
+          const osc = ctxAudio.createOscillator();
+          const gain = ctxAudio.createGain();
+          osc.type = 'sine';
+          osc.frequency.setValueAtTime(880, ctxAudio.currentTime);
+          gain.gain.setValueAtTime(0.08, ctxAudio.currentTime);
+          osc.connect(gain);
+          gain.connect(ctxAudio.destination);
+          osc.start();
+          osc.stop(ctxAudio.currentTime + 0.12);
+       } catch(e) {}
+    }
+
+    // --- TEMPLATES RÁPIDOS E RASCUNHO AUTOMÁTICO DE OS ---
+    function inserirTemplateOS(texto) {
+       hapticFeedback();
+       const el = document.getElementById('txtObservacaoOS');
+       if (!el) return;
+       el.value = el.value ? (el.value.trim() + "\n- " + texto) : ("- " + texto);
+       salvarRascunhoOS(el.value);
+    }
+    function salvarRascunhoOS(val) {
+       localStorage.setItem('rascunho_os_' + usuarioAutenticado, val || "");
+    }
+    function copiarCampoFicha(idInput) {
+       const el = document.getElementById(idInput);
+       if (!el || !el.value) return alert("Campo vazio.");
+       navigator.clipboard.writeText(el.value).then(() => {
+          hapticFeedback();
+          alert("Copiado para a área de transferência!");
+       });
+    }
 
     async function obterInfoBateria() {
        try {
@@ -1017,7 +1085,11 @@
       }
     }
 
-    function exibirMsg(msg, isErro) { hapticFeedback(); setTimeout(() => alert(msg), 100); }
+    function exibirMsg(msg, isErro) { 
+       hapticFeedback(); 
+       if (!isErro) playBeepSucesso();
+       setTimeout(() => alert(msg), 100); 
+    }
 
     function atualizarBadgeOffline() {
        const badge = document.getElementById('badgeOffline'); 
@@ -1103,6 +1175,7 @@
           safeSetDisplay('abasAdmin', 'flex');
           safeSetDisplay('areaAtribuirItinerario', 'block');
           carregarAusenciasEquipe();
+          carregarAprovacoes();
       }
       if(navigator.onLine) {
           carregarEstoque();
@@ -1691,7 +1764,7 @@
     function prepararModalAgenda(cliente, acao, linha) { 
         pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; 
         let elObs = document.getElementById('txtObservacaoOS');
-        if(elObs) elObs.value = ""; 
+        if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
         materiaisUsados = []; atualizarUI_Materiais(); 
         
         let showOS = (acao.includes('Saí') && acao !== 'Cliente Ausente'); 
@@ -1715,7 +1788,7 @@
         if(!elCli || !elCli.value.trim()) return alert("Local avulso vazio."); 
         pendenteCliente = elCli.value.trim(); pendenteAcao = acao; pendenteLinhaAgenda = null; 
         let elObs = document.getElementById('txtObservacaoOS');
-        if(elObs) elObs.value = ""; 
+        if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
         materiaisUsados = []; atualizarUI_Materiais(); 
         
         safeSetDisplay('box-os', 'block');
@@ -1770,6 +1843,7 @@
            return alert("A foto do local é obrigatória para registar ausência.");
        }
        fecharModal();
+       localStorage.removeItem('rascunho_os_' + usuarioAutenticado);
        
        executarComLoader("A gerar OS e concluir...", async () => {
            let linksExtra = ""; 
@@ -1835,6 +1909,7 @@
           else { 
               elMotivo.value = ""; 
               carregarMeusAjustes(usuarioAutenticado);
+              playBeepSucesso();
               alert("Pedido enviado com sucesso! Acompanhe o status na aba Perfil."); 
           } 
       });
@@ -1873,6 +1948,7 @@
              document.getElementById("ausMotivo").value = "";
              document.getElementById("ausArquivo").value = "";
              carregarMeusAjustes(usuarioAutenticado);
+             playBeepSucesso();
              alert("Solicitação de " + tipo + " enviada! Acompanhe o status na aba Perfil.");
           }
        });
@@ -1991,12 +2067,25 @@
              safeSetHTML("areaRadar", "Sem localizações."); 
              return; 
          }
+         let ativos = 0, pausa = 0, fora = 0;
          let html = ""; 
          dados.forEach(d => { 
+             let ac = String(d.acao || "");
+             let cor = 'var(--primary)';
+             if (ac === 'Entrada' || ac === 'Retorno' || ac === 'Cheguei' || ac.includes('Início')) {
+                 ativos++; cor = 'var(--accent)';
+             } else if (ac === 'Pausa') {
+                 pausa++; cor = 'var(--warning)';
+             } else {
+                 fora++; cor = 'var(--danger)';
+             }
              let linkMapa = (d.localizacao && d.localizacao.startsWith('http')) ? '<a href="' + d.localizacao + '" target="_blank" style="color:var(--primary); font-size:0.8rem; border:1px solid var(--primary); padding:4px 8px; border-radius:6px; text-decoration:none;">🧭 Ver no Mapa</a>' : '<span style="color:var(--danger); font-size:0.8rem;">Sem GPS</span>';
              let horaR = d.dataHora.split(' ')[1] || d.dataHora;
-             html += '<div class="card-radar" style="border-left-color: var(--primary)"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">' + d.nome + '</strong><small style="color:var(--primary); font-weight:bold;">' + d.acao + '</small></div><div style="color:var(--primary); margin-top:4px;">' + d.cliente + '</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">' + horaR + '</small>' + linkMapa + '</div></div>'; 
+             html += '<div class="card-radar" style="border-left-color: ' + cor + '"><div style="display:flex; justify-content:space-between;"><strong style="color:var(--text);">' + d.nome + '</strong><small style="color:' + cor + '; font-weight:bold;">' + d.acao + '</small></div><div style="color:#38bdf8; margin-top:4px; font-weight:600;">' + d.cliente + '</div><div style="display:flex; justify-content:space-between; margin-top:10px; align-items:center;"><small style="color:var(--text-muted);">Último registo: ' + horaR + '</small>' + linkMapa + '</div></div>'; 
          }); 
+         safeSetText("radAtivos", ativos);
+         safeSetText("radPausa", pausa);
+         safeSetText("radFora", fora);
          safeSetHTML("areaRadar", html);
       });
     }
@@ -2051,15 +2140,18 @@
 
     function carregarAprovacoes() {
       callAPI('getSolicitacoesPendentes').then(dados => {
+         const badge = document.getElementById("badgeQtdPedidos");
          if (dados.erro || !dados || dados.length === 0) { 
+             if (badge) badge.style.display = 'none';
              safeSetHTML("listaAprovacoes", "Nenhuma pendência."); 
              return; 
          }
+         if (badge) { badge.innerText = dados.length; badge.style.display = 'inline-block'; }
          let html = ""; 
          dados.forEach(d => { 
              let b1 = '<button class="btn-acao" style="background:var(--accent); flex:1;" onclick="julgar(' + d.linha + ', \'Aprovado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Aprovar</button>';
              let b2 = '<button class="btn-acao" style="background:var(--danger); flex:1;" onclick="julgar(' + d.linha + ', \'Recusado\', \'' + d.nome + '\', \'' + d.tipo + '\', \'' + d.dataCorreta + '\', \'' + d.motivo + '\')">Recusar</button>';
-             html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px;">
+             html += `<div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; text-align:left;">
                         <strong style="color:var(--primary); font-size:1.1rem;">${d.nome}</strong> pediu <strong>${d.tipo}</strong><br>
                         <small style="color:var(--text-muted)">Período / Data: ${d.dataCorreta}</small><br>
                         <small style="color:var(--text-muted)">Motivo: ${d.motivo}</small>
