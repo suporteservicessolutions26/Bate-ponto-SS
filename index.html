@@ -1003,6 +1003,102 @@
         document.getElementById('handoffJustificativa').value = '';
         safeSetDisplay('modal-overlay', 'block'); safeSetDisplay('modal-handoff', 'block');
     }
+    // =========================================================================
+    // FUNÇÕES DOS BOTÕES DO CABEÇALHO E DA FICHA TÉCNICA (estavam ausentes)
+    // =========================================================================
+    function toggleTema() {
+      const html = document.documentElement;
+      if (html.getAttribute('data-theme') === 'light') {
+        html.removeAttribute('data-theme');
+        localStorage.setItem('ponto_tema', 'dark');
+      } else {
+        html.setAttribute('data-theme', 'light');
+        localStorage.setItem('ponto_tema', 'light');
+      }
+    }
+
+    async function forcarAtualizacaoSistema() {
+      if (!confirm('Atualizar o aplicativo agora?')) return;
+      try {
+        if ('serviceWorker' in navigator) {
+          const regs = await navigator.serviceWorker.getRegistrations();
+          for (const r of regs) await r.unregister();
+        }
+        if ('caches' in window) {
+          const nomes = await caches.keys();
+          for (const n of nomes) await caches.delete(n);
+        }
+      } catch (e) { console.warn('[forcarAtualizacao]', e); }
+      location.reload();
+    }
+
+    function obterLocalizacaoRapida() {
+      return new Promise(resolve => {
+        if (!navigator.geolocation) return resolve('Sem GPS');
+        navigator.geolocation.getCurrentPosition(
+          p => resolve(p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6)),
+          () => resolve('Sem GPS'),
+          { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
+        );
+      });
+    }
+
+    async function acionarSOSPlantao() {
+      if (!usuarioAutenticado) return alert('Faça login para acionar o SOS.');
+      if (!confirm('Enviar alerta SOS para a supervisão?')) return;
+      const loc = await obterLocalizacaoRapida();
+      await executarComLoader('Enviando SOS...', async () => {
+        const res = await callAPI('registrarCheckin', { cliente: 'SOS Plantão', acao: 'SOS', observacao: 'Alerta enviado pelo técnico', nomeColaborador: usuarioAutenticado, localizacao: loc });
+        if (res && res.erro) return alert('Falha ao enviar SOS: ' + res.erro);
+        alert('🚨 SOS enviado à supervisão.');
+      });
+    }
+
+    let fichaClienteAtual = '';
+
+    async function abrirFichaTecnicaCliente(cliente) {
+      const nome = String(cliente || '').trim();
+      if (!nome) return alert('Selecione um cliente primeiro.');
+      fichaClienteAtual = nome;
+      document.getElementById('fichaNomeCliente').value = nome;
+      document.getElementById('fichaCliTitulo').textContent = '🔑 Ficha: ' + nome;
+      document.getElementById('fichaContato').value = '';
+      document.getElementById('fichaIP').value = '';
+      document.getElementById('fichaNotas').value = '';
+      const cred = document.getElementById('fichaCredenciais');
+      cred.value = ''; cred.type = 'password'; cred.setAttribute('readonly', 'true');
+      safeSetDisplay('modal-overlay', 'block');
+      safeSetDisplay('modal-ficha-cliente', 'block');
+      await executarComLoader('Carregando ficha...', async () => {
+        const f = await callAPI('getFichaCliente', { cliente: nome, tecnico: usuarioAutenticado });
+        if (f && f.erro) return alert(f.erro);
+        document.getElementById('fichaContato').value = f.contato || '';
+        document.getElementById('fichaIP').value = f.ip || '';
+        document.getElementById('fichaNotas').value = f.notas || '';
+        cred.value = f.credenciais || '';
+      });
+    }
+
+    function fecharModalFichaCliente() {
+      safeSetDisplay('modal-ficha-cliente', 'none');
+      safeSetDisplay('modal-overlay', 'none');
+    }
+
+    async function salvarFichaClienteUI() {
+      const cliente = fichaClienteAtual || document.getElementById('fichaNomeCliente').value;
+      if (!cliente) return alert('Cliente não identificado.');
+      const contato = document.getElementById('fichaContato').value.trim();
+      const ip = document.getElementById('fichaIP').value.trim();
+      const credenciais = document.getElementById('fichaCredenciais').value;
+      const notas = document.getElementById('fichaNotas').value.trim();
+      await executarComLoader('Salvando ficha...', async () => {
+        const res = await callAPI('salvarFichaCliente', { cliente, contato, ip, credenciais, notas });
+        if (res && res.erro) return alert(res.erro);
+        alert('Ficha salva.');
+        fecharModalFichaCliente();
+      });
+    }
+
     function fecharModalHandoff() { safeSetDisplay('modal-handoff', 'none'); safeSetDisplay('modal-overlay', 'none'); }
     
     function confirmarHandoffOS() {
