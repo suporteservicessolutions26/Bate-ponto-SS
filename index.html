@@ -1491,6 +1491,71 @@
        mapaLeaflet.setView([lat, lng], 16, { animate: true }); window.scrollTo({ top: 120, behavior: 'smooth' });
     }
 
+
+    function escapeHTML(valor) {
+      return String(valor == null ? '' : valor).replace(/[&<>"']/g, caractere => ({
+        '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+      }[caractere]));
+    }
+
+    // Autocomplete dos campos de cliente: usa datalist nativo para não depender de bibliotecas externas.
+    function configAutocomplete(input, opcoes) {
+      if (!input || !Array.isArray(opcoes)) return;
+      const idLista = input.id + '-opcoes';
+      let lista = document.getElementById(idLista);
+      if (!lista) {
+        lista = document.createElement('datalist');
+        lista.id = idLista;
+        document.body.appendChild(lista);
+      }
+      lista.replaceChildren();
+      opcoes.forEach(valor => {
+        const opcao = document.createElement('option');
+        opcao.value = String(valor);
+        lista.appendChild(opcao);
+      });
+      input.setAttribute('list', idLista);
+    }
+
+    // Carrega as solicitações do usuário autenticado.
+    async function carregarMeusAjustes(nome) {
+      const usuario = nome || usuarioAutenticado || localStorage.getItem('ponto_auth_nome');
+      const lista = document.getElementById('listaMinhasSolicitacoes');
+      if (!usuario) {
+        if (lista) lista.textContent = 'Entre no sistema para consultar suas solicitações.';
+        return;
+      }
+      if (!navigator.onLine) {
+        if (lista) lista.textContent = 'Solicitações indisponíveis enquanto estiver offline.';
+        return;
+      }
+      try {
+        const dados = await callAPI('getMinhasSolicitacoes', { nome: usuario });
+        if (!lista) return;
+        if (dados && dados.erro) throw new Error(dados.erro);
+        const pedidos = Array.isArray(dados) ? dados : (dados && Array.isArray(dados.solicitacoes) ? dados.solicitacoes : []);
+        if (!pedidos.length) {
+          lista.textContent = 'Você não possui solicitações registradas.';
+          return;
+        }
+        lista.innerHTML = pedidos.map(p => {
+          const categoria = escapeHTML(p.categoria || 'Solicitação');
+          const status = escapeHTML(p.status || 'Pendente');
+          const data = escapeHTML(p.dataEnvio || '');
+          const detalhe = escapeHTML([p.tipo, p.dataCorreta, p.motivo].filter(Boolean).join(' • '));
+          return `<div class="box" style="margin:8px 0;padding:10px;">
+            <div style="display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap;">
+              <strong>${categoria}</strong><span>${status}</span>
+            </div>
+            <small>${data}</small><div style="margin-top:5px;">${detalhe || '-'}</div>
+          </div>`;
+        }).join('');
+      } catch (err) {
+        console.error('[carregarMeusAjustes]', err);
+        if (lista) lista.textContent = 'Não foi possível carregar suas solicitações. Tente atualizar.';
+      }
+    }
+
     window.onload = async () => {
       if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
       const arrClientes = Object.keys(baseClientes); 
