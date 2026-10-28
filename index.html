@@ -7,14 +7,16 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=47">
+  <link rel="manifest" href="manifest.json?v=48">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=47">
-  <link rel="icon" href="./LogoSS.png?v=47" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=48">
+  <link rel="icon" href="./LogoSS.png?v=48" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos offline.')"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="console.warn('Mapa offline.')"></script>
+  <!-- SCRIPT PARA O LEITOR DE QR CODE (BLOCO 3) -->
+  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
 
   <style>
     :root { --bg:#070f1e; --card-bg:#0d1e36; --border:#1a365d; --text:#f0f6fc; --text-muted:#8ba2c0; --primary:#0088cc; --accent:#10b981; --warning:#f59e0b; --danger:#ef4444; }
@@ -115,6 +117,8 @@
     .star-rating span { transition: all 0.2s; } .star-rating span.ativo { color: #fbbf24; text-shadow: 0 0 16px rgba(251,191,36,0.5); transform: scale(1.15); }
     .logo-img { max-width: 150px; height: auto; border-radius: 12px; }
     .chart-container { position: relative; height: 200px; width: 100%; margin-top: 10px; }
+    #reader { width: 100%; min-height: 250px; border-radius: 10px; overflow: hidden; background: #000; }
+    #reader video { border-radius: 10px; }
 
     @keyframes spin { 100% { transform: rotate(360deg); } }
     @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
@@ -132,7 +136,7 @@
 <body>
 
   <script>
-    const VERSAO_ATUAL = '47';
+    const VERSAO_ATUAL = '48';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) caches.keys().then(n => { for (let k of n) caches.delete(k); }); 
       if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => { for(let a of r) a.unregister(); });
@@ -174,7 +178,11 @@
      </div>
 
      <div id="box-materiais" style="margin-bottom:15px; text-align:left; background: var(--bg); padding: 14px; border-radius: 12px; border: 1px solid var(--border); display: none;">
-       <label>Materiais Utilizados</label>
+       <div style="display:flex; justify-content:space-between; align-items:center;">
+          <label style="margin:0;">Materiais Utilizados</label>
+          <!-- BOTÃO QR CODE PARA OS (BLOCO 3) -->
+          <button class="nav-pill" style="border-color:#10b981; color:#10b981; margin:0;" onclick="abrirLeitorQR('os')">📷 Scan</button>
+       </div>
        <div style="display:flex; gap:8px; margin-top:8px;">
           <select id="selMaterial" style="flex:2; margin-bottom:0; padding:10px;"><option value="">A carregar...</option></select>
           <input type="number" id="qtdMaterial" placeholder="Qtd" min="1" value="1" style="flex:1; margin-bottom:0; padding:10px; text-align:center;" />
@@ -206,6 +214,48 @@
      <div style="display:flex; gap:12px; margin-top:24px;">
         <button class="btn btn-logout" style="flex:1; border:none;" onclick="fecharModal()">Cancelar</button>
         <button class="btn btn-entrada" id="btnConfirmarModal" style="flex:2;" onclick="enviarComprovativoEFechar(); hapticFeedback()">Concluir OS</button>
+     </div>
+  </div>
+
+  <!-- MODAL LEITOR QR CODE / CÓDIGO DE BARRAS (BLOCO 3) -->
+  <div id="modal-qr" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:10000; padding:22px; border-radius:18px; border:1px solid var(--border);">
+      <h3 style="color:#38bdf8; margin-bottom:12px;">📷 Escanear QR / Código de Barras</h3>
+      <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:12px;">Aponte a câmara para a etiqueta.</p>
+      <div id="reader"></div>
+      <button class="btn btn-logout" style="width:100%; margin-top:14px; border-color:var(--danger); color:var(--danger);" onclick="fecharLeitorQR()">Cancelar Leitura</button>
+  </div>
+
+  <!-- MODAL INSPEÇÃO DE VIATURA (BLOCO 3) -->
+  <div id="modal-inspecao" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:85vh; overflow-y:auto;">
+     <h3 style="color:#a855f7; margin-bottom:12px;">🚗 Check-list de Viatura (Início do Dia)</h3>
+     <label>Quilometragem Inicial (KM)</label><input type="number" id="inspKm" placeholder="Ex: 45000" />
+     <label>Nível de Combustível</label>
+     <select id="inspCombustivel">
+        <option value="Reserva">Reserva (Luz Acesa)</option>
+        <option value="1/4">1/4 de Tanque</option>
+        <option value="Meio Tanque">Meio Tanque (1/2)</option>
+        <option value="3/4">3/4 de Tanque</option>
+        <option value="Tanque Cheio" selected>Tanque Cheio</option>
+     </select>
+     <label>📸 Foto de Avaria (Se houver arranhões/danos)</label><input type="file" id="inspFoto" accept="image/*" capture="environment" />
+     <label>Observação (Opcional)</label><input type="text" id="inspObs" placeholder="Ex: Risco na porta direita..." />
+     <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="btn btn-logout" style="flex:1;" onclick="fecharModalInspecao()">Cancelar</button>
+        <button class="btn" style="flex:2; background:#a855f7;" onclick="enviarInspecaoViatura()">Salvar Inspeção</button>
+     </div>
+  </div>
+
+  <!-- MODAL TERMO DE RESPONSABILIDADE EPI/FERRAMENTA (BLOCO 3) -->
+  <div id="modal-termo-epi" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:85vh; overflow-y:auto;">
+     <h3 style="color:#10b981; margin-bottom:12px;">🛡️ Termo de Responsabilidade Digital</h3>
+     <p style="font-size:0.8rem; color:var(--text-muted); margin-bottom:12px;">Declaro ter recebido os equipamentos listados em perfeitas condições e comprometo-me a zelar pela sua conservação.</p>
+     <label>Item / Equipamento Recebido</label><input type="text" id="termoItem" placeholder="Ex: Furadeira Bosch ou Kit EPI completo" />
+     <label style="margin-top:10px;">✍️ Sua Assinatura</label>
+     <canvas id="canvasTermoEPI" style="background:#fff; border:2px dashed #94a3b8; border-radius:12px; width:100%; height:120px; touch-action:none;"></canvas>
+     <div style="text-align:right; margin-bottom:10px;"><button class="btn-logout" style="border-color:var(--primary); color:var(--primary); padding:4px 8px; font-size:0.7rem;" onclick="limparAssinaturaTermo()">Limpar</button></div>
+     <div style="display:flex; gap:10px; margin-top:14px;">
+        <button class="btn btn-logout" style="flex:1;" onclick="fecharModalTermoEPI()">Cancelar</button>
+        <button class="btn" style="flex:2; background:#10b981;" onclick="assinarEnviarTermoEPI()">Assinar e Salvar</button>
      </div>
   </div>
 
@@ -286,7 +336,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=47" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=48" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="O seu utilizador" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="A sua palavra-passe" />
@@ -472,7 +522,11 @@
              <button class="btn-logout" onclick="carregarMeusEquipamentos(); hapticFeedback()">🔄</button>
           </div>
           <ul id="listaMeusEquipamentos" style="list-style:none; padding:0; font-size:0.88rem; display:flex; flex-direction:column; gap:8px;"></ul>
-          <button class="btn-logout" style="width:100%; margin-top:14px; border-color:var(--warning); color:var(--warning);" onclick="abrirReporteFerramenta()">⚠️ Reportar Avaria ou Pedir Reposição</button>
+          
+          <!-- BLOCO 3 - TERMO DE RESPONSABILIDADE DIGITAL -->
+          <button class="btn-logout" style="width:100%; margin-top:14px; border-color:#10b981; color:#10b981;" onclick="abrirModalTermoEPI()">✍️ Assinar Termo de Recebimento</button>
+          
+          <button class="btn-logout" style="width:100%; margin-top:8px; border-color:var(--warning); color:var(--warning);" onclick="abrirReporteFerramenta()">⚠️ Reportar Avaria ou Pedir Reposição</button>
         </div>
 
         <div class="box" style="padding: 20px; margin-top: 16px;">
@@ -666,7 +720,11 @@
       <!-- ESTOQUE -->
       <div id="tab-estoque" class="tab-content">
         <div class="box">
-          <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;">📦 Controle de Estoque & Reposição</h3>
+          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
+             <h3 style="margin: 0; font-size: 1.1rem; color: #38bdf8;">📦 Controle de Estoque & Reposição</h3>
+             <!-- BOTÃO QR CODE PARA ESTOQUE (BLOCO 3) -->
+             <button class="btn-logout" style="border-color:#10b981; color:#10b981;" onclick="abrirLeitorQR('estoque')">📷 Scan</button>
+          </div>
           <div class="form-row" style="display:flex; gap:10px; margin-bottom:10px;">
              <input type="text" id="estNomeItem" placeholder="Nome da Peça / Material" style="flex:2; margin-bottom:0;" />
              <input type="number" id="estQtdItem" placeholder="Qtd (+)" style="flex:1; margin-bottom:0;" />
@@ -678,8 +736,12 @@
         </div>
       </div>
 
-      <!-- FROTA E REEMBOLSOS (BLOCO 2 - UPLOAD DE RECIBO) -->
+      <!-- FROTA E REEMBOLSOS (BLOCO 2 - UPLOAD DE RECIBO | BLOCO 3 - CHECKLIST VIATURA) -->
       <div id="tab-rotas" class="tab-content">
+        
+        <!-- BLOCO 3: BOTÃO INICIAR DIA - INSPEÇÃO VIATURA -->
+        <button class="btn" style="background:#a855f7; width:100%; margin-bottom:16px; font-size:1.1rem; padding:16px;" onclick="abrirModalInspecao()">📋 Iniciar Dia: Check-list de Viatura</button>
+
         <div class="box">
           <h3 style="margin: 0 0 16px; font-size: 1.1rem; color: #a855f7;">Gestão de Frota e Reembolsos</h3>
           <div class="form-row" style="display:flex; gap:12px; margin-bottom: 20px;">
@@ -838,7 +900,7 @@
     // =========================================================================
     // BLOCO 1 - SEMÁFORO INTELIGENTE DE SLA E HANDOFF
     // =========================================================================
-    const TEMPO_SLA_MAXIMO_SEGUNDOS = 7200; // 2 horas (Ajustável)
+    const TEMPO_SLA_MAXIMO_SEGUNDOS = 7200; // 2 horas
     function iniciarSlaLocal(linha) { if (!localStorage.getItem('sla_start_' + linha)) localStorage.setItem('sla_start_' + linha, Date.now()); }
     
     function obterDuracaoSlaFormatada(linha) {
@@ -846,9 +908,9 @@
        const diff = Math.max(0, Math.floor((Date.now() - parseInt(ini, 10)) / 1000));
        const h = String(Math.floor(diff / 3600)).padStart(2, '0'), m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0'), s = String(diff % 60).padStart(2, '0');
        
-       let corBadge = "rgba(16,185,129,0.2)"; let corTexto = "#34d399"; let piscar = false; // Verde (Inicial)
-       if (diff > TEMPO_SLA_MAXIMO_SEGUNDOS) { corBadge = "rgba(239,68,68,0.3)"; corTexto = "#ef4444"; piscar = true; } // Vermelho (Estourou)
-       else if (diff > (TEMPO_SLA_MAXIMO_SEGUNDOS * 0.75)) { corBadge = "rgba(245,158,11,0.3)"; corTexto = "#fbbf24"; } // Amarelo (75%)
+       let corBadge = "rgba(16,185,129,0.2)"; let corTexto = "#34d399"; let piscar = false; 
+       if (diff > TEMPO_SLA_MAXIMO_SEGUNDOS) { corBadge = "rgba(239,68,68,0.3)"; corTexto = "#ef4444"; piscar = true; } 
+       else if (diff > (TEMPO_SLA_MAXIMO_SEGUNDOS * 0.75)) { corBadge = "rgba(245,158,11,0.3)"; corTexto = "#fbbf24"; } 
        
        return { texto: `${h}:${m}:${s}`, corBadge, corTexto, piscar };
     }
@@ -879,7 +941,7 @@
         fecharModalHandoff();
         executarComLoader(`Transferindo para ${tecDestino}...`, async () => {
             await callAPI('transferirOSBase', { linha: linha, novoTecnico: tecDestino, justificativa: just, remetente: usuarioAutenticado });
-            localStorage.removeItem('sla_start_' + linha); // Pausa SLA local
+            localStorage.removeItem('sla_start_' + linha); 
             sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
             carregarItinerario(true);
             alert("OS transferida com sucesso!");
@@ -894,13 +956,12 @@
         const cliente = document.getElementById('fichaNomeCliente').value;
         input.type = 'text'; input.removeAttribute('readonly');
         
-        // Registo de auditoria em background
         callAPI('registrarAuditoriaCofre', { tecnico: usuarioAutenticado, cliente: cliente });
         
         setTimeout(() => {
             input.type = 'password'; input.setAttribute('readonly', 'true');
             alert("🔒 Por segurança, a senha foi ocultada novamente (Zero Trust).");
-        }, 300000); // 5 minutos
+        }, 300000); 
     }
 
     // =========================================================================
@@ -931,13 +992,138 @@
 
     async function carregarRankingTopTech() {
        const el = document.getElementById('listaRanking'); if(!el) return;
-       // Mock de ranking para demonstração rápida (conectaremos à API no futuro)
        const html = `
           <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid var(--border);"><span>🥇 <b>Northon Duarte</b></span><span style="color:var(--accent);">48 OS | 4.9 ⭐</span></div>
           <div style="display:flex; justify-content:space-between; padding:8px; border-bottom:1px solid var(--border);"><span>🥈 <b>Victor Rodrigues</b></span><span style="color:var(--accent);">42 OS | 4.7 ⭐</span></div>
           <div style="display:flex; justify-content:space-between; padding:8px;"><span>🥉 <b>Alef Silva</b></span><span style="color:var(--accent);">39 OS | 4.6 ⭐</span></div>
        `;
        el.innerHTML = html;
+    }
+
+    // =========================================================================
+    // BLOCO 3 - LEITOR QR CODE / CÓDIGO DE BARRAS
+    // =========================================================================
+    let html5QrcodeScanner = null;
+    let destinoQR = ''; // Pode ser 'os' ou 'estoque'
+
+    function abrirLeitorQR(destino) {
+       destinoQR = destino;
+       safeSetDisplay('modal-overlay', 'block');
+       safeSetDisplay('modal-qr', 'block');
+
+       if (typeof Html5QrcodeScanner !== "undefined") {
+           html5QrcodeScanner = new Html5QrcodeScanner("reader", { fps: 10, qrbox: {width: 250, height: 250} }, false);
+           html5QrcodeScanner.render(onScanSuccess, onScanFailure);
+       } else {
+           alert("A biblioteca do leitor QR não foi carregada corretamente.");
+           fecharLeitorQR();
+       }
+    }
+
+    function fecharLeitorQR() {
+       if (html5QrcodeScanner) {
+           html5QrcodeScanner.clear().catch(error => console.error("Erro ao fechar scanner", error));
+       }
+       safeSetDisplay('modal-qr', 'none');
+       if (destinoQR === 'estoque') safeSetDisplay('modal-overlay', 'none'); 
+       // Se o destino for 'os', não fecha o overlay pois o modal de OS continua aberto.
+    }
+
+    function onScanSuccess(decodedText, decodedResult) {
+       playBeepSucesso();
+       fecharLeitorQR();
+       if (destinoQR === 'estoque') {
+           document.getElementById('estNomeItem').value = decodedText;
+       } else if (destinoQR === 'os') {
+           // Adiciona diretamente à observação da OS
+           const elObs = document.getElementById('txtObservacaoOS');
+           elObs.value = elObs.value + `\n[Patrimônio Lido: ${decodedText}]`;
+           salvarRascunhoOS(elObs.value);
+       }
+    }
+    function onScanFailure(error) { /* Silencia falhas normais do frame a frame */ }
+
+    // =========================================================================
+    // BLOCO 3 - CHECK-LIST DE VIATURA E TERMO EPI
+    // =========================================================================
+    function abrirModalInspecao() {
+       document.getElementById('inspKm').value = '';
+       document.getElementById('inspObs').value = '';
+       document.getElementById('inspFoto').value = '';
+       safeSetDisplay('modal-overlay', 'block'); safeSetDisplay('modal-inspecao', 'block');
+    }
+    function fecharModalInspecao() { safeSetDisplay('modal-inspecao', 'none'); safeSetDisplay('modal-overlay', 'none'); }
+
+    async function enviarInspecaoViatura() {
+       const km = document.getElementById('inspKm').value;
+       const comb = document.getElementById('inspCombustivel').value;
+       const obs = document.getElementById('inspObs').value;
+       const foto = document.getElementById('inspFoto');
+       
+       if (!km) return alert("Informe a quilometragem inicial.");
+       
+       fecharModalInspecao();
+       executarComLoader("A salvar inspeção...", async () => {
+           let urlFoto = "";
+           if (foto.files && foto.files[0]) {
+               const reader = new FileReader(); 
+               const b64 = await new Promise(res => { reader.onload = ev => res(ev.target.result); reader.readAsDataURL(foto.files[0]); });
+               const resF = await callAPI('uploadComprovativo', { base64: b64, nomeArquivo: `Inspecao_${usuarioAutenticado}_${Date.now()}.jpg` });
+               if(resF.sucesso) urlFoto = resF.url;
+           }
+           const msgCompleta = `Início Dia (Frota). Km: ${km} | Combustível: ${comb} | Obs: ${obs} ${urlFoto ? '[Foto Anexada]' : ''}`;
+           let loc = await obterLocalizacao();
+           
+           // Gravar Check-in como inspeção
+           await callAPI('registrarCheckin', { cliente: "Base / Frota", acao: "Inspeção de Veículo", observacao: msgCompleta, nomeColaborador: usuarioAutenticado, localizacao: loc });
+           
+           alert("Check-list de Viatura registado com sucesso!");
+           carregarHistoricoEAtualizarBotoes(usuarioAutenticado);
+       });
+    }
+
+    function abrirModalTermoEPI() {
+       document.getElementById('termoItem').value = '';
+       limparAssinaturaTermo();
+       safeSetDisplay('modal-overlay', 'block'); safeSetDisplay('modal-termo-epi', 'block');
+    }
+    function fecharModalTermoEPI() { safeSetDisplay('modal-termo-epi', 'none'); safeSetDisplay('modal-overlay', 'none'); }
+
+    let canvasEPI, ctxEPI, assinandoEPI = false, isAssinaturaEPIVazia = true;
+    function initAssinaturaTermo() {
+       canvasEPI = document.getElementById('canvasTermoEPI'); if(!canvasEPI) return; 
+       ctxEPI = canvasEPI.getContext('2d');
+       const startPosEPI = (e) => { assinandoEPI = true; drawEPI(e); }; const endPosEPI = () => { assinandoEPI = false; ctxEPI.beginPath(); };
+       const drawEPI = (e) => { 
+           if(!assinandoEPI) return; e.preventDefault(); isAssinaturaEPIVazia = false;
+           const rect = canvasEPI.getBoundingClientRect(), x = (e.clientX || e.touches[0].clientX) - rect.left, y = (e.clientY || e.touches[0].clientY) - rect.top; 
+           ctxEPI.lineWidth = 2; ctxEPI.lineCap = 'round'; ctxEPI.lineTo(x, y); ctxEPI.stroke(); ctxEPI.beginPath(); ctxEPI.moveTo(x, y); 
+       };
+       canvasEPI.addEventListener('mousedown', startPosEPI); canvasEPI.addEventListener('mouseup', endPosEPI); canvasEPI.addEventListener('mousemove', drawEPI);
+       canvasEPI.addEventListener('touchstart', startPosEPI, {passive:false}); canvasEPI.addEventListener('touchend', endPosEPI); canvasEPI.addEventListener('touchmove', drawEPI, {passive:false});
+    }
+    function limparAssinaturaTermo() { if(ctxEPI && canvasEPI) ctxEPI.clearRect(0, 0, canvasEPI.width, canvasEPI.height); isAssinaturaEPIVazia = true; }
+
+    function assinarEnviarTermoEPI() {
+       const itemEPI = document.getElementById('termoItem').value.trim();
+       if (!itemEPI) return alert("Informe o equipamento recebido.");
+       if (isAssinaturaEPIVazia) return alert("A assinatura é obrigatória.");
+
+       fecharModalTermoEPI();
+       executarComLoader("A gerar Termo de Responsabilidade...", async () => {
+           let urlAssinatura = "";
+           const resA = await callAPI('uploadComprovativo', { base64: canvasEPI.toDataURL('image/png'), nomeArquivo: `AssinaturaEPI_${usuarioAutenticado}_${Date.now()}.png` }); 
+           if (resA.sucesso) urlAssinatura = resA.url;
+
+           // Chama a API existente para registrar a solicitação/termo e pode reutilizar a API de GerarOS adaptada se quiser gerar um PDF
+           const resTermo = await callAPI('solicitarAjusteFerramental', { tecnico: usuarioAutenticado, item: itemEPI, motivo: "Termo Assinado Eletronicamente" });
+           
+           if(resTermo.erro) alert(resTermo.erro);
+           else {
+               alert("Termo de Responsabilidade assinado e salvo com sucesso!");
+               carregarMeusEquipamentos();
+           }
+       });
     }
 
     // =========================================================================
@@ -1232,149 +1418,14 @@
        mapaLeaflet.setView([lat, lng], 16, { animate: true }); window.scrollTo({ top: 120, behavior: 'smooth' });
     }
 
-    // BLOCO 1 - SOS TÉCNICO MELHORADO
-    async function acionarSOSPlantao() {
-       hapticFeedback(); 
-       const tipoApoio = prompt("Digite '1' para Apoio Remoto ou '2' para Apoio Presencial:");
-       if(!tipoApoio) return;
-       const motivo = prompt("Descreva a urgência / bloqueio técnico em campo:"); 
-       if (!motivo) return;
-       let loc = await obterLocalizacao();
-       const tipoTXT = tipoApoio === '2' ? 'PRESENCIAL' : 'REMOTO';
-       window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(`🚨 *SOS TÉCNICO (${tipoTXT})*\n👤 *Técnico:* ${usuarioAutenticado}\n⚠️ *Fato:* ${motivo}\n📍 *Local:* ${loc}\n\n_Admin: Consulte o Mapa/Radar no Portal SS para identificar o técnico mais próximo._`), "_blank");
-    }
-
-    async function abrirFichaTecnicaCliente(nomeCliente) {
-       if (!nomeCliente) return alert("Selecione o cliente primeiro.");
-       showLoading("Carregando Cofre..."); const res = await callAPI('getFichaCliente', { cliente: nomeCliente, tecnico: usuarioAutenticado }); hideLoading();
-       safeSetText("fichaCliTitulo", "🔑 Ficha: " + nomeCliente); document.getElementById("fichaNomeCliente").value = nomeCliente;
-       document.getElementById("fichaContato").value = (res && res.contato) ? res.contato : ""; document.getElementById("fichaIP").value = (res && res.ip) ? res.ip : ""; document.getElementById("fichaCredenciais").value = (res && res.credenciais) ? res.credenciais : ""; document.getElementById("fichaNotas").value = (res && res.notas) ? res.notas : "";
-       
-       // Garante que o input Zero Trust está oculto por default
-       document.getElementById('fichaCredenciais').type = 'password';
-       document.getElementById('fichaCredenciais').setAttribute('readonly', 'true');
-
-       safeSetDisplay("modal-overlay", "block"); safeSetDisplay("modal-ficha-cliente", "block");
-    }
-    function fecharModalFichaCliente() { safeSetDisplay("modal-overlay", "none"); safeSetDisplay("modal-ficha-cliente", "none"); }
-    function salvarFichaClienteUI() {
-       const cli = document.getElementById("fichaNomeCliente").value, contato = document.getElementById("fichaContato").value.trim(), ip = document.getElementById("fichaIP").value.trim(), cred = document.getElementById("fichaCredenciais").value.trim(), notas = document.getElementById("fichaNotas").value.trim();
-       fecharModalFichaCliente();
-       executarComLoader("Guardando ficha...", async () => {
-          const res = await callAPI('salvarFichaCliente', { cliente: cli, contato: contato, ip: ip, credenciais: cred, notas: notas });
-          if (res.erro) alert(res.erro); else { playBeepSucesso(); alert("Ficha Técnica salva!"); }
-       });
-    }
-
-    async function carregarMeusAjustes(nome) { 
-      const div = document.getElementById("listaMinhasSolicitacoes"); if (!div || !nome) return;
-      const res = await callAPI('getMinhasSolicitacoes', { nome: nome });
-      if (!res || res.erro || res.length === 0) { div.innerHTML = `<div style="text-align:center; color:var(--text-muted); font-size:0.85rem; padding:12px;">Sem solicitações recentes.</div>`; return; }
-      div.innerHTML = res.map(item => {
-        let st = String(item.status || 'Pendente'), stLower = st.toLowerCase(), cardClass = 'st-pendente', badgeClass = 'bg-pendente', icon = '⏳';
-        if (stLower.includes('aprovado')) { cardClass = 'st-aprovado'; badgeClass = 'bg-aprovado'; icon = '✅'; } else if (stLower.includes('recusado')) { cardClass = 'st-recusado'; badgeClass = 'bg-recusado'; icon = '❌'; }
-        let catLabel = item.categoria ? `<small style="color:#38bdf8; font-weight:700; text-transform:uppercase; font-size:0.68rem; display:block;">${item.categoria}</small>` : '';
-        let motivoHtml = item.motivo && item.motivo !== '-' ? `<div style="font-size:0.78rem; color:var(--text-muted); margin-top:3px;">💬 ${item.motivo}</div>` : '';
-        let btnCancelar = (st === 'Pendente' && item.linha) ? `<button class="btn-logout" style="padding:4px 8px; font-size:0.7rem; border-color:var(--danger); color:var(--danger); margin-top:6px;" onclick="cancelarSolicitacaoUI('${item.categoria}', ${item.linha})">🗑️ Cancelar</button>` : '';
-        return `<div class="req-card ${cardClass}"><div style="flex:1;">${catLabel}<strong style="font-size:0.95rem; color:var(--text);">${item.tipo}</strong><div style="font-size:0.8rem; color:var(--text-muted); margin-top:2px;">📅 Ref: <b>${item.dataCorreta}</b></div>${motivoHtml}</div><div style="text-align:right; display:flex; flex-direction:column; align-items:flex-end;"><span class="badge-status-req ${badgeClass}">${icon} ${st}</span>${btnCancelar}</div></div>`;
-      }).join('');
-    }
-    function cancelarSolicitacaoUI(categoria, linha) {
-       if (!confirm("Cancelar solicitação pendente?")) return;
-       executarComLoader("A cancelar...", async () => { await callAPI('cancelarMinhaSolicitacao', { categoria: categoria, linha: linha, nome: usuarioAutenticado }); carregarMeusAjustes(usuarioAutenticado); });
-    }
-
-    function hapticFeedback() { if (navigator.vibrate) navigator.vibrate(50); }
-    function toggleTema() { const el = document.documentElement, tema = el.getAttribute('data-theme') === 'light' ? 'dark' : 'light'; el.setAttribute('data-theme', tema); localStorage.setItem('ponto_tema', tema); }
-    function showLoading(msg) { safeSetText('loaderMsg', msg || "A processar..."); safeSetDisplay('loaderOverlay', 'flex'); }
-    function hideLoading() { safeSetDisplay('loaderOverlay', 'none'); }
-    
-    async function forcarAtualizacaoSistema() {
-      hapticFeedback(); showLoading("A limpar cache...");
-      try {
-        if ('serviceWorker' in navigator) { const regs = await navigator.serviceWorker.getRegistrations(); for (let r of regs) await r.unregister(); }
-        if ('caches' in window) { const cacheNames = await caches.keys(); for (let n of cacheNames) await caches.delete(n); }
-        localStorage.setItem('appVersion', parseInt(localStorage.getItem('appVersion')||'0')+1);
-        window.location.href = window.location.origin + window.location.pathname + '?t=' + Date.now();
-      } catch (err) { window.location.reload(); }
-    }
-
-    async function executarComLoader(msg, task) {
-       showLoading(msg); try { await task(); } catch(e) { console.error(e); alert("Erro técnico: " + e.message); } hideLoading();
-    }
-
-    function configAutocomplete(inp, arr) {
-      if(!inp) return;
-      function renderList(val) {
-        closeAllLists(); if (!val) return; 
-        let a = document.createElement("DIV"); a.setAttribute("class", "autocomplete-items"); inp.parentNode.appendChild(a);
-        for (let i = 0; i < arr.length; i++) {
-          if (arr[i].toUpperCase().includes(val.toUpperCase())) {
-            let b = document.createElement("DIV"), matchIdx = arr[i].toUpperCase().indexOf(val.toUpperCase());
-            b.innerHTML = arr[i].substring(0, matchIdx) + "<strong>" + arr[i].substring(matchIdx, matchIdx + val.length) + "</strong>" + arr[i].substring(matchIdx + val.length) + `<input type='hidden' value='${arr[i].replace(/'/g, "&#39;")}'>`;
-            b.addEventListener("mousedown", (e) => { e.preventDefault(); inp.value = arr[i]; closeAllLists(); if(inp.id === 'itiCliente') autoPreencherEndereco(); });
-            a.appendChild(b);
-          }
-        }
-      }
-      inp.addEventListener("input", function(e) { e.stopPropagation(); renderList(this.value); });
-      inp.addEventListener("focus", function(e) { e.stopPropagation(); renderList(this.value); });
-      function closeAllLists(elmnt) { document.querySelectorAll(".autocomplete-items").forEach(el => el.remove()); }
-      document.addEventListener("click", closeAllLists);
-    }
-
-    function autoPreencherEndereco() {
-      let elCli = document.getElementById("itiCliente"), elEnd = document.getElementById("itiEndereco");
-      if(!elCli || !elEnd) return; let cli = elCli.value.trim(); if(baseClientes[cli] && baseClientes[cli].end) elEnd.value = baseClientes[cli].end;
-    }
-
-    function isSyncable(action) { return action === 'registrarPonto' || action === 'registrarCheckin'; }
-
-    async function callAPI(action, payload = {}) {
-      payload.action = action; payload.dataHoraExecucao = new Date().toLocaleString('pt-BR').replace(',', '');
-      if (!navigator.onLine && isSyncable(action)) { filaOffline.push(payload); localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); atualizarBadgeOffline(); return { sucesso: "Offline." }; }
-      try {
-        const response = await fetch(API_URL, { method: "POST", body: JSON.stringify(payload), headers: { "Content-Type": "text/plain;charset=utf-8" } });
-        return JSON.parse(await response.text());
-      } catch (err) { 
-        if (isSyncable(action)) { filaOffline.push(payload); localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); atualizarBadgeOffline(); return { sucesso: "Offline." }; }
-        return { erro: "Falha na ligação." }; 
-      }
-    }
-
-    function exibirMsg(msg, isErro) { hapticFeedback(); if (!isErro) playBeepSucesso(); setTimeout(() => alert(msg), 100); }
-
-    function atualizarBadgeOffline() {
-       const badge = document.getElementById('badgeOffline'), num = document.getElementById('qtdOffline');
-       if(badge && num) { if(filaOffline.length > 0) { badge.style.display = 'block'; num.innerText = filaOffline.length; } else badge.style.display = 'none'; }
-    }
-
-    async function sincronizarFila() {
-       if (!navigator.onLine || filaOffline.length === 0) return;
-       showLoading("A sincronizar " + filaOffline.length + " pendentes...");
-       let novaFila = [];
-       for (let i = 0; i < filaOffline.length; i++) {
-          try { await fetch(API_URL, { method: "POST", body: JSON.stringify(filaOffline[i]), headers: { "Content-Type": "text/plain;charset=utf-8" } }); } catch(e) { novaFila.push(filaOffline[i]); }
-       }
-       filaOffline = novaFila; localStorage.setItem('ponto_filaSync', JSON.stringify(filaOffline)); atualizarBadgeOffline(); hideLoading();
-       if(filaOffline.length === 0) { playBeepSucesso(); alert("Sincronização offline concluída!"); carregarHistoricoEAtualizarBotoes(usuarioAutenticado); }
-    }
-    
-    window.addEventListener('online', sincronizarFila); setInterval(sincronizarFila, 60000); 
-
-    async function obterLocalizacao() {
-      return new Promise((resolve) => {
-        if (!navigator.geolocation) return resolve("GPS não suportado");
-        navigator.geolocation.getCurrentPosition( (pos) => resolve(`https://www.google.com/maps/search/?api=1&query=${pos.coords.latitude},${pos.coords.longitude}`), () => resolve("Sem permissão de GPS"), { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 } );
-      });
-    }
-
     window.onload = async () => {
       if(localStorage.getItem('ponto_tema') === 'light') document.documentElement.setAttribute('data-theme', 'light');
       const arrClientes = Object.keys(baseClientes); 
       configAutocomplete(document.getElementById("itiCliente"), arrClientes); configAutocomplete(document.getElementById("chkCliente"), arrClientes); configAutocomplete(document.getElementById("rotaDestino"), arrClientes);
       atualizarBadgeOffline();
+      
       initAssinatura();
+      initAssinaturaTermo(); // Inicia o canvas de Termos (BLOCO 3)
 
       let uNome = localStorage.getItem('ponto_auth_nome');
       let uPerfil = localStorage.getItem('ponto_auth_perfil');
@@ -1560,8 +1611,8 @@
           
           // BLOCO 2 - ATUALIZAÇÃO DE MÉTRICAS VISUAIS (TMA e Avaliação - Mock inicial)
           safeSetText('lblVisitasMes', visitasMes);
-          safeSetText('lblTMA', '01:15'); // Placeholder para TMA real no futuro
-          safeSetText('lblAvaliacao', '4.8 ⭐'); // Placeholder para Estrelas
+          safeSetText('lblTMA', '01:15'); 
+          safeSetText('lblAvaliacao', '4.8 ⭐'); 
           
           desenharMeuGrafico(minTotal, minExtra);
 
@@ -2127,7 +2178,6 @@
       safeSetHTML("tblRotas", html || '<tr><td colspan="3" style="text-align:center;">Vazio.</td></tr>');
     }
 
-    // BLOCO 2 - SALVAR ROTA COM UPLOAD DE RECIBO
     async function salvarRota(e) {
       e.preventDefault();
       let elTec = document.getElementById("rotaTecnico"), elMes = document.getElementById("rotaMes"), elData = document.getElementById("rotaData"), elDia = document.getElementById("rotaDia"), elOri = document.getElementById("rotaOrigem"), elDest = document.getElementById("rotaDestino"), elKm = document.getElementById("rotaKm"), elEst = document.getElementById("rotaEstac"), elPed = document.getElementById("rotaPedagio"), elDesc = document.getElementById("rotaDesconto"), elObs = document.getElementById("rotaObs");
