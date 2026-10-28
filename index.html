@@ -976,9 +976,8 @@
     const TEMPO_SLA_MAXIMO_SEGUNDOS = 7200; // 2 horas
     function iniciarSlaLocal(linha) { if (!localStorage.getItem('sla_start_' + linha)) localStorage.setItem('sla_start_' + linha, Date.now()); }
     
-    function obterDuracaoSlaFormatada(linha) {
-       const ini = localStorage.getItem('sla_start_' + linha); if (!ini) return { texto: "", corBadge: "", corTexto: "", piscar: false };
-       const diff = Math.max(0, Math.floor((Date.now() - parseInt(ini, 10)) / 1000));
+    function obterDuracaoSlaFormatada(totalMs) {
+       const diff = Math.max(0, Math.floor((Number(totalMs) || 0) / 1000));
        const h = String(Math.floor(diff / 3600)).padStart(2, '0'), m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0'), s = String(diff % 60).padStart(2, '0');
        
        let corBadge = "rgba(16,185,129,0.2)"; let corTexto = "#34d399"; let piscar = false; 
@@ -990,8 +989,10 @@
 
     setInterval(() => {
        document.querySelectorAll('.sla-timer').forEach(el => {
-          const l = el.getAttribute('data-sla-linha'); iniciarSlaLocal(l); 
-          const slaData = obterDuracaoSlaFormatada(l);
+          const base = parseInt(el.getAttribute('data-sla-base'), 10) || 0;
+          const ativo = el.getAttribute('data-sla-ativo') === '1';
+          const ts = parseInt(el.getAttribute('data-sla-ts'), 10) || Date.now(); 
+          const slaData = obterDuracaoSlaFormatada(base + (ativo ? Date.now() - ts : 0));
           el.innerHTML = `⏱️ SLA: ${escapeHTML(slaData.texto)}`;
           el.style.background = slaData.corBadge; el.style.color = slaData.corTexto; el.style.borderColor = slaData.corTexto;
           if (slaData.piscar) el.style.animation = "pulseRed 1.5s infinite"; else el.style.animation = "none";
@@ -1959,8 +1960,8 @@
         if (isPerdida) { 
             botoesGeo = '<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida</span>' + btnConcluirAdmin; 
         } else if (isAndamento) {
-            iniciarSlaLocal(d.linha);
-            slaHtml = `<div class="sla-timer" data-sla-linha="${d.linha}">⏱️ SLA: Calculando...</div>`;
+            
+            slaHtml = `<div class="sla-timer" data-sla-base="${d.slaTotalMs || 0}" data-sla-ativo="${d.slaAtivo ? 1 : 0}" data-sla-ts="${Date.now()}">⏱️ SLA: Calculando...</div>`;
             botoesGeo = `<div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha}, '')">🏢 P/ Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Próx)', ${d.linha}, '')">🚶 Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha}, '')">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha}, '')">🏠 Fim Expediente</button></div><button class="btn-logout" style="border-color:#fbbf24; color:#fbbf24; padding:10px;" onclick="checkinGeolocalizado('${d.cliente}', 'Pausa SLA', ${d.linha}, '')">⏸️ Pausar SLA (Espera)</button><button class="btn-logout" style="border-color:#38bdf8; color:#38bdf8; padding:10px;" onclick="prepararHandoff(${d.linha})">🔄 Transferir OS (Handoff)</button>${btnConcluirAdmin}</div>`;
         } else {
             if (!isHoje && !isAdmin()) { botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; } 
@@ -1980,7 +1981,7 @@
           return; 
       }
       if (tipo === 'Pausa SLA') {
-         if (confirm("Congelar o SLA (aguardando cliente)?")) { localStorage.removeItem('sla_start_' + linhaAgenda); alert("SLA Pausado."); await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Pendente' }); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); }
+         if (confirm("Congelar o SLA (aguardando cliente)?")) { alert("SLA Pausado."); await callAPI('atualizarStatusItinerario', { linha: linhaAgenda, status: 'Pendente' }); sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado); carregarItinerario(false); }
          return;
       }
       if (tipo.includes('Fim') && getQtdPendenciasAgenda(linhaAgenda) > 0) return alert("BLOQUEIO: Finalize os outros atendimentos da agenda antes de encerrar o expediente.");
@@ -1988,7 +1989,7 @@
       executarComLoader("A registar check-in...", async () => {
          let locUrl = await obterLocalizacao();
          let ehBase = cliente.toLowerCase().includes('base') || cliente.toLowerCase().includes('interno');
-         if (tipo === 'Cheguei' && linhaAgenda) iniciarSlaLocal(linhaAgenda);
+         
          if (ehBase) { processarVisita(cliente, tipo, linhaAgenda, locUrl, ""); return; }
          if (tipo.includes('Saí') || tipo === 'Cliente Ausente') { hideLoading(); prepararModalAgenda(cliente, tipo, linhaAgenda); return; }
          processarVisita(cliente, tipo, linhaAgenda, locUrl, "");
@@ -2018,8 +2019,8 @@
       if(ehBase) logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
 
       let batInfo = await obterInfoBateria();
-      let slaData = (linhaAgenda && tipo.includes('Saí')) ? obterDuracaoSlaFormatada(linhaAgenda) : null;
-      let slaDuracao = slaData ? ` [SLA Fim: ${slaData.texto}]` : "";
+      let slaInfo = (linhaAgenda && (tipo.includes('Saí') || tipo === 'Cliente Ausente')) ? await callAPI('obterSLA', { linha: linhaAgenda }) : null;
+      let slaDuracao = (slaInfo && slaInfo.sucesso && slaInfo.totalMs > 0) ? ` [SLA Fim: ${obterDuracaoSlaFormatada(slaInfo.totalMs).texto}]` : "";
 
       if (linhaAgenda && (tipo.includes('Saí') || tipo === 'Cliente Ausente')) localStorage.removeItem('sla_start_' + linhaAgenda);
 
@@ -2276,8 +2277,20 @@
        setTimeout(() => { mapaLeaflet.invalidateSize(); }, 250);
     }
 
+    function atualizarAlertasSLA() {
+      callAPI('getAlertasSLA').then(al => {
+        let box = document.getElementById('bannerAlertasSLA');
+        const area = document.getElementById('areaRadar');
+        if (!box && area) { box = document.createElement('div'); box.id = 'bannerAlertasSLA'; area.parentNode.insertBefore(box, area); }
+        if (!box) return;
+        if (!Array.isArray(al) || al.length === 0) { box.innerHTML = ''; return; }
+        box.innerHTML = al.map(a => `<div style="background:rgba(239,68,68,0.15); border:1px solid #ef4444; color:#fca5a5; padding:8px 10px; border-radius:8px; margin-bottom:8px; font-size:0.85rem;">🚨 SLA excedido: <strong>${escapeHTML(a.tecnico)}</strong> — ${escapeHTML(a.cliente)} (${obterDuracaoSlaFormatada(a.totalMs).texto})</div>`).join('');
+      }).catch(() => {});
+    }
+
     function carregarRadar(forcar = false) {
       inicializarMapaSeNecessario();
+      atualizarAlertasSLA();
       if(forcar) showLoading("A procurar posições...");
       callAPI('getRadarEquipa').then(dados => {
          hideLoading(); 
