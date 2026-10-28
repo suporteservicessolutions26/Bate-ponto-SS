@@ -801,6 +801,79 @@
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
 
+    // Comunicação com a API do Google Apps Script.
+    // O backend recebe um JSON com a propriedade "action" e os parâmetros da operação.
+    async function callAPI(action, params = {}) {
+      if (!navigator.onLine) {
+        throw new Error('Sem conexão com a internet. Verifique sua conexão e tente novamente.');
+      }
+      if (!action || typeof action !== 'string') {
+        throw new Error('Ação da API não informada.');
+      }
+
+      let response;
+      try {
+        response = await fetch(API_URL, {
+          method: 'POST',
+          // text/plain evita o preflight CORS causado por application/json.
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({ action, ...(params || {}) }),
+          redirect: 'follow',
+          cache: 'no-store'
+        });
+      } catch (err) {
+        console.error('[callAPI] Falha de comunicação:', action, err);
+        throw new Error('Não foi possível comunicar com o servidor. Confirme se a API do Apps Script está publicada como Aplicativo da Web e tente novamente. Detalhe: ' + (err && err.message ? err.message : err));
+      }
+
+      const responseText = await response.text();
+      let result;
+      try {
+        result = JSON.parse(responseText);
+      } catch (err) {
+        console.error('[callAPI] Resposta não JSON:', action, response.status, responseText.slice(0, 500));
+        throw new Error('O servidor retornou uma resposta inesperada. Verifique a implantação da API do Apps Script.');
+      }
+
+      if (!response.ok) {
+        throw new Error(result && result.erro ? result.erro : 'Erro HTTP ' + response.status + ' ao consultar o servidor.');
+      }
+      if (result && result.erro) {
+        console.warn('[callAPI] API informou erro:', action, result.erro);
+      }
+      return result;
+    }
+
+    // Utilitários de interface usados pelos botões e operações assíncronas.
+    function showLoading(mensagem = 'A processar...') {
+      const overlay = document.getElementById('loaderOverlay');
+      const texto = document.getElementById('loaderMsg');
+      if (texto) texto.textContent = mensagem;
+      if (overlay) overlay.style.display = 'flex';
+    }
+
+    function hideLoading() {
+      const overlay = document.getElementById('loaderOverlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+
+    async function executarComLoader(mensagem, tarefa) {
+      showLoading(mensagem);
+      try {
+        return await tarefa();
+      } catch (err) {
+        console.error('[executarComLoader] Erro:', err);
+        alert(err && err.message ? err.message : 'Ocorreu um erro ao executar esta operação.');
+        return null;
+      } finally {
+        hideLoading();
+      }
+    }
+
+    function hapticFeedback() {
+      try { if (navigator.vibrate) navigator.vibrate(15); } catch (_) {}
+    }
+
     const baseClientes = {
       "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013" },
       "Audicone Contadores": { end: "Não localizamos, contatar supervisão." },
@@ -1445,9 +1518,20 @@
       const u = document.getElementById('loginUser').value.trim(), s = document.getElementById('loginSenha').value;
       if(!u || !s) return alert("Preencha utilizador e password.");
       executarComLoader("A autenticar...", async () => {
-         const res = await callAPI('autenticarUsuario', { login: u, senha: s });
-         if (res.erro) alert(res.erro);
-         else { localStorage.setItem('ponto_auth_nome', res.nome); localStorage.setItem('ponto_auth_perfil', res.perfil); entrarNoSistema(res.nome, res.perfil); }
+         try {
+           const res = await callAPI('autenticarUsuario', { login: u, senha: s });
+           if (res && res.erro) { alert(res.erro); return; }
+           if (!res || !res.sucesso || !res.nome) {
+             alert('Não foi possível validar o acesso. Confira o utilizador e a senha.');
+             return;
+           }
+           localStorage.setItem('ponto_auth_nome', res.nome);
+           localStorage.setItem('ponto_auth_perfil', res.perfil || 'Normal');
+           entrarNoSistema(res.nome, res.perfil || 'Normal');
+         } catch (err) {
+           console.error('[fazerLogin] Erro:', err);
+           alert(err && err.message ? err.message : 'Falha ao realizar login.');
+         }
       });
     }
 
