@@ -1033,13 +1033,13 @@
       location.reload();
     }
 
-    function obterLocalizacaoRapida() {
+    function obterLocalizacao() {
       return new Promise(resolve => {
         if (!navigator.geolocation) return resolve('Sem GPS');
         navigator.geolocation.getCurrentPosition(
-          p => resolve(p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6)),
+          p => resolve('https://www.google.com/maps?q=' + p.coords.latitude.toFixed(6) + ',' + p.coords.longitude.toFixed(6)),
           () => resolve('Sem GPS'),
-          { enableHighAccuracy: true, timeout: 5000, maximumAge: 60000 }
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 60000 }
         );
       });
     }
@@ -1047,7 +1047,7 @@
     async function acionarSOSPlantao() {
       if (!usuarioAutenticado) return alert('Faça login para acionar o SOS.');
       if (!confirm('Enviar alerta SOS para a supervisão?')) return;
-      const loc = await obterLocalizacaoRapida();
+      const loc = await obterLocalizacao();
       await executarComLoader('Enviando SOS...', async () => {
         const res = await callAPI('registrarCheckin', { cliente: 'SOS Plantão', acao: 'SOS', observacao: 'Alerta enviado pelo técnico', nomeColaborador: usuarioAutenticado, localizacao: loc });
         if (res && res.erro) return alert('Falha ao enviar SOS: ' + res.erro);
