@@ -12,11 +12,11 @@
   <link rel="apple-touch-icon" href="./LogoSS.png?v=48">
   <link rel="icon" href="./LogoSS.png?v=48" type="image/png">
   
-  <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos offline.')"></script>
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" onerror="console.warn('Mapa offline.')"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.6.1/dist/chart.umd.min.js" integrity="sha384-Emf5ZVIUiarAdhkgtqK+5/Z5qIvM6QoVrS+qAVtfyZVuD5lIHrac0me485+Antp0" crossorigin="anonymous" onerror="console.warn('Gráficos offline.')"></script>
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha384-sHL9NAb7lN7rfvG5lfHpm643Xkcjzp4jFvuavGOndn6pjVqS6ny56CAt3nsEVT4H" crossorigin="anonymous" />
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha384-cxOPjt7s7Iz04uaHJceBmS+qpjv2JkIHNVcuOrM+YHwZOmJGBXI00mdUXEq65HTH" crossorigin="anonymous" onerror="console.warn('Mapa offline.')"></script>
   <!-- SCRIPT PARA O LEITOR DE QR CODE (BLOCO 3) -->
-  <script src="https://unpkg.com/html5-qrcode" type="text/javascript"></script>
+  <script src="https://unpkg.com/html5-qrcode@2.3.8/html5-qrcode.min.js" integrity="sha384-c9d8RFSL+u3exBOJ4Yp3HUJXS4znl9f+z66d1y54ig+ea249SpqR+w1wyvXz/lk+" crossorigin="anonymous" type="text/javascript"></script>
 
   <style>
     :root { --bg:#070f1e; --card-bg:#0d1e36; --border:#1a365d; --text:#f0f6fc; --text-muted:#8ba2c0; --primary:#0088cc; --accent:#10b981; --warning:#f59e0b; --danger:#ef4444; }
@@ -992,7 +992,7 @@
        document.querySelectorAll('.sla-timer').forEach(el => {
           const l = el.getAttribute('data-sla-linha'); iniciarSlaLocal(l); 
           const slaData = obterDuracaoSlaFormatada(l);
-          el.innerHTML = `⏱️ SLA: ${slaData.texto}`;
+          el.innerHTML = `⏱️ SLA: ${escapeHTML(slaData.texto)}`;
           el.style.background = slaData.corBadge; el.style.color = slaData.corTexto; el.style.borderColor = slaData.corTexto;
           if (slaData.piscar) el.style.animation = "pulseRed 1.5s infinite"; else el.style.animation = "none";
        });
@@ -1940,7 +1940,7 @@
        const res = await callAPI('getEstoque');
        if(!res.erro && Array.isArray(res)) {
            estoqueGlobal = res; let sel = document.getElementById('selMaterial'); 
-           if(sel) { sel.innerHTML = '<option value="">Selecionar peça...</option>'; res.forEach(item => { if (item.qtd > 0) sel.innerHTML += `<option value="${item.linha}">${item.nome} (Disp: ${item.qtd})</option>`; }); }
+           if(sel) { sel.innerHTML = '<option value="">Selecionar peça...</option>'; res.forEach(item => { if (item.qtd > 0) sel.innerHTML += `<option value="${item.linha}">${escapeHTML(item.nome)} (Disp: ${item.qtd})</option>`; }); }
            const tbl = document.getElementById('tblAdminEstoque');
            if (tbl) {
                let html = "";
@@ -1974,7 +1974,7 @@
     
     function atualizarUI_Materiais() {
        const ul = document.getElementById('listaMateriaisUi'); if(!ul) return;
-       ul.innerHTML = ''; materiaisUsados.forEach((m, idx) => { ul.innerHTML += `<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:var(--card-bg); padding:8px; border-radius:6px; border:1px solid var(--border);"><span><strong>${m.qtdUsada}x</strong> ${m.nome}</span> <span style="color:var(--danger); cursor:pointer;" onclick="removeMaterial(${idx})">✖</span></li>`; });
+       ul.innerHTML = ''; materiaisUsados.forEach((m, idx) => { ul.innerHTML += `<li style="display:flex; justify-content:space-between; margin-bottom:6px; background:var(--card-bg); padding:8px; border-radius:6px; border:1px solid var(--border);"><span><strong>${escapeHTML(m.qtdUsada)}x</strong> ${escapeHTML(m.nome)}</span> <span style="color:var(--danger); cursor:pointer;" onclick="removeMaterial(${idx})">✖</span></li>`; });
     }
     function removeMaterial(idx) { materiaisUsados.splice(idx, 1); atualizarUI_Materiais(); }
 
@@ -2214,7 +2214,7 @@
          if (!dados.erro && dados.length > 0) { 
              dadosGeralGlobais = dados; 
              const sel = document.getElementById("filtroGeralColab"); 
-             if(sel) { sel.innerHTML = '<option value="TODOS">Todos</option>' + [...new Set(dados.map(d => d.nome))].sort().map(c => `<option value="${c}">${c}</option>`).join(''); }
+             if(sel) { sel.innerHTML = '<option value="TODOS">Todos</option>' + [...new Set(dados.map(d => d.nome))].sort().map(c => `<option value="${escapeHTML(c)}">${escapeHTML(c)}</option>`).join(''); }
              filtrarGeralPonto(); 
          } else { safeSetHTML("tblGeral", '<tr><td colspan="4" style="text-align:center;">Vazio.</td></tr>'); }
       });
