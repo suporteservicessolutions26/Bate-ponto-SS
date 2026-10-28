@@ -7,10 +7,10 @@
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
   <title>Portal Services & Solutions</title>
   
-  <link rel="manifest" href="manifest.json?v=45">
+  <link rel="manifest" href="manifest.json?v=46">
   <meta name="theme-color" content="#0a192f">
-  <link rel="apple-touch-icon" href="./LogoSS.png?v=45">
-  <link rel="icon" href="./LogoSS.png?v=45" type="image/png">
+  <link rel="apple-touch-icon" href="./LogoSS.png?v=46">
+  <link rel="icon" href="./LogoSS.png?v=46" type="image/png">
   
   <script src="https://cdn.jsdelivr.net/npm/chart.js" onerror="console.warn('Gráficos offline.')"></script>
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
@@ -48,7 +48,6 @@
     .status-badge { display: inline-block; padding: 8px 18px; border-radius: 30px; font-size: 0.85rem; font-weight: 800; background: #1a365d; color: #fff; margin-bottom: 10px; text-transform: uppercase; }
     .aviso-interno { background: rgba(0,136,204,0.1); padding: 16px; text-align: center; border: 1px dashed var(--primary); border-radius: 12px; margin-bottom: 16px; font-size: 0.9rem; color: #38bdf8; cursor: pointer;}
     
-    /* ESTILOS DE AVISOS POR NÍVEL DE URGÊNCIA (V45) */
     .mural-banner { background: linear-gradient(135deg, rgba(0,136,204,0.18), rgba(13,30,54,0.9)); border: 1px solid rgba(56,189,248,0.4); border-left: 5px solid #38bdf8; padding: 14px 16px; border-radius: 12px; margin-bottom: 10px; }
     .mural-banner h4 { font-size: 0.82rem; text-transform: uppercase; color: #38bdf8; margin-bottom: 4px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; }
     .mural-banner p { font-size: 0.92rem; font-weight: 600; color: var(--text); white-space: pre-wrap; }
@@ -65,7 +64,7 @@
     .nav-pills { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
     .nav-pill { font-size: 0.76rem; font-weight: 700; padding: 6px 10px; border-radius: 8px; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; border: 1px solid var(--border); background: var(--bg); color: var(--text); cursor: pointer; }
     .nav-pill:active, .nav-pill.ativo-filtro { transform: scale(0.97); background: var(--primary); color: #fff; border-color: var(--primary); }
-    .sla-timer { display: inline-block; margin-top: 8px; padding: 6px 12px; border-radius: 8px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; font-weight: 800; font-size: 0.85rem; font-family: monospace; }
+    .sla-timer { display: inline-block; margin-top: 8px; padding: 6px 12px; border-radius: 8px; background: rgba(245,158,11,0.15); border: 1px solid rgba(245,158,11,0.4); color: #fbbf24; font-weight: 800; font-size: 0.85rem; font-family: monospace; transition: all 0.3s ease; }
     .template-chips { display: flex; gap: 6px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; scrollbar-width: none; }
     .template-chips::-webkit-scrollbar { display: none; }
     .chip-os { background: var(--bg); border: 1px solid var(--border); color: #38bdf8; padding: 6px 10px; border-radius: 20px; font-size: 0.72rem; font-weight: 700; white-space: nowrap; cursor: pointer; }
@@ -133,7 +132,7 @@
 <body>
 
   <script>
-    const VERSAO_ATUAL = '45';
+    const VERSAO_ATUAL = '46';
     if(localStorage.getItem('appVersion') !== VERSAO_ATUAL) {
       if('caches' in window) caches.keys().then(n => { for (let k of n) caches.delete(k); }); 
       if('serviceWorker' in navigator) navigator.serviceWorker.getRegistrations().then(r => { for(let a of r) a.unregister(); });
@@ -160,6 +159,17 @@
            <span class="chip-os" onclick="inserirTemplateOS('Verificação de rede e reboot.')">🌐 Rede/Firewall</span>
            <span class="chip-os" onclick="inserirTemplateOS('Suporte local AD / M365.')">💻 Estação/AD</span>
         </div>
+
+        <!-- CHECKLIST DE EXECUÇÃO OBRIGATÓRIO (BLOCO 1) -->
+        <div id="box-checklist-os" style="background: rgba(0,136,204,0.05); padding: 12px; border: 1px solid rgba(0,136,204,0.3); border-radius: 10px; margin-bottom: 12px;">
+           <label style="color:#38bdf8; font-size:0.8rem;">📋 Checklist de Execução Obrigatório</label>
+           <div style="display:flex; flex-direction:column; gap:8px; margin-top:8px;">
+              <label style="display:flex; align-items:center; gap:8px; text-transform:none; color:var(--text);"><input type="checkbox" class="chk-os-req" value="Cabos e equipamentos identificados"> Cabos e equipamentos identificados</label>
+              <label style="display:flex; align-items:center; gap:8px; text-transform:none; color:var(--text);"><input type="checkbox" class="chk-os-req" value="Rack ou ambiente organizado pós-serviço"> Rack ou ambiente organizado pós-serviço</label>
+              <label style="display:flex; align-items:center; gap:8px; text-transform:none; color:var(--text);"><input type="checkbox" class="chk-os-req" value="Testes de conectividade validados com sucesso"> Testes de conectividade validados com sucesso</label>
+           </div>
+        </div>
+        
         <textarea id="txtObservacaoOS" rows="3" placeholder="Descreva os serviços prestados..." oninput="salvarRascunhoOS(this.value)"></textarea>
      </div>
 
@@ -206,37 +216,48 @@
      <button class="btn btn-logout" style="margin-top:16px;" onclick="fecharModalHistoricoOS()">Fechar</button>
   </div>
 
-  <!-- MODAL OPORTUNIDADE DE VENDA / UPSELL (V45 - COM VALOR ESTIMADO) -->
-  <div id="modal-oportunidade" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
-     <h3 style="color:var(--warning); margin-bottom:6px;">💡 Reportar Venda / Oportunidade</h3>
-     <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Exclusivo para Vendedores e Administradores.</p>
-     <input type="hidden" id="oppNomeCliente" />
-     <label>O que o cliente precisa?</label>
-     <textarea id="oppDesc" rows="3" placeholder="Ex: Nobreak não aguenta carga, precisa de um de 2000VA..."></textarea>
-     <label>💰 Valor Estimado do Orçamento (R$) (Opcional)</label>
-     <input type="number" id="oppValor" step="0.01" min="0" placeholder="Ex: 1500.00" />
-     <label>📸 Foto do Local/Equipamento (Recomendado)</label>
-     <input type="file" id="oppFoto" accept="image/*" capture="environment" />
+  <!-- MODAL TRANSFERÊNCIA DE OS (HANDOFF) (BLOCO 1) -->
+  <div id="modal-handoff" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); box-shadow: 0 10px 25px rgba(0,0,0,0.5);">
+     <h3 style="color:var(--warning); margin-bottom:6px;">🔄 Transferir OS (Escalonamento)</h3>
+     <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">O SLA será pausado automaticamente.</p>
+     <input type="hidden" id="handoffLinha" />
+     <label>Técnico de Destino</label>
+     <select id="handoffTecnicoDestino">
+        <option value="Northon Duarte">Northon Duarte (N2/N3)</option>
+        <option value="Victor Rodrigues">Victor Rodrigues</option>
+        <option value="Alef Silva">Alef Silva</option>
+        <option value="Kaio medeiros">Kaio Medeiros</option>
+     </select>
+     <label>Justificativa do Repasse</label>
+     <textarea id="handoffJustificativa" rows="3" placeholder="Ex: Necessário apoio N3 para reconfiguração de Firewall..."></textarea>
      <div style="display:flex; gap:10px; margin-top:14px;">
-        <button class="btn btn-logout" style="flex:1;" onclick="fecharModalOportunidade()">Cancelar</button>
-        <button class="btn" style="flex:2; background:var(--warning); color:#000;" onclick="salvarOportunidadeUI()">Enviar ao Comercial</button>
+        <button class="btn btn-logout" style="flex:1;" onclick="fecharModalHandoff()">Cancelar</button>
+        <button class="btn" style="flex:2; background:var(--warning); color:#000;" onclick="confirmarHandoffOS()">Transferir Visita</button>
      </div>
   </div>
 
-  <!-- MODAL COFRE -->
+  <!-- MODAL COFRE COM ZERO TRUST (BLOCO 1) -->
   <div id="modal-ficha-cliente" style="display:none; position:fixed; top:50%; left:50%; transform:translate(-50%, -50%); width:92%; max-width:440px; background:var(--card-bg); z-index:9999; padding:22px; border-radius:18px; border:1px solid var(--border); max-height:88vh; overflow-y:auto;">
      <h3 style="color:#38bdf8; margin-bottom:6px;" id="fichaCliTitulo">🔑 Ficha Técnica</h3>
      <p style="font-size:0.75rem; color:var(--text-muted); margin-bottom:14px;">Informações confidenciais.</p>
      <input type="hidden" id="fichaNomeCliente" />
      <label>Responsável Local / Tel</label><input type="text" id="fichaContato" placeholder="Ex: Sr. Carlos (21) 99999-0000" />
+     
      <div style="display:flex; justify-content:space-between; align-items:center;">
         <label>IP Gerência / Gateway</label><span style="font-size:0.72rem; color:#38bdf8; cursor:pointer;" onclick="copiarCampoFicha('fichaIP')">📋 Copiar IP</span>
      </div>
      <input type="text" id="fichaIP" />
+     
+     <!-- ZERO TRUST -->
      <div style="display:flex; justify-content:space-between; align-items:center;">
-        <label>Wi-Fi / Senha Rack</label><span style="font-size:0.72rem; color:#38bdf8; cursor:pointer;" onclick="copiarCampoFicha('fichaCredenciais')">📋 Copiar Senha</span>
+        <label>Wi-Fi / Senha Rack</label>
+        <span style="font-size:0.72rem; color:var(--warning); cursor:pointer; font-weight:bold;" onclick="revelarSenhaCofre()">👁️ Revelar (5 min)</span>
      </div>
-     <input type="text" id="fichaCredenciais" />
+     <div style="display:flex; gap:8px;">
+        <input type="password" id="fichaCredenciais" style="flex:1;" readonly placeholder="Protegido por Zero Trust" />
+        <button class="nav-pill" style="border-color:#38bdf8; color:#38bdf8; height:45px;" onclick="copiarCampoFicha('fichaCredenciais')">📋 Copiar</button>
+     </div>
+
      <label>Notas Técnicas</label><textarea id="fichaNotas" rows="3"></textarea>
      <div style="display:flex; gap:10px; margin-top:10px;">
         <button class="btn btn-logout" style="flex:1;" onclick="fecharModalFichaCliente()">Fechar</button>
@@ -265,7 +286,7 @@
 
     <!-- TELA LOGIN -->
     <div id="tela-login" class="box" style="margin-top: 40px; padding: 40px 20px;">
-      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=45" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
+      <div style="text-align: center; margin-bottom: 30px;"><img src="./LogoSS.png?v=46" alt="Logo SS" class="logo-img" onerror="this.style.display='none'"></div>
       <h3 style="margin-bottom: 30px; text-align: center; font-weight:800; font-size:1.5rem; color:#38bdf8;">Acesso ao Portal</h3>
       <label>Usuário</label><input type="text" id="loginUser" placeholder="O seu utilizador" autocomplete="off" />
       <label>Senha</label><input type="password" id="loginSenha" placeholder="A sua palavra-passe" />
@@ -285,7 +306,6 @@
       <div class="tabs" id="abasRestritas" style="display:none; margin-top: 0; background:var(--bg); border-color:var(--warning);">
         <button class="tab-btn" id="btnTabAdminPonto" onclick="abrirAba('tab-admin-ponto', this); hapticFeedback()">👥 Ponto</button>
         <button class="tab-btn" id="btnTabAdminPedidos" onclick="abrirAba('tab-aprovacoes', this); hapticFeedback()">✅ Pedidos <span id="badgeQtdPedidos" class="badge-notif">0</span></button>
-        <button class="tab-btn" id="btnTabVendas" onclick="abrirAba('tab-oportunidades', this); hapticFeedback()">💡 Vendas</button>
         <button class="tab-btn" id="btnTabAdminAvisos" onclick="abrirAba('tab-avisos', this); hapticFeedback()">📢 Avisos</button>
         <button class="tab-btn" id="btnTabAdminUsuarios" onclick="abrirAba('tab-usuarios', this); hapticFeedback()">🔐 Acessos</button>
         <button class="tab-btn" id="btnTabAdminEstoque" onclick="abrirAba('tab-estoque', this); hapticFeedback()">📦 Estoque</button>
@@ -363,7 +383,6 @@
           <div style="display:flex; gap:8px; margin-bottom:12px;">
              <button type="button" class="btn-logout" style="flex:1; color:#38bdf8; border-color:var(--border); padding:8px;" onclick="consultarHistoricoOSCliente(document.getElementById('chkCliente').value.trim())">📋 Últimas OS</button>
              <button type="button" class="btn-logout" style="flex:1; color:var(--warning); border-color:var(--border); padding:8px;" onclick="abrirFichaTecnicaCliente(document.getElementById('chkCliente').value.trim())">🔑 Ficha</button>
-             <button type="button" id="btnNovaVendaAvulso" class="btn-logout" style="flex:1; display:none; color:var(--accent); border-color:var(--border); padding:8px;" onclick="abrirModalOportunidade(document.getElementById('chkCliente').value.trim())">💡 Nova Venda</button>
           </div>
           <div class="grid-botoes" style="grid-template-columns: 1fr;">
             <button class="btn btn-acao" style="background:var(--primary);" onclick="checkinAvulso('Cheguei')">📍 Cheguei (Avulso)</button>
@@ -469,7 +488,7 @@
         </div>
       </div>
 
-      <!-- ================= ÁREA RESTRITA (ADMIN & VENDEDOR) ================= -->
+      <!-- ================= ÁREA RESTRITA (ADMIN) ================= -->
 
       <!-- GERAL PONTO & BANCO (EXCLUSIVO ADMIN) -->
       <div id="tab-admin-ponto" class="tab-content">
@@ -500,47 +519,8 @@
           </div>
         </div>
       </div>
-      
-      <!-- 1. OPORTUNIDADES COMERCIAIS / UPSELL (V45 - COM ORÇAMENTO, COMISSÃO, FILTROS E WHATSAPP) -->
-      <div id="tab-oportunidades" class="tab-content">
-        <div class="box">
-          <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px;">
-             <div>
-                <h3 style="margin: 0; font-size: 1.1rem; color: var(--warning);">💡 Funil de Oportunidades (Comercial)</h3>
-                <p style="font-size:0.75rem; color:var(--text-muted);">Gestão de Orçamentos, Propostas e Comissões.</p>
-             </div>
-             <button class="btn-logout" onclick="carregarOportunidades(); hapticFeedback()">🔄 Atualizar</button>
-          </div>
 
-          <!-- PAINEL DE MÉTRICAS COMERCIAIS DO MÊS -->
-          <div class="metrics" style="margin-bottom:16px;">
-             <div class="card-metric">
-                <div class="label">Total Vendido (Mês)</div>
-                <div class="val" id="lblTotalVendidoMes" style="color:var(--accent); font-size:1.25rem;">R$ 0,00</div>
-             </div>
-             <div class="card-metric">
-                <div class="label">Comissão Estimada (<span id="lblPercComissao">5</span>%)</div>
-                <div class="val" id="lblComissaoMes" style="color:var(--warning); font-size:1.25rem;">R$ 0,00</div>
-             </div>
-             <div class="card-metric">
-                <div class="label">Vendas Fechadas</div>
-                <div class="val" id="lblQtdVendasFechadas" style="color:#38bdf8; font-size:1.25rem;">0</div>
-             </div>
-          </div>
-
-          <!-- FILTROS RÁPIDOS POR STATUS COMERCIAL -->
-          <div class="nav-pills" style="margin-bottom:16px; justify-content:center;">
-             <button type="button" class="nav-pill ativo-filtro" id="fltOppTodos" onclick="filtrarStatusOportunidade('TODOS', this)">📋 Todos</button>
-             <button type="button" class="nav-pill" id="fltOppPendente" onclick="filtrarStatusOportunidade('Pendente', this)">⏳ Pendentes</button>
-             <button type="button" class="nav-pill" id="fltOppNegociacao" onclick="filtrarStatusOportunidade('Em Negociação', this)">💬 Em Negociação</button>
-             <button type="button" class="nav-pill" id="fltOppFechada" onclick="filtrarStatusOportunidade('Venda Fechada', this)">✅ Venda Fechada</button>
-          </div>
-
-          <div id="listaOportunidades" style="color: var(--text-muted); text-align: center;">A carregar funil de vendas...</div>
-        </div>
-      </div>
-
-      <!-- 2. ABA: GERENCIADOR DE AVISOS (V45 - DIRECIONADO, URGÊNCIA E CONFIRMAÇÃO DE LEITURA) -->
+      <!-- ABA: GERENCIADOR DE AVISOS (DIRECIONADO, URGÊNCIA E CONFIRMAÇÃO DE LEITURA) -->
       <div id="tab-avisos" class="tab-content">
         <div class="box" style="border-color:#38bdf8;">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: #38bdf8;" id="tituloFormAviso">📢 Criar Novo Aviso</h3>
@@ -557,7 +537,6 @@
                 <label>🎯 Destinatário</label>
                 <select id="avisoDestinatarioInput" style="margin-bottom:0;">
                    <option value="TODOS">👥 Todos da Equipe</option>
-                   <option value="VENDEDORES">💡 Apenas Vendedores / Comercial</option>
                    <option value="Northon Duarte">👤 Técnico: Northon Duarte</option>
                    <option value="Victor Rodrigues">👤 Técnico: Victor Rodrigues</option>
                    <option value="Alef Silva">👤 Técnico: Alef Silva</option>
@@ -610,7 +589,7 @@
         </div>
       </div>
 
-      <!-- 3. ABA: GESTÃO DE ACESSOS E PERFIS DE USUÁRIOS (V45 - EXCLUSIVO ADMIN) -->
+      <!-- ABA: GESTÃO DE ACESSOS E PERFIS DE USUÁRIOS (EXCLUSIVO ADMIN) -->
       <div id="tab-usuarios" class="tab-content">
         <div class="box" style="border-color:var(--warning);">
           <h3 style="margin: 0 0 14px; font-size: 1.1rem; color: var(--warning);">➕ Cadastrar Novo Colaborador</h3>
@@ -633,7 +612,6 @@
                 <label>Perfil / Cargo</label>
                 <select id="novoUsuPerfil">
                    <option value="Normal">🔧 Técnico (Normal)</option>
-                   <option value="Vendedor">💡 Vendedor / Comercial</option>
                    <option value="Admin">👑 Administrador</option>
                 </select>
              </div>
@@ -731,7 +709,6 @@
     // LINK DA SUA API DO GOOGLE APPS SCRIPT
     // =========================================================================
     const API_URL = "https://script.google.com/macros/s/AKfycbzb55qpIBG8A4VyUimke21ONx-WHOiC3l9LRnWDrHPbRYadXZnDoUCCovIVvAgXQWoTwg/exec";
-    const TAXA_COMISSAO_PADRAO = 0.05; // 5% de comissão estimada
 
     const baseClientes = {
       "ABC-TUR": { end: "R. Riachuelo, 366 - Sl 615 - Centro, Rio de Janeiro - RJ, 20230-013" },
@@ -796,19 +773,14 @@
     let chartMeuDesempenho = null, chartAdminBanco = null, mapaLeaflet = null, camadaPinos = null;
     let usuarioAutenticado = "", perfilAutenticado = "", statusGlobalPonto = "Saída";
     let todasRotas = [], dadosGeralGlobais = [], ausenciasEquipe = [], ultimoBancoConsolidado = [], cacheTodosAvisos = [];
-    let todasOportunidades = [], filtroStatusOppAtual = "TODOS";
     let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
     let currentRating = 0, tempoInicioExpediente = null, filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
 
-    // --- VERIFICADOR DE PERMISSÃO (ADMIN e VENDEDOR) ---
+    // --- VERIFICADOR DE PERMISSÃO (ADMIN) ---
     function isAdmin() {
        const p = String(perfilAutenticado || "").trim().toLowerCase();
        return p === 'admin' || p === 'administrador' || p === 'supervisao' || p === 'supervisão';
-    }
-    function podeAcessarVendas() {
-       const p = String(perfilAutenticado || "").trim().toLowerCase();
-       return isAdmin() || p === 'vendedor' || p === 'vendedora' || p === 'vendas' || p === 'comercial';
     }
 
     // --- MODO TELÃO NOC ---
@@ -835,7 +807,75 @@
     });
 
     // =========================================================================
-    // 2. MURAL DE AVISOS DIRECIONADOS, URGÊNCIA E CONFIRMAÇÃO DE LEITURA (V45)
+    // BLOCO 1 - SEMÁFORO INTELIGENTE DE SLA E HANDOFF
+    // =========================================================================
+    const TEMPO_SLA_MAXIMO_SEGUNDOS = 7200; // 2 horas (Ajustável)
+    function iniciarSlaLocal(linha) { if (!localStorage.getItem('sla_start_' + linha)) localStorage.setItem('sla_start_' + linha, Date.now()); }
+    
+    function obterDuracaoSlaFormatada(linha) {
+       const ini = localStorage.getItem('sla_start_' + linha); if (!ini) return { texto: "", corBadge: "", corTexto: "", piscar: false };
+       const diff = Math.max(0, Math.floor((Date.now() - parseInt(ini, 10)) / 1000));
+       const h = String(Math.floor(diff / 3600)).padStart(2, '0'), m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0'), s = String(diff % 60).padStart(2, '0');
+       
+       let corBadge = "rgba(16,185,129,0.2)"; let corTexto = "#34d399"; let piscar = false; // Verde (Inicial)
+       if (diff > TEMPO_SLA_MAXIMO_SEGUNDOS) { corBadge = "rgba(239,68,68,0.3)"; corTexto = "#ef4444"; piscar = true; } // Vermelho (Estourou)
+       else if (diff > (TEMPO_SLA_MAXIMO_SEGUNDOS * 0.75)) { corBadge = "rgba(245,158,11,0.3)"; corTexto = "#fbbf24"; } // Amarelo (75%)
+       
+       return { texto: `${h}:${m}:${s}`, corBadge, corTexto, piscar };
+    }
+
+    setInterval(() => {
+       document.querySelectorAll('.sla-timer').forEach(el => {
+          const l = el.getAttribute('data-sla-linha'); iniciarSlaLocal(l); 
+          const slaData = obterDuracaoSlaFormatada(l);
+          el.innerHTML = `⏱️ SLA: ${slaData.texto}`;
+          el.style.background = slaData.corBadge; el.style.color = slaData.corTexto; el.style.borderColor = slaData.corTexto;
+          if (slaData.piscar) el.style.animation = "pulseRed 1.5s infinite"; else el.style.animation = "none";
+       });
+    }, 1000);
+
+    function prepararHandoff(linha) {
+        document.getElementById('handoffLinha').value = linha;
+        document.getElementById('handoffJustificativa').value = '';
+        safeSetDisplay('modal-overlay', 'block'); safeSetDisplay('modal-handoff', 'block');
+    }
+    function fecharModalHandoff() { safeSetDisplay('modal-handoff', 'none'); safeSetDisplay('modal-overlay', 'none'); }
+    
+    function confirmarHandoffOS() {
+        const linha = document.getElementById('handoffLinha').value;
+        const tecDestino = document.getElementById('handoffTecnicoDestino').value;
+        const just = document.getElementById('handoffJustificativa').value.trim();
+        if(!just) return alert("A justificativa é obrigatória.");
+        
+        fecharModalHandoff();
+        executarComLoader(`Transferindo para ${tecDestino}...`, async () => {
+            await callAPI('transferirOSBase', { linha: linha, novoTecnico: tecDestino, justificativa: just, remetente: usuarioAutenticado });
+            localStorage.removeItem('sla_start_' + linha); // Pausa SLA local
+            sessionStorage.removeItem('cacheAgenda_' + usuarioAutenticado);
+            carregarItinerario(true);
+            alert("OS transferida com sucesso!");
+        });
+    }
+
+    // =========================================================================
+    // BLOCO 1 - COFRE ZERO TRUST
+    // =========================================================================
+    function revelarSenhaCofre() {
+        const input = document.getElementById('fichaCredenciais');
+        const cliente = document.getElementById('fichaNomeCliente').value;
+        input.type = 'text'; input.removeAttribute('readonly');
+        
+        // Registo de auditoria em background
+        callAPI('registrarAuditoriaCofre', { tecnico: usuarioAutenticado, cliente: cliente });
+        
+        setTimeout(() => {
+            input.type = 'password'; input.setAttribute('readonly', 'true');
+            alert("🔒 Por segurança, a senha foi ocultada novamente (Zero Trust).");
+        }, 300000); // 5 minutos
+    }
+
+    // =========================================================================
+    // MURAL DE AVISOS DIRECIONADOS, URGÊNCIA E CONFIRMAÇÃO DE LEITURA
     // =========================================================================
     async function carregarMuralAvisos() {
        if (!usuarioAutenticado) return;
@@ -1018,197 +1058,7 @@
     }
 
     // =========================================================================
-    // 1. OPORTUNIDADES (UPSELL) COM ORÇAMENTO, COMISSÃO, FILTROS E WHATSAPP (V45)
-    // =========================================================================
-    function abrirModalOportunidade(cliente) {
-       if (!podeAcessarVendas()) {
-          return alert("🔒 Acesso negado: Apenas usuários com permissão de Vendedor ou Administrador podem registrar oportunidades de venda.");
-       }
-       if(!cliente) return alert("Selecione um cliente primeiro.");
-       document.getElementById("oppNomeCliente").value = cliente;
-       document.getElementById("oppDesc").value = "";
-       if(document.getElementById("oppValor")) document.getElementById("oppValor").value = "";
-       document.getElementById("oppFoto").value = "";
-       safeSetDisplay("modal-overlay", "block");
-       safeSetDisplay("modal-oportunidade", "block");
-    }
-    function fecharModalOportunidade() {
-       safeSetDisplay("modal-overlay", "none");
-       safeSetDisplay("modal-oportunidade", "none");
-    }
-    async function salvarOportunidadeUI() {
-       if (!podeAcessarVendas()) {
-          fecharModalOportunidade();
-          return alert("🔒 Permissão negada: Você não tem perfil de Vendedor ou Admin.");
-       }
-       const cli = document.getElementById("oppNomeCliente").value;
-       const desc = document.getElementById("oppDesc").value.trim();
-       const valOrc = document.getElementById("oppValor") ? document.getElementById("oppValor").value : "0";
-       const foto = document.getElementById("oppFoto");
-       if(!desc) return alert("Descreva a oportunidade.");
-       fecharModalOportunidade();
-       
-       executarComLoader("Enviando ao comercial...", async () => {
-          let urlFoto = "";
-          if(foto && foto.files[0]) {
-             const r = new FileReader(); 
-             const b64 = await new Promise(res => { r.onload = e => res(e.target.result); r.readAsDataURL(foto.files[0]); });
-             const resF = await callAPI('uploadComprovativo', { base64: b64, nomeArquivo: `Opp_${Date.now()}.jpg` });
-             if(resF.sucesso) urlFoto = resF.url;
-          }
-          const res = await callAPI('salvarOportunidadeComercial', { tecnico: usuarioAutenticado, cliente: cli, descricao: desc, fotoUrl: urlFoto, valor: valOrc });
-          if(res.erro) alert(res.erro);
-          else { playBeepSucesso(); alert("Oportunidade enviada ao Comercial com sucesso!"); carregarOportunidades(); }
-       });
-    }
-
-    function filtrarStatusOportunidade(statusFiltro, btnEl) {
-       hapticFeedback();
-       filtroStatusOppAtual = statusFiltro;
-       document.querySelectorAll('#tab-oportunidades .nav-pill').forEach(b => b.classList.remove('ativo-filtro'));
-       if (btnEl) btnEl.classList.add('ativo-filtro');
-       renderizarOportunidadesFiltradas();
-    }
-
-    function carregarOportunidades() {
-       if (!podeAcessarVendas()) {
-          safeSetHTML("listaOportunidades", "🔒 Acesso restrito a usuários com permissão de Vendedor ou Admin.");
-          return;
-       }
-       callAPI('getOportunidadesComerciais', { solicitante: usuarioAutenticado }).then(dados => {
-          if (dados.erro) { safeSetHTML("listaOportunidades", dados.erro); return; }
-          todasOportunidades = Array.isArray(dados) ? dados : [];
-          calcularMetricasVendasMes();
-          renderizarOportunidadesFiltradas();
-       });
-    }
-
-    function calcularMetricasVendasMes() {
-       const mesAtual = new Date().toLocaleDateString('pt-BR', { month: '2-digit', year: 'numeric' });
-       let totalVendido = 0;
-       let qtdFechadas = 0;
-
-       todasOportunidades.forEach(d => {
-          let st = String(d.status || "");
-          let ehMesAtual = !d.data || String(d.data).includes(mesAtual);
-          if ((st.includes('Fechad') || st.includes('Aprovad')) && ehMesAtual) {
-             totalVendido += parseFloat(d.valor || 0);
-             qtdFechadas++;
-          }
-       });
-
-       let comissao = totalVendido * TAXA_COMISSAO_PADRAO;
-       safeSetText("lblTotalVendidoMes", brl(totalVendido));
-       safeSetText("lblComissaoMes", brl(comissao));
-       safeSetText("lblQtdVendasFechadas", qtdFechadas);
-    }
-
-    function renderizarOportunidadesFiltradas() {
-       const filtradas = todasOportunidades.filter(d => {
-          if (filtroStatusOppAtual === "TODOS") return true;
-          if (filtroStatusOppAtual === "Pendente") return String(d.status).toLowerCase().includes('pendente');
-          return String(d.status).toLowerCase().includes(filtroStatusOppAtual.toLowerCase());
-       });
-
-       if (filtradas.length === 0) {
-          safeSetHTML("listaOportunidades", "Nenhuma oportunidade encontrada para este filtro.");
-          return;
-       }
-
-       let html = "";
-       filtradas.forEach(d => {
-          let cor = d.status.includes('Fechad') || d.status.includes('Aprovad') ? 'var(--accent)' : (d.status.includes('Recusad') ? 'var(--danger)' : (d.status.includes('Negocia') ? 'var(--primary)' : 'var(--warning)'));
-          let valorFormatado = (parseFloat(d.valor) || 0).toFixed(2);
-          let descEscapada = String(d.desc || "").replace(/'/g, "\\'").replace(/\n/g, " ");
-          let cliEscapado = String(d.cliente || "").replace(/'/g, "\\'");
-
-          let blocoOrcamento = `
-             <div style="display:flex; gap:8px; align-items:center; margin-top:10px; background:var(--bg); padding:8px 10px; border-radius:10px; border:1px solid var(--border);">
-                <span style="font-size:0.78rem; color:var(--text-muted); font-weight:700;">💰 Orçamento (R$):</span>
-                <input type="number" id="inpValOpp_${d.linha}" step="0.01" min="0" value="${valorFormatado}" style="margin:0; padding:6px 10px; flex:1; font-weight:800; color:var(--accent);" />
-                <button class="nav-pill" style="background:var(--primary); color:#fff; border:none; padding:8px 10px;" onclick="salvarValorOrcamentoUI(${d.linha}, '${d.status}')">💾 Salvar R$</button>
-             </div>
-          `;
-
-          let btns = `
-             <div style="display:flex; gap:8px; margin-top:10px; flex-wrap:wrap;">
-                <button class="btn-acao" style="background:var(--primary); flex:1; font-size:0.78rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Em Negociação')">💬 Negociando</button>
-                <button class="btn-acao" style="background:var(--accent); flex:1; font-size:0.78rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Venda Fechada')">✅ Venda Fechada</button>
-                <button class="btn-acao" style="background:var(--danger); flex:1; font-size:0.78rem; padding:8px;" onclick="atualizarOportunidadeUI(${d.linha}, 'Recusado')">✖ Recusar</button>
-             </div>
-             <button class="btn-logout" style="width:100%; margin-top:8px; border-color:#10b981; color:#10b981; font-weight:800; display:flex; align-items:center; justify-content:center; gap:6px;" onclick="enviarPropostaWhatsAppCliente('${cliEscapado}', '${descEscapada}', ${d.linha})">
-                📲 Enviar Proposta no WhatsApp do Cliente
-             </button>
-          `;
-
-          html += `
-             <div style="background:var(--card-bg); border:1px solid var(--border); padding:16px; border-radius:12px; margin-bottom:12px; text-align:left; position:relative; overflow:hidden;">
-                <div style="position:absolute; top:0; left:0; bottom:0; width:4px; background:${cor};"></div>
-                <div style="display:flex; justify-content:space-between; align-items:flex-start; gap:8px;">
-                   <div>
-                      <strong style="color:var(--primary); font-size:1.1rem;">${d.cliente}</strong><br>
-                      <small style="color:var(--text-muted)">Indicado por: <b>${d.tecnico}</b> | ${d.data}</small>
-                   </div>
-                   <span class="badge-status-req" style="background:${cor}; color:#000;">${d.status}</span>
-                </div>
-                <div style="margin-top:8px; font-size:0.88rem; color:var(--text);">${d.desc}</div>
-                ${d.foto ? `<div style="margin-top:6px;"><a href="${d.foto}" target="_blank" style="color:#38bdf8; font-size:0.8rem;">📸 Ver Foto do Local</a></div>` : ''}
-                ${blocoOrcamento}
-                ${btns}
-             </div>
-          `;
-       });
-       safeSetHTML("listaOportunidades", html);
-    }
-
-    function salvarValorOrcamentoUI(linha, statusAtual) {
-       const inp = document.getElementById('inpValOpp_' + linha);
-       const val = inp ? inp.value : 0;
-       atualizarOportunidadeUI(linha, statusAtual, val);
-    }
-
-    function atualizarOportunidadeUI(linha, status, valorExplicito) {
-       if (!podeAcessarVendas()) return alert("Sem permissão.");
-       const inp = document.getElementById('inpValOpp_' + linha);
-       const valFinal = (valorExplicito !== undefined) ? valorExplicito : (inp ? inp.value : "");
-       executarComLoader("A atualizar funil...", async () => {
-          const r = await callAPI('atualizarOportunidade', { linha: linha, status: status, valor: valFinal, solicitante: usuarioAutenticado });
-          if (r && r.erro) alert(r.erro);
-          else playBeepSucesso();
-          carregarOportunidades();
-       });
-    }
-
-    async function enviarPropostaWhatsAppCliente(cliente, descricao, linha) {
-       hapticFeedback();
-       const inpVal = document.getElementById('inpValOpp_' + linha);
-       const valorOrc = inpVal && parseFloat(inpVal.value) > 0 ? brl(parseFloat(inpVal.value)) : "sob consulta";
-
-       showLoading("Buscando contato na Ficha Técnica...");
-       const ficha = await callAPI('getFichaCliente', { cliente: cliente, tecnico: usuarioAutenticado });
-       hideLoading();
-
-       let foneLimpo = "";
-       if (ficha && ficha.contato) {
-          let digitos = String(ficha.contato).replace(/\D/g, '');
-          if (digitos.length >= 10) {
-             foneLimpo = digitos.startsWith('55') ? digitos : '55' + digitos;
-          }
-       }
-
-       const msgComercial = `Olá *${cliente}*, tudo bem?\n\nDurante a nossa última visita técnica da *Services & Solutions*, identificamos uma oportunidade importante de melhoria na sua infraestrutura:\n\n🔧 *Diagnóstico:* ${descricao}\n💰 *Investimento Estimado:* ${valorOrc}\n\nPodemos agendar a aprovação ou conversar sobre essa proposta?`;
-       const urlWa = foneLimpo
-          ? `https://api.whatsapp.com/send?phone=${foneLimpo}&text=${encodeURIComponent(msgComercial)}`
-          : `https://api.whatsapp.com/send?text=${encodeURIComponent(msgComercial)}`;
-
-       if (!foneLimpo) {
-          alert("⚠️ Nenhum número de telefone válido foi encontrado na Ficha Técnica deste cliente. O WhatsApp será aberto para você selecionar o contato manualmente.");
-       }
-       window.open(urlWa, '_blank');
-    }
-
-    // =========================================================================
-    // 3. GESTÃO DE ACESSOS E PERFIS DE USUÁRIOS DIRETO PELO APP (V45)
+    // GESTÃO DE ACESSOS E PERFIS DE USUÁRIOS
     // =========================================================================
     async function carregarUsuariosAdmin() {
        if (!isAdmin()) return;
@@ -1224,11 +1074,10 @@
           return;
        }
 
-       // Atualiza também os seletores de técnicos do app dinamicamente
        atualizarSeletoresTecnicosDinamicos(res);
 
        div.innerHTML = res.map(u => {
-          let corBadge = u.perfil === 'Admin' ? 'var(--danger)' : (u.perfil === 'Vendedor' ? 'var(--warning)' : 'var(--primary)');
+          let corBadge = u.perfil === 'Admin' ? 'var(--danger)' : 'var(--primary)';
           return `
              <div style="background:var(--bg); border:1px solid var(--border); border-left:4px solid ${corBadge}; padding:14px; border-radius:12px; margin-bottom:10px; display:flex; justify-content:space-between; align-items:center; gap:10px; flex-wrap:wrap; text-align:left;">
                 <div>
@@ -1237,7 +1086,6 @@
                 </div>
                 <div style="display:flex; gap:6px; align-items:center; flex-wrap:wrap;">
                    <button type="button" class="nav-pill ${u.perfil === 'Normal' ? 'ativo-filtro' : ''}" onclick="alterarCargoUsuarioUI(${u.linha}, 'Normal', '${u.nome}')">🔧 Normal</button>
-                   <button type="button" class="nav-pill ${u.perfil === 'Vendedor' ? 'ativo-filtro' : ''}" onclick="alterarCargoUsuarioUI(${u.linha}, 'Vendedor', '${u.nome}')">💡 Vendedor</button>
                    <button type="button" class="nav-pill ${u.perfil === 'Admin' ? 'ativo-filtro' : ''}" onclick="alterarCargoUsuarioUI(${u.linha}, 'Admin', '${u.nome}')">👑 Admin</button>
                 </div>
              </div>
@@ -1249,7 +1097,7 @@
        const destSel = document.getElementById('avisoDestinatarioInput');
        if (destSel && Array.isArray(listaUsuarios)) {
           const valAtual = destSel.value;
-          let html = `<option value="TODOS">👥 Todos da Equipe</option><option value="VENDEDORES">💡 Apenas Vendedores / Comercial</option>`;
+          let html = `<option value="TODOS">👥 Todos da Equipe</option>`;
           listaUsuarios.forEach(u => {
              html += `<option value="${u.nome}">👤 Técnico: ${u.nome}</option>`;
           });
@@ -1318,23 +1166,16 @@
        mapaLeaflet.setView([lat, lng], 16, { animate: true }); window.scrollTo({ top: 120, behavior: 'smooth' });
     }
 
-    function iniciarSlaLocal(linha) { if (!localStorage.getItem('sla_start_' + linha)) localStorage.setItem('sla_start_' + linha, Date.now()); }
-    function obterDuracaoSlaFormatada(linha) {
-       const ini = localStorage.getItem('sla_start_' + linha); if (!ini) return "";
-       const diff = Math.max(0, Math.floor((Date.now() - parseInt(ini, 10)) / 1000));
-       const h = String(Math.floor(diff / 3600)).padStart(2, '0'), m = String(Math.floor((diff % 3600) / 60)).padStart(2, '0'), s = String(diff % 60).padStart(2, '0');
-       return `${h}:${m}:${s}`;
-    }
-    setInterval(() => {
-       document.querySelectorAll('[data-sla-linha]').forEach(el => {
-          const l = el.getAttribute('data-sla-linha'); iniciarSlaLocal(l); el.innerText = "⏱️ Atendimento: " + obterDuracaoSlaFormatada(l);
-       });
-    }, 1000);
-
+    // BLOCO 1 - SOS TÉCNICO MELHORADO
     async function acionarSOSPlantao() {
-       hapticFeedback(); const motivo = prompt("Descreva a urgência / bloqueio em campo:"); if (!motivo) return;
+       hapticFeedback(); 
+       const tipoApoio = prompt("Digite '1' para Apoio Remoto ou '2' para Apoio Presencial:");
+       if(!tipoApoio) return;
+       const motivo = prompt("Descreva a urgência / bloqueio técnico em campo:"); 
+       if (!motivo) return;
        let loc = await obterLocalizacao();
-       window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(`🚨 *SOS DE CAMPO*\n👤 *Técnico:* ${usuarioAutenticado}\n⚠️ *Fato:* ${motivo}\n📍 *Local:* ${loc}`), "_blank");
+       const tipoTXT = tipoApoio === '2' ? 'PRESENCIAL' : 'REMOTO';
+       window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent(`🚨 *SOS TÉCNICO (${tipoTXT})*\n👤 *Técnico:* ${usuarioAutenticado}\n⚠️ *Fato:* ${motivo}\n📍 *Local:* ${loc}\n\n_Admin: Consulte o Mapa/Radar no Portal SS para identificar o técnico mais próximo._`), "_blank");
     }
 
     async function abrirFichaTecnicaCliente(nomeCliente) {
@@ -1342,6 +1183,11 @@
        showLoading("Carregando Cofre..."); const res = await callAPI('getFichaCliente', { cliente: nomeCliente, tecnico: usuarioAutenticado }); hideLoading();
        safeSetText("fichaCliTitulo", "🔑 Ficha: " + nomeCliente); document.getElementById("fichaNomeCliente").value = nomeCliente;
        document.getElementById("fichaContato").value = (res && res.contato) ? res.contato : ""; document.getElementById("fichaIP").value = (res && res.ip) ? res.ip : ""; document.getElementById("fichaCredenciais").value = (res && res.credenciais) ? res.credenciais : ""; document.getElementById("fichaNotas").value = (res && res.notas) ? res.notas : "";
+       
+       // Garante que o input Zero Trust está oculto por default
+       document.getElementById('fichaCredenciais').type = 'password';
+       document.getElementById('fichaCredenciais').setAttribute('readonly', 'true');
+
        safeSetDisplay("modal-overlay", "block"); safeSetDisplay("modal-ficha-cliente", "block");
     }
     function fecharModalFichaCliente() { safeSetDisplay("modal-overlay", "none"); safeSetDisplay("modal-ficha-cliente", "none"); }
@@ -1488,32 +1334,19 @@
       });
     }
 
-    // --- APLICAÇÃO EXPLICITA DE PERMISSÕES (INCLUINDO GESTÃO DE ACESSOS V45) ---
+    // --- APLICAÇÃO EXPLICITA DE PERMISSÕES ---
     function aplicarPermissoesAbas() {
       const barraRestrita = document.getElementById('abasRestritas');
       const idsExclusivosAdmin = ['btnTabAdminPonto', 'btnTabAdminPedidos', 'btnTabAdminAvisos', 'btnTabAdminUsuarios', 'btnTabAdminEstoque', 'btnTabAdminFrota'];
-      const btnVendas = document.getElementById('btnTabVendas');
-      const btnNovaVendaAvulso = document.getElementById('btnNovaVendaAvulso');
 
       if (isAdmin()) {
          if (barraRestrita) barraRestrita.style.display = 'flex';
-         if (btnVendas) btnVendas.style.display = 'inline-block';
-         if (btnNovaVendaAvulso) btnNovaVendaAvulso.style.display = 'inline-block';
          idsExclusivosAdmin.forEach(id => safeSetDisplay(id, 'inline-block'));
          safeSetDisplay('areaAtribuirItinerario', 'block');
-      } else if (podeAcessarVendas()) {
-         if (barraRestrita) barraRestrita.style.display = 'flex';
-         if (btnVendas) btnVendas.style.display = 'inline-block';
-         if (btnNovaVendaAvulso) btnNovaVendaAvulso.style.display = 'inline-block';
-         idsExclusivosAdmin.forEach(id => safeSetDisplay(id, 'none'));
-         safeSetDisplay('areaAtribuirItinerario', 'none');
       } else {
          if (barraRestrita) barraRestrita.style.display = 'none';
-         if (btnVendas) btnVendas.style.display = 'none';
-         if (btnNovaVendaAvulso) btnNovaVendaAvulso.style.display = 'none';
          idsExclusivosAdmin.forEach(id => safeSetDisplay(id, 'none'));
          safeSetDisplay('areaAtribuirItinerario', 'none');
-         fecharModalOportunidade();
       }
     }
 
@@ -1526,9 +1359,7 @@
       aplicarPermissoesAbas();
 
       if (isAdmin()) { 
-          carregarAusenciasEquipe(); carregarAprovacoes(); carregarOportunidades(); carregarListaAvisosAdmin(); carregarUsuariosAdmin();
-      } else if (podeAcessarVendas()) {
-          carregarOportunidades();
+          carregarAusenciasEquipe(); carregarAprovacoes(); carregarListaAvisosAdmin(); carregarUsuariosAdmin();
       }
       if(navigator.onLine) { carregarEstoque(); carregarMeusEquipamentos(); carregarMeusAjustes(nome); carregarMuralAvisos(); }
       abrirAba('tab-itinerario', document.getElementById('btnAbaAgenda')); 
@@ -1541,9 +1372,6 @@
       const abasExclusivasAdmin = ['tab-admin-ponto', 'tab-aprovacoes', 'tab-avisos', 'tab-usuarios', 'tab-estoque', 'tab-rotas'];
       if (abasExclusivasAdmin.includes(id) && !isAdmin()) {
          return alert("🔒 Acesso restrito ao Administrador.");
-      }
-      if (id === 'tab-oportunidades' && !podeAcessarVendas()) {
-         return alert("🔒 Acesso permitido apenas para Vendedores e Administradores.");
       }
 
       document.querySelectorAll('.tab-content').forEach(e => e.classList.remove('active'));
@@ -1558,7 +1386,6 @@
       if(id === 'tab-usuarios') carregarUsuariosAdmin();
       if(id === 'tab-estoque') carregarEstoque();
       if(id === 'tab-rotas') carregarRotasServidor();
-      if(id === 'tab-oportunidades') carregarOportunidades();
     }
 
     setInterval(() => {
@@ -1753,12 +1580,10 @@
         let btnConcluirAdmin = isAdmin() ? `<button class="btn-logout" style="width:100%; margin-top:8px;" onclick="${argForcar}">✔ Forçar Remoção (Admin)</button>` : '';
         
         let endEncoded = encodeURIComponent(d.endereco || d.cliente);
-        let btnNovaVendaCard = podeAcessarVendas() ? `<button type="button" class="nav-pill" onclick="abrirModalOportunidade('${d.cliente}')" style="color:var(--accent);">💡 Nova Venda</button>` : '';
         let botoesRota = `<div class="nav-pills">
              <a class="nav-pill" href="https://waze.com/ul?q=${endEncoded}&navigate=yes" target="_blank">🚗 Waze</a>
              <a class="nav-pill" href="https://www.google.com/maps/search/?api=1&query=${endEncoded}" target="_blank">🗺️ Maps</a>
              <button type="button" class="nav-pill" onclick="abrirFichaTecnicaCliente('${d.cliente}')" style="color:var(--warning);">🔑 Ficha</button>
-             ${btnNovaVendaCard}
           </div>`;
 
         let slaHtml = "", botoesGeo = "";
@@ -1766,8 +1591,8 @@
             botoesGeo = '<span style="color:var(--danger); font-weight:bold;">❌ Visita Perdida</span>' + btnConcluirAdmin; 
         } else if (isAndamento) {
             iniciarSlaLocal(d.linha);
-            slaHtml = `<div class="sla-timer" data-sla-linha="${d.linha}">⏱️ Atendimento: ${obterDuracaoSlaFormatada(d.linha)}</div>`;
-            botoesGeo = `<div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha}, '')">🏢 P/ Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Próx)', ${d.linha}, '')">🚶 Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha}, '')">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha}, '')">🏠 Fim Expediente</button></div><button class="btn-logout" style="border-color:#fbbf24; color:#fbbf24; padding:10px;" onclick="checkinGeolocalizado('${d.cliente}', 'Pausa SLA', ${d.linha}, '')">⏸️ Pausar SLA (Espera)</button>${btnConcluirAdmin}</div>`;
+            slaHtml = `<div class="sla-timer" data-sla-linha="${d.linha}">⏱️ SLA: Calculando...</div>`;
+            botoesGeo = `<div style="display:flex; flex-direction:column; gap:10px;"><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:var(--warning); color:#000; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Indo para Base)', ${d.linha}, '')">🏢 P/ Base</button><button class="btn-acao" style="background:var(--danger); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Próx)', ${d.linha}, '')">🚶 Próximo</button></div><div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px;"><button class="btn-acao" style="background:#ea580c; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cliente Ausente', ${d.linha}, '')">🚫 Ausente</button><button class="btn-acao" style="background:#475569; margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Saí (Fim de Expediente)', ${d.linha}, '')">🏠 Fim Expediente</button></div><button class="btn-logout" style="border-color:#fbbf24; color:#fbbf24; padding:10px;" onclick="checkinGeolocalizado('${d.cliente}', 'Pausa SLA', ${d.linha}, '')">⏸️ Pausar SLA (Espera)</button><button class="btn-logout" style="border-color:#38bdf8; color:#38bdf8; padding:10px;" onclick="prepararHandoff(${d.linha})">🔄 Transferir OS (Handoff)</button>${btnConcluirAdmin}</div>`;
         } else {
             if (!isHoje && !isAdmin()) { botoesGeo = '<span style="color:var(--warning); font-size:0.85rem; font-weight:bold;">⏳ Apenas no dia ' + d.data + '</span>'; } 
             else { botoesGeo = `<button class="btn-acao" style="background:var(--primary); margin:0;" onclick="checkinGeolocalizado('${d.cliente}', 'Cheguei', ${d.linha}, '')">📍 Cheguei no Local</button>${btnConcluirAdmin}`; }
@@ -1823,7 +1648,10 @@
       let logAcao = tipo === 'Cliente Ausente' ? "Saí (Ausente)" : tipo;
       if(ehBase) logAcao = tipo === 'Cheguei' ? "Interno Base (Início)" : "Interno Base (Fim)";
 
-      let batInfo = await obterInfoBateria(), slaDuracao = (linhaAgenda && tipo.includes('Saí')) ? ` [SLA: ${obterDuracaoSlaFormatada(linhaAgenda)}]` : "";
+      let batInfo = await obterInfoBateria();
+      let slaData = (linhaAgenda && tipo.includes('Saí')) ? obterDuracaoSlaFormatada(linhaAgenda) : null;
+      let slaDuracao = slaData ? ` [SLA Fim: ${slaData.texto}]` : "";
+
       if (linhaAgenda && (tipo.includes('Saí') || tipo === 'Cliente Ausente')) localStorage.removeItem('sla_start_' + linhaAgenda);
 
       await callAPI('registrarCheckin', { cliente: cliente, acao: logAcao, observacao: "Via Agenda " + linksExtra + slaDuracao + batInfo, nomeColaborador: usuarioAutenticado, localizacao: loc });
@@ -1879,6 +1707,10 @@
 
     function prepararModalAgenda(cliente, acao, linha) { 
         pendenteCliente = cliente; pendenteAcao = acao; pendenteLinhaAgenda = linha; 
+        
+        // Checklist limpo por padrão
+        document.querySelectorAll('.chk-os-req').forEach(chk => chk.checked = false);
+        
         let elObs = document.getElementById('txtObservacaoOS'); if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
         materiaisUsados = []; atualizarUI_Materiais(); 
         let showOS = (acao.includes('Saí') && acao !== 'Cliente Ausente'); 
@@ -1891,6 +1723,10 @@
     function prepararModalAvulso(acao) { 
         let elCli = document.getElementById('chkCliente'); if(!elCli || !elCli.value.trim()) return alert("Local avulso vazio."); 
         pendenteCliente = elCli.value.trim(); pendenteAcao = acao; pendenteLinhaAgenda = null; 
+        
+        // Checklist limpo por padrão
+        document.querySelectorAll('.chk-os-req').forEach(chk => chk.checked = false);
+
         let elObs = document.getElementById('txtObservacaoOS'); if(elObs) elObs.value = localStorage.getItem('rascunho_os_' + usuarioAutenticado) || ""; 
         materiaisUsados = []; atualizarUI_Materiais(); 
         safeSetDisplay('box-os', 'block'); safeSetDisplay('box-materiais', 'block'); safeSetDisplay('box-avaliacao', 'block'); safeSetDisplay('box-assinatura', 'block');
@@ -1923,7 +1759,18 @@
     function enviarComprovativoEFechar() {
        const fotoInput = document.getElementById('fotoVisita'); 
        let textoOS = document.getElementById('txtObservacaoOS') ? document.getElementById('txtObservacaoOS').value.trim() : "";
+       
        if (pendenteAcao === 'Cliente Ausente' && (!fotoInput || !fotoInput.files || !fotoInput.files[0])) return alert("A foto do local é obrigatória para registar ausência.");
+       
+       // BLOCO 1 - VALIDAÇÃO DE CHECKLIST DINÂMICO
+       let checklistSelecionado = [];
+       document.querySelectorAll('.chk-os-req:checked').forEach(chk => checklistSelecionado.push(chk.value));
+       if (checklistSelecionado.length < 3 && pendenteAcao !== 'Cliente Ausente') {
+           return alert("Você deve marcar todos os itens do Checklist Obrigatório antes de concluir a OS.");
+       }
+       let textoChecklistHTML = checklistSelecionado.length > 0 ? `\n\n[Checklist Executado]:\n- ` + checklistSelecionado.join(`\n- `) : "";
+       let textoFinalOS = textoOS + textoChecklistHTML;
+
        fecharModal(); localStorage.removeItem('rascunho_os_' + usuarioAutenticado);
        
        executarComLoader("A gerar OS e concluir...", async () => {
@@ -1958,7 +1805,7 @@
 
            if (pendenteAcao !== 'Cliente Ausente' && navigator.onLine) {
                let dataAgoraLimpa = new Date().toLocaleString('pt-BR').replace(',', '');
-               let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoOS, assinaturaUrl: urlAssinaturaOS, dataHora: dataAgoraLimpa, materiais: materiaisUsados });
+               let osRes = await callAPI('gerarOS', { cliente: pendenteCliente, tecnico: usuarioAutenticado, observacao: textoFinalOS, assinaturaUrl: urlAssinaturaOS, dataHora: dataAgoraLimpa, materiais: materiaisUsados });
                if(osRes && osRes.sucesso) { 
                    window.open("https://api.whatsapp.com/send?text=" + encodeURIComponent("Olá! Segue a Ordem de Serviço:\n\n📄 Visualizar Relatório: " + osRes.url), '_blank');
                    carregarEstoque(); 
