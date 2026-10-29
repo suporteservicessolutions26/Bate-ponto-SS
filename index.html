@@ -940,6 +940,30 @@
     let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
     let currentRating = 0, tempoInicioExpediente = null, filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
+    // 1. Função para exibir mensagens na tela que estava faltando
+    function exibirMsg(mensagem, isErro = false) {
+    alert(mensagem);
+   }
+   // 2. Função para atualizar o contador offline
+   function atualizarBadgeOffline() {
+      const badge = document.getElementById('badgeOffline');
+      const qtdDisplay = document.getElementById('qtdOffline');
+      if (badge && qtdDisplay) {
+         let fila = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
+         if (!navigator.onLine || fila.length > 0) {
+            qtdDisplay.innerText = fila.length;
+            badge.style.display = 'block';
+         } else {
+            badge.style.display = 'none';
+         }
+      }
+   }
+
+   // --- VERIFICADOR DE PERMISSÃO (ADMIN) ---
+   function isAdmin() {
+      const p = String(perfilAutenticado || "").trim().toLowerCase();
+      return p === 'admin' || p === 'administrador' || p === 'supervisao' || p === 'supervisão';
+   }
 
     // --- VERIFICADOR DE PERMISSÃO (ADMIN) ---
     function isAdmin() {
