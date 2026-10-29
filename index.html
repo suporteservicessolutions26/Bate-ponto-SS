@@ -940,10 +940,10 @@
     let pendenteCliente = "", pendenteAcao = "", pendenteLinhaAgenda = null;
     let currentRating = 0, tempoInicioExpediente = null, filaOffline = JSON.parse(localStorage.getItem('ponto_filaSync') || '[]');
     let estoqueGlobal = [], materiaisUsados = [];
-    // 1. Função para exibir mensagens na tela que estava faltando
+    // Declarada vazia de propósito para silenciar todos os pop-ups
     function exibirMsg(mensagem, isErro = false) {
-    alert(mensagem);
-   }
+    // Não faz nada
+}
    // 2. Função para atualizar o contador offline
    function atualizarBadgeOffline() {
       const badge = document.getElementById('badgeOffline');
