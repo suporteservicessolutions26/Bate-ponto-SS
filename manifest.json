@@ -3,14 +3,14 @@
   "short_name": "Portal SS",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#0f172a",
-  "theme_color": "#0f172a",
+  "background_color": "#0a192f",
+  "theme_color": "#0a192f",
   "description": "Portal de Gestão Field Service",
   "icons": [
     {
-      "src": "Logo2.jpeg",
+      "src": "LogoSS.png",
       "sizes": "512x512",
-      "type": "image/jpeg"
+      "type": "image/png"
     }
   ]
 }
